@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bidding_market/login.dart';
 
+import 'login.dart';
+
 void main() {
   runApp(MyApp());
 }
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Phone Authentication'),
+      home: LoginScreen(),
     );
   }
 }
