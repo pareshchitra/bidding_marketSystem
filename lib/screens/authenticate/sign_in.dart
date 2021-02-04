@@ -1,7 +1,9 @@
+import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -20,8 +22,8 @@ class _SignInState extends State<SignIn> {
   bool loading = false;
 
   // text field state
-  String email = '';
-  String password = '';
+  final _phoneController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,58 +41,71 @@ class _SignInState extends State<SignIn> {
           ),
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20.0),
-              TextFormField(
-                decoration: textInputDecoration.copyWith(hintText: 'email'),
-                validator: (val) => val.isEmpty ? 'Enter an email' : null,
-                onChanged: (val) {
-                  setState(() => email = val);
-                },
-              ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                obscureText: true,
-                decoration: textInputDecoration.copyWith(hintText: 'password'),
-                validator: (val) => val.length < 6 ? 'Enter a password 6+ chars long' : null,
-                onChanged: (val) {
-                  setState(() => password = val);
-                },
-              ),
-              SizedBox(height: 20.0),
-              RaisedButton(
-                  color: Colors.pink[400],
-                  child: Text(
-                    'Sign In',
-                    style: TextStyle(color: Colors.white),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(32),
+          child: Form(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Login", style: TextStyle(color: Colors.lightBlue, fontSize: 36, fontWeight: FontWeight.w500),),
+
+                SizedBox(height: 16,),
+
+                TextFormField(
+                  decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(color: Colors.grey[200])
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          borderSide: BorderSide(color: Colors.grey[300])
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      hintText: "Mobile Number"
+
                   ),
-                  onPressed: () async {
-                    if(_formKey.currentState.validate()){
+                  controller: _phoneController,
+                ),
+
+                SizedBox(height: 16,),
+
+
+                Container(
+                  width: double.infinity,
+                  child: FlatButton(
+                    child: Text("LOGIN"),
+                    textColor: Colors.white,
+                    padding: EdgeInsets.all(16),
+                    onPressed: () async {
                       setState(() => loading = true);
-                      dynamic result = await _auth.signInWithEmailAndPassword(email, password);
+                      final phone = _phoneController.text.trim();
+
+                      dynamic result = await _auth.signInWithMobileNumber(phone , context);
                       if(result == null) {
                         setState(() {
                           loading = false;
                           error = 'Could not sign in with those credentials';
                         });
                       }
-                    }
-                  }
-              ),
-              SizedBox(height: 12.0),
-              Text(
-                error,
-                style: TextStyle(color: Colors.red, fontSize: 14.0),
-              ),
-            ],
+                    },
+                    color: Colors.blue,
+                  ),
+                ),
+
+                SizedBox(height: 12.0),
+                Text(
+                  error,
+                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                )
+              ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 }

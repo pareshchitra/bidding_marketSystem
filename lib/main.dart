@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:bidding_market/login.dart';
+import 'package:bidding_market/screens/wrapper.dart';
+import 'package:bidding_market/services/auth.dart';
+import 'package:provider/provider.dart';
+import 'package:bidding_market/models/user.dart';
 
-import 'login.dart';
-
-void main() {
-  runApp(MyApp());
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Firebase Phone Auth Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return StreamProvider<User>.value(
+      value: AuthService().user,
+      child: MaterialApp(
+        home: Wrapper(),
       ),
-      home: LoginScreen(),
     );
   }
 }
