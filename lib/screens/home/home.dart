@@ -15,10 +15,10 @@ class Home extends StatelessWidget {
     return StreamProvider<List<Brew>>.value(
       value: DatabaseService().brews,
       child: Scaffold(
-        backgroundColor: Colors.brown[50],
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Brew Crew'),
-          backgroundColor: Colors.brown[400],
+          title: Text('WELCOME to Bidding Market'),
+          backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
             FlatButton.icon(

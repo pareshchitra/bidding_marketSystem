@@ -59,14 +59,15 @@ class AuthService {
           FirebaseUser user = result.user;
 
           if(user != null){
-            Navigator.push(context, MaterialPageRoute(
-                builder: (context) => Home()
-            ));
+            // Navigator.push(context, MaterialPageRoute(
+            //     builder: (context) => Home()
+            // ));
+            Navigator.of(context).pop();
           }else{
             print("Error");
           }
-          return user;
-          //This callback would gets called when verification is done auto maticlly
+          return _userFromFirebaseUser(user);
+          //This callback would gets called when verification is done automatically
         },
         verificationFailed: (AuthException exception){
           print(exception);
@@ -101,13 +102,14 @@ class AuthService {
                         print("Inside codeSent: user is $user");
 
                         if(user != null){
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => Home()
-                          ));
+                          // Navigator.push(context, MaterialPageRoute(
+                          //     builder: (context) => Home()
+                         // ));
+                        Navigator.of(context).pop();
                         }else{
                           print("Error");
                         }
-                        return user;
+                        return _userFromFirebaseUser(user);
                       },
                     )
                   ],

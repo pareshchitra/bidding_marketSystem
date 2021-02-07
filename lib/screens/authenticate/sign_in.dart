@@ -28,11 +28,11 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return loading ? Loading() : Scaffold(
-      backgroundColor: Colors.brown[100],
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.brown[400],
+        backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Text('Sign in to Brew Crew'),
+        title: Text('Sign in to Bidding Market'),
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.person),
@@ -49,7 +49,7 @@ class _SignInState extends State<SignIn> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text("Login", style: TextStyle(color: Colors.lightBlue, fontSize: 36, fontWeight: FontWeight.w500),),
+                Text("Login", style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
 
                 SizedBox(height: 16,),
 
@@ -92,7 +92,7 @@ class _SignInState extends State<SignIn> {
                         });
                       }
                     },
-                    color: Colors.blue,
+                    color: Colors.green[400],
                   ),
                 ),
 

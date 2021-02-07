@@ -28,9 +28,9 @@ class _RegisterState extends State<Register> {
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
-        backgroundColor: Colors.brown[400],
+        backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Text('Sign up to Brew Crew'),
+        title: Text('Sign up to Bidding Market'),
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.person),
