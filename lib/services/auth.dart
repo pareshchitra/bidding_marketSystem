@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:bidding_market/main.dart';
 
 class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  DatabaseService dbConnection = DatabaseService();
 
   // create user obj based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -14,6 +17,10 @@ class AuthService {
   }
 
   // auth change user stream
+  // void createGuiStream () {
+  //   guiController = StreamController<int>();
+  //   guiController.add(states.home as int);
+  // }
   Stream<User> get user {
     return _auth.onAuthStateChanged
     //.map((FirebaseUser user) => _userFromFirebaseUser(user));
@@ -55,7 +62,7 @@ class AuthService {
           //Navigator.of(context).pop();
 
           AuthResult result = await _auth.signInWithCredential(credential);
-
+          print("After first signInWithCredential");
           FirebaseUser user = result.user;
 
           if(user != null){
@@ -92,16 +99,18 @@ class AuthService {
                       child: Text("Confirm"),
                       textColor: Colors.white,
                       color: Colors.blue,
-                      onPressed: () async{
+                      onPressed: () async {
                         final code = _codeController.text.trim();
                         AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
-
+                        print("Before second signInWithCredential call");
                         AuthResult result = await _auth.signInWithCredential(credential);
-
+                        print("After second signInWithCredential call");
                         FirebaseUser user = result.user;
                         print("Inside codeSent: user is $user");
 
                         if(user != null){
+                          loggedUser.uid = user.uid;
+                          loggedUser.type = await dbConnection.checkIfUserExists(user.uid);
                           // Navigator.push(context, MaterialPageRoute(
                           //     builder: (context) => Home()
                          // ));
