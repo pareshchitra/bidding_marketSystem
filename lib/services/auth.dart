@@ -62,7 +62,7 @@ class AuthService {
           //Navigator.of(context).pop();
 
           AuthResult result = await _auth.signInWithCredential(credential);
-          print("After first signInWithCredential");
+          //print("After first signInWithCredential");
           FirebaseUser user = result.user;
 
           if(user != null){
@@ -102,14 +102,16 @@ class AuthService {
                       onPressed: () async {
                         final code = _codeController.text.trim();
                         AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
-                        print("Before second signInWithCredential call");
+                        //print("Before second signInWithCredential call");
+
                         AuthResult result = await _auth.signInWithCredential(credential);
-                        print("After second signInWithCredential call");
+                        //print("After second signInWithCredential call");
                         FirebaseUser user = result.user;
                         print("Inside codeSent: user is $user");
 
                         if(user != null){
                           loggedUser.uid = user.uid;
+                          await dbConnection.updatePhoneData(phone, user.uid);
                           loggedUser.type = await dbConnection.checkIfUserExists(user.uid);
                           // Navigator.push(context, MaterialPageRoute(
                           //     builder: (context) => Home()

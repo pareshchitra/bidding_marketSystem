@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/buyerModel.dart';
+import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -249,8 +251,9 @@ class buyerForm extends StatelessWidget {
                   if(_formKey.currentState.validate())
                   {
                     _formKey.currentState.save();
-                    buyerModel.uid = "1";
+                    buyerModel.uid = loggedUser.uid;
                     await dbConnection.updateBuyerData(buyerModel, _AadharFront, _AadharBack);
+                    Home();
                   }
                 },
                 color: Colors.green[700],

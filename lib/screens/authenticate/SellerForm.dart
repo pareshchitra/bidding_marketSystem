@@ -1,4 +1,6 @@
+import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/user.dart';
+import 'package:bidding_market/screens/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/services/database.dart';
 
@@ -173,8 +175,9 @@ class sellerForm extends StatelessWidget {
                   if(_formKey.currentState.validate())
                     {
                       _formKey.currentState.save();
-                      seller.uid = "1";
+                      seller.uid = loggedUser.uid;
                       dbConnection.updateSellerData(seller);
+                      Home();
                     }
                 },
                 color: Colors.green[700],

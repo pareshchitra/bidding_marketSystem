@@ -1,3 +1,4 @@
+import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/models/user.dart';
@@ -17,6 +18,7 @@ class DatabaseService {
   // collection reference
   final CollectionReference dbSellerCollection = Firestore.instance.collection('Seller');
   final CollectionReference dbBuyerCollection = Firestore.instance.collection('Buyer');
+  final CollectionReference dbPhoneCollection = Firestore.instance.collection('PhoneNo');
 
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
@@ -29,6 +31,26 @@ class DatabaseService {
     });
     return "File not uploaded";
   }
+
+  Future <void> updatePhoneData(String Phone, String uid) async {
+    return await dbPhoneCollection.document(Phone).setData({
+      'Uid': uid
+    });
+  }
+
+  Future<void> checkIfPhoneExists(String Phone) async {
+  DocumentSnapshot ds;
+  ds = await dbPhoneCollection.document(Phone).get();
+  print('Phone Number exists: ${ds.exists}');
+  if(ds.exists == true)
+  {
+  loggedUser.type = 1; //Default to move to homePage
+  }
+  else
+    {
+      loggedUser.type = 0; //Not Found Data
+    }
+}
 
   Future<void> updateSellerData(User seller) async {
     print("Entering UpdateSellerData");
@@ -46,8 +68,6 @@ class DatabaseService {
       'Pincode': seller.Pincode,
     });
   }
-
-
 
   Future<void> updateBuyerData(BuyerModel buyer, File aadharFront, File aadharBack) async {
     print("Entering UpdateBuyerData");

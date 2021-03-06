@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:bidding_market/screens/authenticate/registerDetails.dart';
 import 'package:bidding_market/services/auth.dart';
+import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +25,7 @@ class _RegisterState extends State<Register> {
   final _formKey = GlobalKey<FormState>();
   String error = '';
   bool loading = false;
+  DatabaseService dbConnection = DatabaseService();
 
   final _phoneController = TextEditingController();
 
@@ -84,6 +88,8 @@ class _RegisterState extends State<Register> {
                       setState(() => loading = true);
                       final phone = _phoneController.text.trim();
 
+                      await dbConnection.checkIfPhoneExists(phone);
+                      //sleep(const Duration(seconds: 1));
                       dynamic result = await _auth.signInWithMobileNumber(phone , context);
                       if(result == null) {
                         setState(() {
