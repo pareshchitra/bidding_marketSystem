@@ -1,4 +1,5 @@
-import 'package:bidding_market/screens/authenticate/register.dart';
+import 'package:bidding_market/screens/authenticate/registerDetails.dart';
+import 'package:bidding_market/screens/authenticate/registerMobile.dart';
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
 
