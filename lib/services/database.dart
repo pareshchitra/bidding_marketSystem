@@ -54,6 +54,7 @@ class DatabaseService {
 
   Future<void> updateSellerData(User seller) async {
     print("Entering UpdateSellerData");
+    loggedUser.type = 2;
     print(seller.uid);
     print(seller.Name);
     print(seller.HouseNo);
@@ -71,6 +72,7 @@ class DatabaseService {
 
   Future<void> updateBuyerData(BuyerModel buyer, File aadharFront, File aadharBack) async {
     print("Entering UpdateBuyerData");
+    loggedUser.type = 1;
     print(buyer.uid);
     print(buyer.Name);
     print(buyer.HouseNo);

@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:bidding_market/models/user.dart';
-import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -111,8 +110,9 @@ class AuthService {
 
                         if(user != null){
                           loggedUser.uid = user.uid;
+                          loggedUser.type = await dbConnection.checkIfUserExists(user.uid); //Needed to get correct type of user
                           await dbConnection.updatePhoneData(phone, user.uid);
-                          loggedUser.type = await dbConnection.checkIfUserExists(user.uid);
+
                           // Navigator.push(context, MaterialPageRoute(
                           //     builder: (context) => Home()
                          // ));
