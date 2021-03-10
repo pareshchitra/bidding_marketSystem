@@ -51,7 +51,7 @@ class buyerForm extends StatelessWidget {
   }
 
   void retreiveImage(ImageSource source, int imageNumber) async {
- final pickedFile = await _picker.getImage(imageQuality: 75,source: source);
+ final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
  File _imageFile = File(pickedFile.path);
  if(imageNumber == 1)
    {
@@ -253,7 +253,9 @@ class buyerForm extends StatelessWidget {
                     _formKey.currentState.save();
                     buyerModel.uid = loggedUser.uid;
                     await dbConnection.updateBuyerData(buyerModel, _AadharFront, _AadharBack);
-                    Home();
+                    Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => Home()
+                    ));
                   }
                 },
                 color: Colors.green[700],

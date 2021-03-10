@@ -22,14 +22,15 @@ class DatabaseService {
 
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
+    String value = "File not uploaded";
     StorageReference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$imageName');
     StorageUploadTask uploadTask = dbFirestoreCollection.putFile(Image);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    taskSnapshot.ref.getDownloadURL().then((value) {
+    value = await taskSnapshot.ref.getDownloadURL().then((value) {
       print("Done: $value");
       return value;
     });
-    return "File not uploaded";
+    return value;
   }
 
   Future <void> updatePhoneData(String Phone, String uid) async {
@@ -89,7 +90,9 @@ class DatabaseService {
     String IdFrontFileName = "buyer/${buyer.uid}/IdFront";
     String IdBackFileName = "buyer/${buyer.uid}/IdBack";
     String IdFrontUrl = await uploadImage(aadharFront, IdFrontFileName);
+    print("IdFrontUrl value is $IdFrontUrl");
     String IdBackUrl = await uploadImage(aadharBack, IdBackFileName);
+    print("IdBackUrl value is $IdBackUrl");
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,
