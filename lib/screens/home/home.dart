@@ -3,6 +3,7 @@ import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/home/brew_list.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,7 @@ class Home extends StatelessWidget {
     return StreamProvider<List<Brew>>.value(
       value: DatabaseService().brews,
       child: Scaffold(
+        drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text('WELCOME to Bidding Market'),
