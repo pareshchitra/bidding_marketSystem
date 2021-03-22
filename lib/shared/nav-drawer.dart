@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:bidding_market/screens/authenticate/productRegisteration.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
@@ -28,11 +29,12 @@ class NavDrawer extends StatelessWidget {
             title: Text('Add Product'
                 ''),
             onTap:() {
-                 Navigator.of(context).pop();
-                 Navigator.push(context, MaterialPageRoute(
-                 builder: (context) => _ProductRegisterationFormState()
-             ));
-              )
+                      Navigator.of(context).pop();
+                      Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => ProductRegisterForm()
+                      ));
+                      }
+
           ),
           ListTile(
             leading: Icon(Icons.verified_user),
