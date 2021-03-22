@@ -136,6 +136,10 @@
         "source": "C:\\Users\\Paresh Chitra\\.gradle\\caches\\transforms-2\\files-2.1\\4c0b774c09d5393feb013f0dbe753af3\\play-services-base-17.0.0\\res\\color\\common_google_signin_btn_tint.xml"
     },
     {
+        "merged": "C:\\Users\\Paresh Chitra\\StudioProjects\\bidding_marketSystem\\build\\app\\intermediates\\res\\merged\\debug\\xml_flutter_image_picker_file_paths.xml.flat",
+        "source": "C:\\Users\\Paresh Chitra\\StudioProjects\\bidding_marketSystem\\build\\image_picker\\intermediates\\packaged_res\\debug\\xml\\flutter_image_picker_file_paths.xml"
+    },
+    {
         "merged": "C:\\Users\\Paresh Chitra\\StudioProjects\\bidding_marketSystem\\build\\app\\intermediates\\res\\merged\\debug\\layout-v21_notification_action.xml.flat",
         "source": "C:\\Users\\Paresh Chitra\\.gradle\\caches\\transforms-2\\files-2.1\\3aaf6e5219b7f981ec263df919098c6f\\core-1.1.0\\res\\layout-v21\\notification_action.xml"
     },
