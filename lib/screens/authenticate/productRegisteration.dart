@@ -28,35 +28,31 @@ class _UploadImagesFieldsState extends State<UploadImagesFields> {
   }
   @override
   Widget build(BuildContext context) {
+    _ProductRegisterFormState p = new _ProductRegisterFormState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      _nameController.text = _productRegisterFormState.imagesList[widget.index]
+      _nameController.text = _ProductRegisterFormState.imagesList[widget.index]
           ?? '';
     });
-    return TextFormField(
-      controller: _nameController,
-      // save text field data in friends list at index
-      // whenever text field value changes
-      onChanged: (v) => _productRegisterFormState.imagesList[widget.index] = v,
-      decoration: InputDecoration(
-          hintText: 'Upload Images'
-      ),
-      validator: (v){
-        if(v.trim().isEmpty) return 'Please enter something';
-        return null;
-      },
+    return RaisedButton(
+        color: Colors.green[700],
+        child: Text('Upload Image'),
+        onPressed: () {
+          showModalBottomSheet(context: context,
+              builder: ((builder) => p.imageSourceSelector(context, widget.index)));
+        }
     );
   }
 }
 
 
-class productRegisterForm extends StatefulWidget {
+class ProductRegisterForm extends StatefulWidget {
 
 
   @override
-  _productRegisterFormState createState() => _productRegisterFormState();
+  _ProductRegisterFormState createState() => _ProductRegisterFormState();
 }
 
-class _productRegisterFormState extends State<productRegisterForm> {
+class _ProductRegisterFormState extends State<ProductRegisterForm> {
   final _formKey = GlobalKey<FormState>();
 
   Product product = Product();
@@ -166,7 +162,7 @@ class _productRegisterFormState extends State<productRegisterForm> {
       child: Form(
           key: _formKey,
           child: Column(
-            children: <Widget>[
+            children:[
               SizedBox(height: 10.0),
               TextFormField(
                 maxLength: 20,
@@ -319,6 +315,7 @@ class _productRegisterFormState extends State<productRegisterForm> {
                         builder: ((builder) => imageSourceSelector(context, 2)));
                   }
               ),
+
               RaisedButton(
                 onPressed: () async {
                   if(_formKey.currentState.validate())
@@ -336,8 +333,14 @@ class _productRegisterFormState extends State<productRegisterForm> {
                 color: Colors.green[700],
                 child: Text('ADD'),
               ),
+              Expanded(
+                  child: Column(
+                    children:_getImages()
+                  )
+              )
             ],
           ),
+
       ),
     );
   }

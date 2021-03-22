@@ -27,7 +27,12 @@ class NavDrawer extends StatelessWidget {
             leading: Icon(Icons.input),
             title: Text('Add Product'
                 ''),
-            onTap: () => {},
+            onTap:() {
+                 Navigator.of(context).pop();
+                 Navigator.push(context, MaterialPageRoute(
+                 builder: (context) => _ProductRegisterationFormState()
+             ));
+              )
           ),
           ListTile(
             leading: Icon(Icons.verified_user),
