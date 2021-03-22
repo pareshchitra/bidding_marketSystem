@@ -88,7 +88,7 @@ class _RegisterState extends State<Register> {
                       setState(() => loading = true);
                       final phone = _phoneController.text.trim();
 
-                      await dbConnection.checkIfPhoneExists(phone);
+                      await dbConnection.checkIfPhoneExists(phone); //Workaround needed to bypass home after user authentication
                       //sleep(const Duration(seconds: 1));
                       dynamic result = await _auth.signInWithMobileNumber(phone , context);
                       if(result == null) {

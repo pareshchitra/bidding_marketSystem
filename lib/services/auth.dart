@@ -13,7 +13,7 @@ class AuthService {
 
   // create user obj based on firebase user
   User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
+    return user != null ? User(uid: user.uid ) : null;
   }
 
   // auth change user stream
@@ -28,28 +28,28 @@ class AuthService {
   }
 
   // sign in anon
-  Future signInAnon() async {
-    try {
-      AuthResult result = await _auth.signInAnonymously();
-      FirebaseUser user = result.user;
-      return _userFromFirebaseUser(user);
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
+  // Future signInAnon() async {
+  //   try {
+  //     AuthResult result = await _auth.signInAnonymously();
+  //     FirebaseUser user = result.user;
+  //     return _userFromFirebaseUser(user);
+  //   } catch (e) {
+  //     print(e.toString());
+  //     return null;
+  //   }
+  // }
 
   // sign in with email and password
-  Future signInWithEmailAndPassword(String email, String password) async {
-    try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
-      FirebaseUser user = result.user;
-      return user;
-    } catch (error) {
-      print(error.toString());
-      return null;
-    }
-  }
+  // Future signInWithEmailAndPassword(String email, String password) async {
+  //   try {
+  //     AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+  //     FirebaseUser user = result.user;
+  //     return user;
+  //   } catch (error) {
+  //     print(error.toString());
+  //     return null;
+  //   }
+  // }
 
   //sign in with mobile number
   final _codeController = TextEditingController();
@@ -64,14 +64,16 @@ class AuthService {
           AuthResult result = await _auth.signInWithCredential(credential);
           //print("After first signInWithCredential");
           FirebaseUser user = result.user;
-
+          int type;
           if(user != null){
             // Navigator.push(context, MaterialPageRoute(
             //     builder: (context) => Home()
             // ));
+            type = await dbConnection.checkIfUserExists(user.uid);
             Navigator.of(context).pop();
           }else{
             print("Error");
+            type = 0;
           }
           return _userFromFirebaseUser(user);
           //This callback would gets called when verification is done automatically
@@ -104,6 +106,11 @@ class AuthService {
                         AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
                         //print("Before second signInWithCredential call");
 
+                        print("Going to check phoneNumber in DB");
+
+                        await dbConnection.checkIfPhoneExists(phone);
+                        print("Status of user $loggedUser.type");
+                        
                         AuthResult result = await _auth.signInWithCredential(credential);
                         //print("After second signInWithCredential call");
                         FirebaseUser user = result.user;
@@ -111,13 +118,17 @@ class AuthService {
 
                         if(user != null){
                           loggedUser.uid = user.uid;
-                          await dbConnection.updatePhoneData(phone, user.uid);
-                          loggedUser.type = await dbConnection.checkIfUserExists(user.uid);
+
+                          //loggedUser.type = await dbConnection.checkIfUserExists(user.uid);
+                          print("Logged user type changed to $loggedUser.type");
+
                           // Navigator.push(context, MaterialPageRoute(
                           //     builder: (context) => Home()
                          // ));
                         Navigator.of(context).pop();
+                          await dbConnection.updatePhoneData(phone, user.uid);
                         }else{
+
                           print("Error");
                         }
                         return _userFromFirebaseUser(user);
@@ -134,18 +145,18 @@ class AuthService {
   }
 
   // register with email and password
-  Future registerWithEmailAndPassword(String email, String password) async {
-    try {
-      AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      FirebaseUser user = result.user;
-      // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid).updateUserData('0','new crew member', 100);
-      return _userFromFirebaseUser(user);
-    } catch (error) {
-      print(error.toString());
-      return null;
-    }
-  }
+  // Future registerWithEmailAndPassword(String email, String password) async {
+  //   try {
+  //     AuthResult result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+  //     FirebaseUser user = result.user;
+  //     // create a new document for the user with the uid
+  //     await DatabaseService(uid: user.uid).updateUserData('0','new crew member', 100);
+  //     return _userFromFirebaseUser(user);
+  //   } catch (error) {
+  //     print(error.toString());
+  //     return null;
+  //   }
+  // }
 
   // sign out
   Future signOut() async {

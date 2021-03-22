@@ -1,19 +1,68 @@
 import 'dart:io';
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/buyerModel.dart';
+import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class buyerForm extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-  BuyerModel buyerModel = BuyerModel();
-  DatabaseService dbConnection = DatabaseService();
-  File _AadharFront;
-  File _AadharBack;
-  final ImagePicker _picker = ImagePicker();
 
+class UploadImagesFields extends StatefulWidget {
+  final int index;
+  UploadImagesFields(this.index);
+  @override
+  _UploadImagesFieldsState createState() => _UploadImagesFieldsState();
+}
+class _UploadImagesFieldsState extends State<UploadImagesFields> {
+  TextEditingController _nameController;
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController();
+  }
+  @override
+  void dispose() {
+    _nameController.dispose();
+    super.dispose();
+  }
+  @override
+  Widget build(BuildContext context) {
+    _ProductRegisterFormState p = new _ProductRegisterFormState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      _nameController.text = _ProductRegisterFormState.imagesList[widget.index]
+          ?? '';
+    });
+    return RaisedButton(
+        color: Colors.green[700],
+        child: Text('Upload Image'),
+        onPressed: () {
+          showModalBottomSheet(context: context,
+              builder: ((builder) => p.imageSourceSelector(context, widget.index)));
+        }
+    );
+  }
+}
+
+
+class ProductRegisterForm extends StatefulWidget {
+
+
+  @override
+  _ProductRegisterFormState createState() => _ProductRegisterFormState();
+}
+
+class _ProductRegisterFormState extends State<ProductRegisterForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  Product product = Product();
+
+  DatabaseService dbConnection = DatabaseService();
+
+  File productPhoto1 , productPhoto2;
+
+  final ImagePicker _picker = ImagePicker();
+  static List<String> imagesList = [null];
 
   Widget imageSourceSelector(BuildContext context, int imageNumber) {
     return Container(
@@ -24,7 +73,7 @@ class buyerForm extends StatelessWidget {
         children: <Widget>[
           Text("Choose Photo Source",
               style: TextStyle(fontSize: 20.0
-      )),
+              )),
           SizedBox(
             height: 20,
           ),
@@ -32,16 +81,16 @@ class buyerForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton.icon(
-                label: Text("Camera"),
+                  label: Text("Camera"),
                   onPressed: () {
                     retreiveImage(ImageSource.camera, imageNumber);
-              },
+                  },
                   icon: Icon(Icons.camera_alt)
               ),
               FlatButton.icon(
-                label: Text("Gallery"),
+                  label: Text("Gallery"),
                   onPressed: () {
-    retreiveImage(ImageSource.gallery, imageNumber);}, icon: Icon(Icons.image)),
+                    retreiveImage(ImageSource.gallery, imageNumber);}, icon: Icon(Icons.image)),
             ],
           )
         ],
@@ -51,30 +100,74 @@ class buyerForm extends StatelessWidget {
   }
 
   void retreiveImage(ImageSource source, int imageNumber) async {
-      final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
-      File _imageFile = File(pickedFile.path);
-      if(imageNumber == 1)
-      {
-          _AadharFront = _imageFile;
-      }
-      else if(imageNumber == 2)
-      {
-          _AadharBack = _imageFile;
-      }
-}
+    final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
+    File _imageFile = File(pickedFile.path);
+    if(imageNumber == 1)
+    {
+      productPhoto1 = _imageFile;
+    }
+    else if(imageNumber == 2)
+    {
+      productPhoto2 = _imageFile;
+    }
+  }
+
+  List<Widget> _getImages(){
+    List<Widget> uploadImagesFieldsList = [];
+    for(int i=0; i<imagesList.length; i++){
+      uploadImagesFieldsList.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Row(
+              children: [
+                Expanded(child: UploadImagesFields(i)),
+                SizedBox(width: 16,),
+                // we need add button at last friends row only
+                _addRemoveButton(i == imagesList.length-1, i),
+              ],
+            ),
+          )
+      );
+    }
+    return uploadImagesFieldsList;
+  }
+
+  Widget _addRemoveButton(bool add, int index){
+    return InkWell(
+      onTap: (){
+        if(add){
+          // add new text-fields at the top of all friends textfields
+          imagesList.insert(0, null);
+        }
+        else imagesList.removeAt(index);
+        setState((){});
+      },
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          color: (add) ? Colors.green : Colors.red,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Icon(
+          (add) ? Icons.add : Icons.remove, color: Colors.white,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Form(
-        key: _formKey,
+          key: _formKey,
           child: Column(
-            children: <Widget>[
+            children:[
               SizedBox(height: 10.0),
               TextFormField(
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "Name",
+                  labelText: "Category",
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -84,29 +177,22 @@ class buyerForm extends StatelessWidget {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "Name cannot be empty";
+                    return "Category cannot be empty";
                   } else {
                     return null;
                   }
                 },
                 keyboardType: TextInputType.name,
                 onSaved: (String value) {
-                  buyerModel.Name = value;
+                  product.category = value;
                 },
               ),
-              SizedBox(height: 10.0),
-              Text(
-                'Address',
-                style: TextStyle(
-                  fontSize: 15.0,
-                  fontFamily: "Georgia",
-                ),
-              ),
+
               SizedBox(height: 10.0),
               TextFormField(
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "House Number",
+                  labelText: "Location",
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -116,7 +202,7 @@ class buyerForm extends StatelessWidget {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "House Number cannot be empty";
+                    return "Location cannot be empty";
                   } else {
                     return null;
                   }
@@ -124,14 +210,14 @@ class buyerForm extends StatelessWidget {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.HouseNo = value;
+                  product.location = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "Village/City",
+                  labelText: "Owner",
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -141,7 +227,7 @@ class buyerForm extends StatelessWidget {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "Village or city cannot be empty";
+                    return "Owner name cannot be empty";
                   } else {
                     return null;
                   }
@@ -149,14 +235,14 @@ class buyerForm extends StatelessWidget {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.Village = value;
+                  product.owner = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "District",
+                  labelText: "Age/Years Old",
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -166,22 +252,22 @@ class buyerForm extends StatelessWidget {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "District cannot be empty";
+                    return "Age cannot be empty";
                   } else {
                     return null;
                   }
                 },
-                keyboardType: TextInputType.text,
+                keyboardType: TextInputType.number,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.District = value;
+                  product.age = int.parse(value);
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
                 maxLength: 6,
                 decoration: new InputDecoration(
-                  labelText: "Pincode",
+                  labelText: "Reserve Price",
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -190,8 +276,8 @@ class buyerForm extends StatelessWidget {
                   //fillColor: Colors.green
                 ),
                 validator: (val) {
-                  if (val.length < 6) {
-                    return "Pincode cannot be less than 6 digits";
+                  if (val.length < 0) {
+                    return "Reserve price cannot be less than 0";
                   } else {
                     return null;
                   }
@@ -199,40 +285,23 @@ class buyerForm extends StatelessWidget {
                 keyboardType: TextInputType.number,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.Pincode = value;
+                  product.reservePrice = double.parse(value);
                 },
               ),
               SizedBox(height: 10.0),
-              TextFormField(
-                maxLength: 12,
-                decoration: new InputDecoration(
-                  labelText: "Aadhar Number",
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
+
+              Text('Add Images',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
                 ),
-                validator: (val) {
-                  if (val.length < 12) {
-                    return "Aadhaar cannot be less than 12 digits";
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.number,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  buyerModel.AadharNo = value;
-                },
               ),
-              // _AadharFront == null ?
-              //     Image.file(_AadharFront) :
-              //     SizedBox(height:10),
+              SizedBox(height: 10.0),
+
+
               RaisedButton(
-                color: Colors.green[700],
-                  child: Text('Aadhar Front'),
+                  color: Colors.green[700],
+                  child: Text('Upload Image1'),
                   onPressed: () {
                     showModalBottomSheet(context: context,
                         builder: ((builder) => imageSourceSelector(context, 1)));
@@ -240,29 +309,39 @@ class buyerForm extends StatelessWidget {
               ),
               RaisedButton(
                   color: Colors.green[700],
-                  child: Text('Aadhar Back'),
+                  child: Text('Upload Image2'),
                   onPressed: () {
                     showModalBottomSheet(context: context,
                         builder: ((builder) => imageSourceSelector(context, 2)));
                   }
               ),
+
               RaisedButton(
                 onPressed: () async {
                   if(_formKey.currentState.validate())
                   {
                     _formKey.currentState.save();
-                    buyerModel.uid = loggedUser.uid;
-                    await dbConnection.updateBuyerData(buyerModel, _AadharFront, _AadharBack);
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => Home()
-                    ));
+                    product.id = loggedUser.uid;
+                    product.lastUpdatedOn = DateTime.now();
+                    product.lastUpdatedBy = loggedUser.uid;
+                    await dbConnection.updateProductData(product, productPhoto1, productPhoto2);
+                    // Navigator.push(context, MaterialPageRoute(
+                    //     builder: (context) => Home()
+                    // ));
                   }
                 },
                 color: Colors.green[700],
-                child: Text('Register'),
+                child: Text('ADD'),
               ),
+              Expanded(
+                  child: Column(
+                    children:_getImages()
+                  )
+              )
             ],
-          )),
+          ),
+
+      ),
     );
   }
 }

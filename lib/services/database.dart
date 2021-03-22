@@ -1,6 +1,7 @@
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/buyerModel.dart';
+import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/authenticate/BuyerForm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,14 +23,15 @@ class DatabaseService {
 
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
+    String value = "File not uploaded";
     StorageReference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$imageName');
     StorageUploadTask uploadTask = dbFirestoreCollection.putFile(Image);
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    taskSnapshot.ref.getDownloadURL().then((value) {
+    value = await taskSnapshot.ref.getDownloadURL().then((value) {
       print("Done: $value");
       return value;
     });
-    return "File not uploaded";
+    return value;
   }
 
   Future <void> updatePhoneData(String Phone, String uid) async {
@@ -54,6 +56,7 @@ class DatabaseService {
 
   Future<void> updateSellerData(User seller) async {
     print("Entering UpdateSellerData");
+    loggedUser.type = 2;
     print(seller.uid);
     print(seller.Name);
     print(seller.HouseNo);
@@ -71,6 +74,7 @@ class DatabaseService {
 
   Future<void> updateBuyerData(BuyerModel buyer, File aadharFront, File aadharBack) async {
     print("Entering UpdateBuyerData");
+    loggedUser.type = 1;
     print(buyer.uid);
     print(buyer.Name);
     print(buyer.HouseNo);
@@ -89,7 +93,9 @@ class DatabaseService {
     String IdFrontFileName = "buyer/${buyer.uid}/IdFront";
     String IdBackFileName = "buyer/${buyer.uid}/IdBack";
     String IdFrontUrl = await uploadImage(aadharFront, IdFrontFileName);
+    print("IdFrontUrl value is $IdFrontUrl");
     String IdBackUrl = await uploadImage(aadharBack, IdBackFileName);
+    print("IdBackUrl value is $IdBackUrl");
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,
@@ -99,6 +105,42 @@ class DatabaseService {
       'AadharNo': buyer.AadharNo,
       'IdFrontUrl': IdFrontUrl,
       'IdBackUrl': IdBackUrl
+    });
+  }
+
+  Future<void> updateProductData(Product  product, File productPhoto1, File productPhoto2) async {
+    print("Entering UpdateProductData");
+
+    print(product.id);
+    print(product.category);
+    print(product.description);
+    print(product.rating);
+    print(product.owner);
+    print(product.location);
+    print(product.age);
+    print(product.reservePrice);
+    print(product.lastUpdatedOn);
+    print(product.lastUpdatedBy);
+
+    String photo1 = "product/${product.id}/Photo1";
+    String photo2 = "product/${product.id}/Photo2";
+    String photo1Url = await uploadImage(productPhoto1, photo1);
+    print("photo1Url value is $photo1Url");
+    String photo2Url = await uploadImage(productPhoto2, photo2);
+    print("photo2Url value is $photo2Url");
+    return await dbBuyerCollection.document(product.id).setData({
+      'ID': product.id,
+      'Category': product.category,
+      'Description': product.description,
+      'Rating': product.rating,
+      'Owner': product.owner,
+      'Location': product.location,
+      'Age': product.age,
+      'ReservePrice': product.reservePrice,
+      'LastUpdatedOn': product.lastUpdatedOn,
+      'LastUpdateBy': product.lastUpdatedBy,
+      'Image': photo1Url
+
     });
   }
 

@@ -1,5 +1,6 @@
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/auth.dart';
+import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
   String error = '';
   bool loading = false;
+  DatabaseService dbConnection = DatabaseService();
 
   // text field state
   final _phoneController = TextEditingController();
@@ -84,6 +86,7 @@ class _SignInState extends State<SignIn> {
                       setState(() => loading = true);
                       final phone = _phoneController.text.trim();
 
+                      await dbConnection.checkIfPhoneExists(phone); //Workaround needed to bypass home after user authentication
                       dynamic result = await _auth.signInWithMobileNumber(phone , context);
                       if(result == null) {
                         setState(() {
