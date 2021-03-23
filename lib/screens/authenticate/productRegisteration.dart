@@ -173,8 +173,10 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
         title: Text('Add Your Product'),
         ),
 
-        body:  Container(
-        child: Form(
+        body:  SingleChildScrollView(
+           scrollDirection: Axis.vertical,
+           child:Container(
+           child: Form(
             key: _formKey,
             child: Column(
               children:[
@@ -375,6 +377,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
         ),
       ),
+        )
     );
   }
 }

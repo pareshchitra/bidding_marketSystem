@@ -173,6 +173,30 @@ class DatabaseService {
       }
   }
 
+  // product list from snapshot
+  List<Product> productListFromSnapshot() {
+    List<Product> productList = new List<Product>();
+    dbProductCollection.getDocuments().then((snapshot) {
+      snapshot.documents.forEach((result) {
+        Product p = new Product();
+        p.id = result.data['id'] ?? '';
+        p.category = result.data['category'] ?? '';
+        p.description = result.data['id'] ?? '';
+        p.rating = result.data['rating'] ?? '';
+        p.owner = result.data['owner'] ?? '';
+        p.location = result.data['location'] ?? '';
+        p.age = result.data['age'] ?? '';
+        p.image = result.data['image'] ?? '';
+        p.isVerfied = result.data['isVerfied'] ?? '';
+        p.reservePrice = result.data['reservePrice'] ?? '';
+        p.lastUpdatedOn = result.data['lastUpdatedOn'] ?? '';
+        p.lastUpdatedBy = result.data['lastUpdatedBy'] ?? '';
+        productList.add(p);
+      });
+  });
+    return productList;
+        }
+
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
 
