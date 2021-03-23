@@ -1,5 +1,6 @@
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/products.dart';
+import 'package:bidding_market/screens/authenticate/authenticate.dart';
 import 'package:bidding_market/screens/home/brew_list.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
@@ -12,7 +13,7 @@ class ABC {
   var productsList = new List<Product>();
 
   ABC(productsList) {
-    Product p1 = new Product(id: 1);
+    Product p1 = new Product(id: '1');
     this.productsList.add(p1);
   }
 
@@ -33,7 +34,7 @@ class Home extends StatelessWidget {
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('WELCOME to Bidding Market'),
+          title: Text('Home'),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
@@ -41,7 +42,12 @@ class Home extends StatelessWidget {
               icon: Icon(Icons.person),
               label: Text('logout'),
               onPressed: () async {
+                //Navigator.of(context).pop();
                 await _auth.signOut();
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => Authenticate()
+                ));
+
               },
             ),
           ],

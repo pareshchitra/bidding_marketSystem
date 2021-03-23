@@ -61,20 +61,26 @@ class AuthService {
         verificationCompleted: (AuthCredential credential) async{
           //Navigator.of(context).pop();
 
+          await dbConnection.checkIfPhoneExists(phone);
+          print("Status of user $loggedUser.type");
+
           AuthResult result = await _auth.signInWithCredential(credential);
           //print("After first signInWithCredential");
           FirebaseUser user = result.user;
           int type;
           if(user != null){
+            loggedUser.uid = user.uid;
             // Navigator.push(context, MaterialPageRoute(
             //     builder: (context) => Home()
             // ));
-            type = await dbConnection.checkIfUserExists(user.uid);
-            Navigator.of(context).pop();
+
+            //type = await dbConnection.checkIfUserExists(user.uid);
+            await dbConnection.updatePhoneData(phone, user.uid);
           }else{
             print("Error");
             type = 0;
           }
+          print("Before returning from authentication");
           return _userFromFirebaseUser(user);
           //This callback would gets called when verification is done automatically
         },
@@ -131,6 +137,7 @@ class AuthService {
 
                           print("Error");
                         }
+                        print("Before returning from authentication");
                         return _userFromFirebaseUser(user);
                       },
                     )

@@ -20,6 +20,7 @@ class DatabaseService {
   final CollectionReference dbSellerCollection = Firestore.instance.collection('Seller');
   final CollectionReference dbBuyerCollection = Firestore.instance.collection('Buyer');
   final CollectionReference dbPhoneCollection = Firestore.instance.collection('PhoneNo');
+  final CollectionReference dbProductCollection = Firestore.instance.collection('Product');
 
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
@@ -121,14 +122,20 @@ class DatabaseService {
     print(product.reservePrice);
     print(product.lastUpdatedOn);
     print(product.lastUpdatedBy);
+    print(productPhoto1);
+    print(productPhoto2);
 
+    if( product.id == null)
+      product.id = "1234";
     String photo1 = "product/${product.id}/Photo1";
     String photo2 = "product/${product.id}/Photo2";
+    print("photo1 = $photo1");
+    print("photo2 = $photo2");
     String photo1Url = await uploadImage(productPhoto1, photo1);
     print("photo1Url value is $photo1Url");
     String photo2Url = await uploadImage(productPhoto2, photo2);
     print("photo2Url value is $photo2Url");
-    return await dbBuyerCollection.document(product.id).setData({
+    return await dbProductCollection.document(product.id).setData({
       'ID': product.id,
       'Category': product.category,
       'Description': product.description,

@@ -4,8 +4,10 @@ import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 
 class UploadImagesFields extends StatefulWidget {
@@ -33,12 +35,14 @@ class _UploadImagesFieldsState extends State<UploadImagesFields> {
       _nameController.text = _ProductRegisterFormState.imagesList[widget.index]
           ?? '';
     });
+    print("Widget Index for imageSource is");
+    print(widget.index);
     return RaisedButton(
         color: Colors.green[700],
         child: Text('Upload Image'),
         onPressed: () {
           showModalBottomSheet(context: context,
-              builder: ((builder) => p.imageSourceSelector(context, widget.index)));
+              builder: ((builder) => p.imageSourceSelector(context, widget.index+1)));
         }
     );
   }
@@ -117,10 +121,11 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
     for(int i=0; i<imagesList.length; i++){
       uploadImagesFieldsList.add(
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            padding: const EdgeInsets.symmetric(vertical: 2.0),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(child: UploadImagesFields(i)),
+                UploadImagesFields(i),
                 SizedBox(width: 16,),
                 // we need add button at last friends row only
                 _addRemoveButton(i == imagesList.length-1, i),
@@ -158,189 +163,217 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Form(
-          key: _formKey,
-          child: Column(
-            children:[
-              SizedBox(height: 10.0),
-              TextFormField(
-                maxLength: 20,
-                decoration: new InputDecoration(
-                  labelText: "Category",
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return "Category cannot be empty";
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.name,
-                onSaved: (String value) {
-                  product.category = value;
-                },
-              ),
+    final user = Provider.of<User>(context);
 
-              SizedBox(height: 10.0),
-              TextFormField(
-                maxLength: 20,
-                decoration: new InputDecoration(
-                  labelText: "Location",
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return "Location cannot be empty";
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  product.location = value;
-                },
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-                maxLength: 20,
-                decoration: new InputDecoration(
-                  labelText: "Owner",
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return "Owner name cannot be empty";
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  product.owner = value;
-                },
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-                maxLength: 20,
-                decoration: new InputDecoration(
-                  labelText: "Age/Years Old",
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return "Age cannot be empty";
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.number,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  product.age = int.parse(value);
-                },
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-                maxLength: 6,
-                decoration: new InputDecoration(
-                  labelText: "Reserve Price",
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length < 0) {
-                    return "Reserve price cannot be less than 0";
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.number,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  product.reservePrice = double.parse(value);
-                },
-              ),
-              SizedBox(height: 10.0),
+    return  Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+        backgroundColor: Colors.green[700],
+        elevation: 0.0,
+        title: Text('Add Your Product'),
+        ),
 
-              Text('Add Images',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
+        body:  Container(
+        child: Form(
+            key: _formKey,
+            child: Column(
+              children:[
+                SizedBox(height: 2.0),
+                TextFormField(
+                  maxLength: 20,
+                  decoration: new InputDecoration(
+                    labelText: "Category",
+                    fillColor: Colors.white,
+                    border: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: new BorderSide(),
+                    ),
+                    //fillColor: Colors.green
+                  ),
+                  validator: (val) {
+                    if (val.length == 0) {
+                      return "Category cannot be empty";
+                    } else {
+                      return null;
+                    }
+                  },
+                  keyboardType: TextInputType.name,
+                  onSaved: (String value) {
+                    product.category = value;
+                  },
                 ),
-              ),
-              SizedBox(height: 10.0),
+
+                SizedBox(height: 2.0),
+                TextFormField(
+                  maxLength: 20,
+                  decoration: new InputDecoration(
+                    labelText: "Location",
+                    fillColor: Colors.white,
+                    border: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: new BorderSide(),
+                    ),
+                    //fillColor: Colors.green
+                  ),
+                  validator: (val) {
+                    if (val.length == 0) {
+                      return "Location cannot be empty";
+                    } else {
+                      return null;
+                    }
+                  },
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {},
+                  onSaved: (String value) {
+                    product.location = value;
+                  },
+                ),
+                SizedBox(height: 2.0),
+                TextFormField(
+                  maxLength: 20,
+                  decoration: new InputDecoration(
+                    labelText: "Owner",
+                    fillColor: Colors.white,
+                    border: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: new BorderSide(),
+                    ),
+                    //fillColor: Colors.green
+                  ),
+                  validator: (val) {
+                    if (val.length == 0) {
+                      return "Owner name cannot be empty";
+                    } else {
+                      return null;
+                    }
+                  },
+                  keyboardType: TextInputType.text,
+                  onChanged: (val) {},
+                  onSaved: (String value) {
+                    product.owner = value;
+                  },
+                ),
+                SizedBox(height: 2.0),
+                TextFormField(
+                  maxLength: 20,
+                  decoration: new InputDecoration(
+                    labelText: "Age/Years Old",
+                    fillColor: Colors.white,
+                    border: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: new BorderSide(),
+                    ),
+                    //fillColor: Colors.green
+                  ),
+                  validator: (val) {
+                    if (val.length == 0) {
+                      return "Age cannot be empty";
+                    } else {
+                      return null;
+                    }
+                  },
+                  keyboardType: TextInputType.number,
+                  onChanged: (val) {},
+                  onSaved: (String value) {
+                    product.age = int.parse(value);
+                  },
+                ),
+                SizedBox(height: 2.0),
+                TextFormField(
+                  maxLength: 6,
+                  decoration: new InputDecoration(
+                    labelText: "Reserve Price",
+                    fillColor: Colors.white,
+                    border: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: new BorderSide(),
+                    ),
+                    //fillColor: Colors.green
+                  ),
+                  validator: (val) {
+                    if (val.length < 0) {
+                      return "Reserve price cannot be less than 0";
+                    } else {
+                      return null;
+                    }
+                  },
+                  keyboardType: TextInputType.number,
+                  onChanged: (val) {},
+                  onSaved: (String value) {
+                    product.reservePrice = double.parse(value);
+                  },
+                ),
+                //SizedBox(height: 2.0),
+
+                Text('Add Images',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+                SizedBox(height: 5.0),
 
 
-              RaisedButton(
+                RaisedButton(
+                    color: Colors.green[700],
+                    child: Text('Upload Image1'),
+                    onPressed: () {
+                      showModalBottomSheet(context: context,
+                          builder: ((builder) => imageSourceSelector(context, 1)));
+                    }
+                ),
+                RaisedButton(
+                    color: Colors.green[700],
+                    child: Text('Upload Image2'),
+                    onPressed: () {
+                      showModalBottomSheet(context: context,
+                          builder: ((builder) => imageSourceSelector(context, 2)));
+                    }
+                ),
+
+                // RaisedButton(
+                //   onPressed: () async {
+                //     if(_formKey.currentState.validate())
+                //     {
+                //       _formKey.currentState.save();
+                //       product.id = loggedUser.uid;
+                //       product.lastUpdatedOn = DateTime.now();
+                //       product.lastUpdatedBy = loggedUser.uid;
+                //       await dbConnection.updateProductData(product, productPhoto1, productPhoto2);
+                //       // Navigator.push(context, MaterialPageRoute(
+                //       //     builder: (context) => Home()
+                //       // ));
+                //     }
+                //   },
+                //   color: Colors.green[700],
+                //   child: Text('ADD'),
+                // ),
+                // Expanded(
+                //     child: Column(
+                //       children:_getImages()
+                //     )
+                // ),
+                RaisedButton(
+                  onPressed: () async {
+                    if(_formKey.currentState.validate())
+                    {
+                      _formKey.currentState.save();
+                      product.id = user.uid;
+                      product.lastUpdatedOn = DateTime.now();
+                      product.lastUpdatedBy = user.uid;
+                      await dbConnection.updateProductData(product, productPhoto1, productPhoto2);
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Home()
+                      ));
+                    }
+                  },
                   color: Colors.green[700],
-                  child: Text('Upload Image1'),
-                  onPressed: () {
-                    showModalBottomSheet(context: context,
-                        builder: ((builder) => imageSourceSelector(context, 1)));
-                  }
-              ),
-              RaisedButton(
-                  color: Colors.green[700],
-                  child: Text('Upload Image2'),
-                  onPressed: () {
-                    showModalBottomSheet(context: context,
-                        builder: ((builder) => imageSourceSelector(context, 2)));
-                  }
-              ),
+                  child: Text('ADD'),
+                ),
+              ],
+            ),
 
-              RaisedButton(
-                onPressed: () async {
-                  if(_formKey.currentState.validate())
-                  {
-                    _formKey.currentState.save();
-                    product.id = loggedUser.uid;
-                    product.lastUpdatedOn = DateTime.now();
-                    product.lastUpdatedBy = loggedUser.uid;
-                    await dbConnection.updateProductData(product, productPhoto1, productPhoto2);
-                    // Navigator.push(context, MaterialPageRoute(
-                    //     builder: (context) => Home()
-                    // ));
-                  }
-                },
-                color: Colors.green[700],
-                child: Text('ADD'),
-              ),
-              Expanded(
-                  child: Column(
-                    children:_getImages()
-                  )
-              )
-            ],
-          ),
-
+        ),
       ),
     );
   }

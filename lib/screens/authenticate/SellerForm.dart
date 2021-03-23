@@ -3,14 +3,17 @@ import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:provider/provider.dart';
 
 class sellerForm extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   User seller = User();
   DatabaseService dbConnection = DatabaseService();
 
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<User>(context);
     return Container(
       child: Form(
         key: _formKey,
@@ -171,13 +174,16 @@ class sellerForm extends StatelessWidget {
               //   onChanged: (val) {},
               // ),
               RaisedButton(
-                onPressed: () {
+                onPressed: () async {
                   if(_formKey.currentState.validate())
                     {
                       _formKey.currentState.save();
-                      seller.uid = loggedUser.uid;
-                      dbConnection.updateSellerData(seller);
-                      Home();
+                      seller.uid = user.uid;
+                      await dbConnection.updateSellerData(seller);
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Home()
+                      ));
+
                     }
                 },
                 color: Colors.green[700],

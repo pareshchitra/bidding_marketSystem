@@ -21,17 +21,26 @@ class Wrapper extends StatelessWidget {
     // return either the Home or Authenticate widget
     if (user == null){
       return Authenticate();
+      // Navigator.push(context, MaterialPageRoute(
+      //     builder: (context) => Authenticate()
+      // ));
     } else {
 
       if(loggedUser.type == 0) //New User
       {
         print("New User");
         return RegisterDetails();
+        // Navigator.push(context, MaterialPageRoute(
+        //     builder: (context) => RegisterDetails()
+        // ));
       }
       else //Registered User
         {
           print("Old User");
         return Home();
+          // Navigator.push(context, MaterialPageRoute(
+          //     builder: (context) => Home()
+          // ));
       }
     }
 

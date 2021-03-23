@@ -29,7 +29,7 @@ class NavDrawer extends StatelessWidget {
             title: Text('Add Product'
                 ''),
             onTap:() {
-                      Navigator.of(context).pop();
+                      //Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
                       builder: (context) => ProductRegisterForm()
                       ));
