@@ -19,17 +19,112 @@ class ABC {
 
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
 
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   final AuthService _auth = AuthService();
-  DatabaseService dbConnection = DatabaseService();
-  var productsList = new List<Product>();
-  //ABC a = new ABC(productsList);
 
+  DatabaseService dbConnection = DatabaseService();
+
+  List<Product> productsList ;
+
+
+ Widget showList() {
+    return FutureBuilder(
+        future: dbConnection.productListFromSnapshot(),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+          print(snapshot);
+          productsList = snapshot.data;
+
+          if (!snapshot.hasData) {
+            return Center(
+                child: Text(
+                  "Loading...",
+                  style: TextStyle(
+                    fontFamily: "Montesserat",
+                    fontWeight: FontWeight.w700,
+                    fontSize: 40.0,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ));
+          }
+          if(productsList == null) {
+            print("PARESH productList");
+            productsList = [];
+          }
+          return Column(
+              children:[
+                Text(
+                  "Product Count is " + (productsList.length).toString(),
+                  style: TextStyle(
+                    fontFamily: "Montesserat",
+                    fontWeight: FontWeight.w700,
+                    fontSize: 20.0,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                Expanded(child:
+                ListView.builder(
+                  itemCount: productsList.length,
+                  itemBuilder: (ctx, i) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 25),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                color: Colors.white,
+                              ),
+                              child: Image.network(
+                                "${productsList[i].image1}",
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 15),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  "${productsList[i].owner}",
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .title,
+                                ),
+                                Text(
+                            "${productsList[i].reservePrice}",
+                          ),
+                          SizedBox(height: 15),
+                          //MyCounter(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          )
+                )
+          ]);
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
-    productsList = dbConnection.productListFromSnapshot();
+
+    print("products list is  $productsList");
+    if(productsList == null) {
+      print("PARESH productList");
+      productsList = [];
+    }
     return Scaffold(
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
@@ -52,49 +147,63 @@ class Home extends StatelessWidget {
             ),
           ],
         ),
-        body: Expanded(
-          child: ListView.builder(
-            itemCount: productsList.length,
-            itemBuilder: (ctx, i) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 25),
-                child: Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15.0),
-                          color: Colors.white,
-                        ),
-                        child: Image.network(
-                          "${productsList[i].image}",
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "${productsList[i].owner}",
-                            style: Theme.of(context).textTheme.title,
-                          ),
-                          Text(
-                            "${productsList[i].reservePrice}",
-                          ),
-                          SizedBox(height: 15),
-                          //MyCounter(),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
+         body:
+         //Column(
+        //   children: [
+        //   Text(
+        //   "Product Count is " + (productsList.length).toString(),
+        //   style: TextStyle(
+        //     fontFamily: "Montesserat",
+        //     fontWeight: FontWeight.w700,
+        //     fontSize: 20.0,
+        //     fontStyle: FontStyle.italic,
+        //   ),
+        //
+        // ),
+    showList()
+    //])
+        // body:  ListView.builder(
+        //     itemCount: productsList.length,
+        //     itemBuilder: (ctx, i) {
+        //       return Container(
+        //         margin: const EdgeInsets.only(bottom: 25),
+        //         child: Row(
+        //           children: <Widget>[
+        //             Expanded(
+        //               child: Container(
+        //                 decoration: BoxDecoration(
+        //                   borderRadius: BorderRadius.circular(15.0),
+        //                   color: Colors.white,
+        //                 ),
+        //                 child: Image.network(
+        //                   "${productsList[i].image}",
+        //                   fit: BoxFit.cover,
+        //                 ),
+        //               ),
+        //             ),
+        //             SizedBox(width: 15),
+        //             Expanded(
+        //               child: Column(
+        //                 crossAxisAlignment: CrossAxisAlignment.start,
+        //                 children: <Widget>[
+        //                   Text(
+        //                     "${productsList[i].owner}",
+        //                     style: Theme.of(context).textTheme.title,
+        //                   ),
+        //                   Text(
+        //                     "${productsList[i].reservePrice}",
+        //                   ),
+        //                   SizedBox(height: 15),
+        //                   //MyCounter(),
+        //                 ],
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       );
+        //     },
+        //   ),
+
       );
 
   }
