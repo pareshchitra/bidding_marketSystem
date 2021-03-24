@@ -109,7 +109,7 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateProductData(Product  product, File productPhoto1, File productPhoto2) async {
+  Future<void> updateProductData(Product  product, File productPhoto1, File productPhoto2, File productPhoto3) async {
     print("Entering UpdateProductData");
 
     print(product.id);
@@ -129,12 +129,25 @@ class DatabaseService {
       product.id = "1234";
     String photo1 = "product/${product.id}/Photo1";
     String photo2 = "product/${product.id}/Photo2";
-    print("photo1 = $photo1");
-    print("photo2 = $photo2");
-    String photo1Url = await uploadImage(productPhoto1, photo1);
+    String photo3 = "product/${product.id}/Photo3";
+    String photo1Url='';
+    String photo2Url='';
+    String photo3Url= '';
+
+    photo1Url = await uploadImage(productPhoto1, photo1);
     print("photo1Url value is $photo1Url");
-    String photo2Url = await uploadImage(productPhoto2, photo2);
+
+    if(productPhoto2 != null) {
+      photo2Url = await uploadImage(productPhoto2, photo2);
+
+    }
     print("photo2Url value is $photo2Url");
+
+    if(productPhoto3 != null ) {
+      photo3Url = await uploadImage(productPhoto3, photo3);
+    }
+    print("photo3Url value is $photo3Url");
+
     return await dbProductCollection.document(product.id).setData({
       'ID': product.id,
       'Category': product.category,
@@ -143,10 +156,14 @@ class DatabaseService {
       'Owner': product.owner,
       'Location': product.location,
       'Age': product.age,
+      'Size': product.size,
+      'NoOfPlants': product.noOfPlants,
       'ReservePrice': product.reservePrice,
       'LastUpdatedOn': product.lastUpdatedOn,
-      'LastUpdateBy': product.lastUpdatedBy,
-      'Image': photo1Url
+      'LastUpdatedBy': product.lastUpdatedBy,
+      'Image1': photo1Url,
+      'Image2': photo2Url,
+      'Image3': photo3Url
 
     });
   }
@@ -173,25 +190,59 @@ class DatabaseService {
       }
   }
 
+
+  // Future<List<Product>> getposts2() async {
+  //   var eachdocument = await dbProductCollection.getDocuments();
+  //   List<Product> posts = [];
+  //   for (var document in eachdocument.documents) {
+  //     DocumentSnapshot myposts = await generalreference
+  //         .document(document.documentID)
+  //         .collection("posts")
+  //         .document("post2")
+  //         .get();
+  //     print(myposts['Pic']);
+  //     Post2 post = Post2(myposts['Pic']);
+  //     posts.add(post);
+  //   }
+  //   return posts;
+  // }
+
   // product list from snapshot
-  List<Product> productListFromSnapshot() {
+  Future<List<Product>> productListFromSnapshot() async{
     List<Product> productList = new List<Product>();
-    dbProductCollection.getDocuments().then((snapshot) {
+    productList= [];
+    print("Entering productList database func");
+    var documents =  dbProductCollection.getDocuments();
+
+    await documents.then((snapshot) {
       snapshot.documents.forEach((result) {
+
+
+        //print(result.data['category']);
         Product p = new Product();
-        p.id = result.data['id'] ?? '';
-        p.category = result.data['category'] ?? '';
-        p.description = result.data['id'] ?? '';
-        p.rating = result.data['rating'] ?? '';
-        p.owner = result.data['owner'] ?? '';
-        p.location = result.data['location'] ?? '';
-        p.age = result.data['age'] ?? '';
-        p.image = result.data['image'] ?? '';
-        p.isVerfied = result.data['isVerfied'] ?? '';
-        p.reservePrice = result.data['reservePrice'] ?? '';
-        p.lastUpdatedOn = result.data['lastUpdatedOn'] ?? '';
-        p.lastUpdatedBy = result.data['lastUpdatedBy'] ?? '';
+        p.id = result.data['ID'] ?? '';
+        print("ID " + result.data['ID']);
+        p.category = result.data['Category'] ?? '';
+        print("Category " + result.data['Category']);
+        //p.description = result.data['Description'] ?? '';
+        //print("Description " + result.data['Description']);
+        //p.rating = result.data['Rating'] ?? '';
+        p.owner = result.data['Owner'] ?? '';
+        print("Owner " + result.data['Owner']);
+        p.location = result.data['Location'] ?? '';
+        //print("Location " + result.data['Location']);
+        print("Age " + result.data['Age'].toString());
+        p.age = result.data['Age'] .toDate()?? '';
+        p.image1 = result.data['Image1'] ?? '';
+        print("Image1 " + result.data['Image1']);
+        //p.isVerfied = result.data['IsVerfied'] ?? '';
+        p.reservePrice = result.data['ReservePrice'] ?? '';
+        //p.lastUpdatedOn = result.data['LastUpdatedOn'] ?? '';
+        //print("LastUpdatedOn " + result.data['LastUpdatedOn']);
+        //p.lastUpdatedBy = result.data['LastUpdateBy'] ?? '';
+        //print("lastUpdatedBy " + result.data['LastUpdateBy']);
         productList.add(p);
+        print("The products fetched from database are $p");
       });
   });
     return productList;

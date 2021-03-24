@@ -6,9 +6,13 @@ class Product {
   double rating;
   String owner;
   String location;
-  int age;
-  String image; //URL
-  bool isVerfied;
+  DateTime age;
+  int size;
+  int noOfPlants;
+  String image1; //URL
+  String image2;
+  String image3;
+  bool isVerified;
   double reservePrice;
   DateTime lastUpdatedOn;
   String lastUpdatedBy;

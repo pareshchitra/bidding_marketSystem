@@ -5,9 +5,12 @@ import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/models/user.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:date_field/date_field.dart';
+import 'package:intl/intl.dart';
 
 
 class UploadImagesFields extends StatefulWidget {
@@ -63,7 +66,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
   DatabaseService dbConnection = DatabaseService();
 
-  File productPhoto1 , productPhoto2;
+  File productPhoto1 , productPhoto2 , productPhoto3;
 
   final ImagePicker _picker = ImagePicker();
   static List<String> imagesList = [null];
@@ -114,8 +117,13 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
     {
       productPhoto2 = _imageFile;
     }
+    else if(imageNumber == 3)
+    {
+        productPhoto3 = _imageFile;
+    }
   }
 
+  //TODO :: GUI change in Add image buttons
   List<Widget> _getImages(){
     List<Widget> uploadImagesFieldsList = [];
     for(int i=0; i<imagesList.length; i++){
@@ -164,6 +172,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
+    String _category;
 
     return  Scaffold(
         backgroundColor: Colors.white,
@@ -181,8 +190,30 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
             child: Column(
               children:[
                 SizedBox(height: 2.0),
-                TextFormField(
-                  maxLength: 20,
+                // TextFormField(
+                //   maxLength: 20,
+                //   decoration: new InputDecoration(
+                //     labelText: "Category",
+                //     fillColor: Colors.white,
+                //     border: new OutlineInputBorder(
+                //       borderRadius: new BorderRadius.circular(25.0),
+                //       borderSide: new BorderSide(),
+                //     ),
+                //     //fillColor: Colors.green
+                //   ),
+                //   validator: (val) {
+                //     if (val.length == 0) {
+                //       return "Category cannot be empty";
+                //     } else {
+                //       return null;
+                //     }
+                //   },
+                //   keyboardType: TextInputType.name,
+                //   onSaved: (String value) {
+                //     product.category = value;
+                //   },
+                // ),
+                DropdownButtonFormField<String>(
                   decoration: new InputDecoration(
                     labelText: "Category",
                     fillColor: Colors.white,
@@ -192,24 +223,129 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     ),
                     //fillColor: Colors.green
                   ),
-                  validator: (val) {
-                    if (val.length == 0) {
-                      return "Category cannot be empty";
-                    } else {
-                      return null;
-                    }
+                  value: _category,
+                  items: ['GUAVA' , 'PAPAYA' , 'AMLA']
+                      .map((label) => DropdownMenuItem(
+                    child: Text(label.toString()),
+                    value: label,
+                  ))
+                      .toList(),
+                  hint: Text('Category'),
+                  onChanged: (value) {
+                    setState(() {
+                      _category = value;
+                    });
                   },
-                  keyboardType: TextInputType.name,
-                  onSaved: (String value) {
+                  onSaved: (String value){
                     product.category = value;
-                  },
+                    },
                 ),
+//TODO : Location API
+                SizedBox(height: 10.0),
+                // TextFormField(
+                //   maxLength: 20,
+                //   decoration: new InputDecoration(
+                //     labelText: "Location",
+                //     fillColor: Colors.white,
+                //     border: new OutlineInputBorder(
+                //       borderRadius: new BorderRadius.circular(25.0),
+                //       borderSide: new BorderSide(),
+                //     ),
+                //     //fillColor: Colors.green
+                //   ),
+                //   validator: (val) {
+                //     if (val.length == 0) {
+                //       return "Location cannot be empty";
+                //     } else {
+                //       return null;
+                //     }
+                //   },
+                //   keyboardType: TextInputType.text,
+                //   onChanged: (val) {},
+                //   onSaved: (String value) {
+                //     product.location = value;
+                //   },
+                // ),
+
+                // SizedBox(height: 2.0),
+                // TextFormField(
+                //   maxLength: 20,
+                //   decoration: new InputDecoration(
+                //     labelText: "Owner",
+                //     fillColor: Colors.white,
+                //     border: new OutlineInputBorder(
+                //       borderRadius: new BorderRadius.circular(25.0),
+                //       borderSide: new BorderSide(),
+                //     ),
+                //     //fillColor: Colors.green
+                //   ),
+                //   validator: (val) {
+                //     if (val.length == 0) {
+                //       return "Owner name cannot be empty";
+                //     } else {
+                //       return null;
+                //     }
+                //   },
+                //   keyboardType: TextInputType.text,
+                //   onChanged: (val) {},
+                //   onSaved: (String value) {
+                //     product.owner = value;
+                //   },
+                // ),
 
                 SizedBox(height: 2.0),
+                // TextFormField(
+                //   maxLength: 20,
+                //   decoration: new InputDecoration(
+                //     labelText: "Age/Years Old",
+                //     fillColor: Colors.white,
+                //     border: new OutlineInputBorder(
+                //       borderRadius: new BorderRadius.circular(25.0),
+                //       borderSide: new BorderSide(),
+                //     ),
+                //     //fillColor: Colors.green
+                //   ),
+                //   validator: (val) {
+                //     if (val.length == 0) {
+                //       return "Age cannot be empty";
+                //     } else {
+                //       return null;
+                //     }
+                //   },
+                //   keyboardType: TextInputType.number,
+                //   onChanged: (val) {},
+                //   onSaved: (String value) {
+                //     product.age = int.parse(value);
+                //   },
+                // ),
+
+               DateField(
+                 onDateSelected: (DateTime value) {
+                   setState(() {
+                     product.age = value;
+                   });
+                 },
+                 decoration: new InputDecoration(
+                   labelText: "Age/Years Old",
+                   fillColor: Colors.white,
+                   border: new OutlineInputBorder(
+                     borderRadius: new BorderRadius.circular(25.0),
+                     borderSide: new BorderSide(),
+                   ),
+                 ),
+                 label: 'Age/Years Old',
+                 dateFormat: DateFormat.yMd(),
+
+                 firstDate: DateTime(1980, 1, 1),
+                 lastDate: DateTime(2021, 31, 12),
+                 selectedDate: product.age,
+               ),
+
+                SizedBox(height: 10.0),
                 TextFormField(
-                  maxLength: 20,
+                  maxLength: 6,
                   decoration: new InputDecoration(
-                    labelText: "Location",
+                    labelText: "Bheega",
                     fillColor: Colors.white,
                     border: new OutlineInputBorder(
                       borderRadius: new BorderRadius.circular(25.0),
@@ -218,58 +354,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     //fillColor: Colors.green
                   ),
                   validator: (val) {
-                    if (val.length == 0) {
-                      return "Location cannot be empty";
-                    } else {
-                      return null;
-                    }
-                  },
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  onSaved: (String value) {
-                    product.location = value;
-                  },
-                ),
-                SizedBox(height: 2.0),
-                TextFormField(
-                  maxLength: 20,
-                  decoration: new InputDecoration(
-                    labelText: "Owner",
-                    fillColor: Colors.white,
-                    border: new OutlineInputBorder(
-                      borderRadius: new BorderRadius.circular(25.0),
-                      borderSide: new BorderSide(),
-                    ),
-                    //fillColor: Colors.green
-                  ),
-                  validator: (val) {
-                    if (val.length == 0) {
-                      return "Owner name cannot be empty";
-                    } else {
-                      return null;
-                    }
-                  },
-                  keyboardType: TextInputType.text,
-                  onChanged: (val) {},
-                  onSaved: (String value) {
-                    product.owner = value;
-                  },
-                ),
-                SizedBox(height: 2.0),
-                TextFormField(
-                  maxLength: 20,
-                  decoration: new InputDecoration(
-                    labelText: "Age/Years Old",
-                    fillColor: Colors.white,
-                    border: new OutlineInputBorder(
-                      borderRadius: new BorderRadius.circular(25.0),
-                      borderSide: new BorderSide(),
-                    ),
-                    //fillColor: Colors.green
-                  ),
-                  validator: (val) {
-                    if (val.length == 0) {
-                      return "Age cannot be empty";
+                    if (val.length < 1) {
+                      return "Bheega cannot be less than 1 digit";
                     } else {
                       return null;
                     }
@@ -277,9 +363,36 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   keyboardType: TextInputType.number,
                   onChanged: (val) {},
                   onSaved: (String value) {
-                    product.age = int.parse(value);
+                    product.size = int.parse(value);
                   },
                 ),
+
+                SizedBox(height: 2.0),
+                TextFormField(
+                  maxLength: 6,
+                  decoration: new InputDecoration(
+                    labelText: "Number of Plants",
+                    fillColor: Colors.white,
+                    border: new OutlineInputBorder(
+                      borderRadius: new BorderRadius.circular(25.0),
+                      borderSide: new BorderSide(),
+                    ),
+                    //fillColor: Colors.green
+                  ),
+                  validator: (val) {
+                    if (val.length < 0) {
+                      return "Number of Plants cannot be less than 0";
+                    } else {
+                      return null;
+                    }
+                  },
+                  keyboardType: TextInputType.number,
+                  onChanged: (val) {},
+                  onSaved: (String value) {
+                    product.noOfPlants = int.parse(value);
+                  },
+                ),
+
                 SizedBox(height: 2.0),
                 TextFormField(
                   maxLength: 6,
@@ -305,7 +418,9 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     product.reservePrice = double.parse(value);
                   },
                 ),
-                //SizedBox(height: 2.0),
+                SizedBox(height: 2.0),
+
+
 
                 Text('Add Images',
                   style: TextStyle(
@@ -330,6 +445,14 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     onPressed: () {
                       showModalBottomSheet(context: context,
                           builder: ((builder) => imageSourceSelector(context, 2)));
+                    }
+                ),
+                RaisedButton(
+                    color: Colors.green[700],
+                    child: Text('Upload Image3'),
+                    onPressed: () {
+                      showModalBottomSheet(context: context,
+                          builder: ((builder) => imageSourceSelector(context, 3)));
                     }
                 ),
 
@@ -361,9 +484,18 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     {
                       _formKey.currentState.save();
                       product.id = user.uid;
+                      //TODO :: change owner field to user name
+                      await dbConnection.dbSellerCollection.document(user.uid).get().then((DocumentSnapshot documentSnapshot) {
+                        if(documentSnapshot.exists)
+                          {
+                            product.owner = documentSnapshot['Name'];
+                          }
+                        else
+                          product.owner = user.uid;
+                      });
                       product.lastUpdatedOn = DateTime.now();
                       product.lastUpdatedBy = user.uid;
-                      await dbConnection.updateProductData(product, productPhoto1, productPhoto2);
+                      await dbConnection.updateProductData(product, productPhoto1, productPhoto2, productPhoto3);
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => Home()
                       ));
