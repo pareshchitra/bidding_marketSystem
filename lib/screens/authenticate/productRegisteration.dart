@@ -483,8 +483,22 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     if(_formKey.currentState.validate())
                     {
                       _formKey.currentState.save();
+                      //Filing out productId by first counting number of products already added by same user
+
                       product.id = user.uid;
+                    var documents =  dbConnection.dbProductCollection.getDocuments();
+                    int currentProductNo = 1;
+                    await documents.then((snapshot) {
+                    snapshot.documents.forEach((result) {
+                      String productUid = result.data['ID'].toString().split('#')[0];
+                      if( productUid == user.uid )
+                        currentProductNo++;
+                    });
+                    });
+                      product.id = user.uid + "#p" + currentProductNo.toString();
+
                       //TODO :: change owner field to user name
+                      //Owner Name will be displayed only if the product is added by Seller Login
                       await dbConnection.dbSellerCollection.document(user.uid).get().then((DocumentSnapshot documentSnapshot) {
                         if(documentSnapshot.exists)
                           {

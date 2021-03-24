@@ -34,7 +34,7 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Text('Sign in to Bidding Market'),
+        title: Text('Sign In'),
         actions: <Widget>[
           FlatButton.icon(
             icon: Icon(Icons.person),
@@ -43,28 +43,35 @@ class _SignInState extends State<SignIn> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(32),
-          child: Form(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text("Login", style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: EdgeInsets.all(32),
+            child: Form(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
 
-                SizedBox(height: 16,),
+                children: <Widget>[
+                  Container(
+                  height: 200.0,
+                  width: 200.0,
+                    alignment: Alignment.bottomRight,
+                    child:Image.asset('assets/images/appLogo.png'),
+                  ),
+                  Text("Login", style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
 
-                TextFormField(
-                  decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(color: Colors.grey[200])
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(8)),
-                          borderSide: BorderSide(color: Colors.grey[300])
-                      ),
+                  SizedBox(height: 16,),
+
+                  TextFormField(
+                    decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(color: Colors.grey[200])
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(8)),
+                            borderSide: BorderSide(color: Colors.grey[300])
+                        ),
                       filled: true,
                       fillColor: Colors.grey[100],
                       hintText: "Mobile Number"
