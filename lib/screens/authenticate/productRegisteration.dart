@@ -5,6 +5,7 @@ import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/models/user.dart';
+import 'package:bidding_market/shared/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -70,6 +71,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
   final ImagePicker _picker = ImagePicker();
   static List<String> imagesList = [null];
+  bool loading = false;
 
   Widget imageSourceSelector(BuildContext context, int imageNumber) {
     return Container(
@@ -174,7 +176,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
     final user = Provider.of<User>(context);
     String _category;
 
-    return  Scaffold(
+    return  loading ? Loading() : Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
         backgroundColor: Colors.green[700],
@@ -482,6 +484,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   onPressed: () async {
                     if(_formKey.currentState.validate())
                     {
+                      setState(() => loading = true);
                       _formKey.currentState.save();
                       //Filing out productId by first counting number of products already added by same user
 
@@ -491,8 +494,13 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     await documents.then((snapshot) {
                     snapshot.documents.forEach((result) {
                       String productUid = result.data['ID'].toString().split('#')[0];
-                      if( productUid == user.uid )
-                        currentProductNo++;
+                      int productNum = int.parse( result.data['ID'].toString().split('#')[1].substring(1) );
+                      print("Product Uid is $productUid");
+                      print(productNum);
+                      if( productUid.compareTo(user.uid) == 0  && productNum >= currentProductNo) {
+                        currentProductNo = productNum+1;
+                        print("CurrentProduct is $currentProductNo");
+                      }
                     });
                     });
                       product.id = user.uid + "#p" + currentProductNo.toString();
@@ -510,9 +518,13 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                       product.lastUpdatedOn = DateTime.now();
                       product.lastUpdatedBy = user.uid;
                       await dbConnection.updateProductData(product, productPhoto1, productPhoto2, productPhoto3);
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => Home()
-                      ));
+                      setState(() {
+                        loading = false;
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => Home()
+                        ));
+                      });
+
                     }
                   },
                   color: Colors.green[700],

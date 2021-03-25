@@ -59,6 +59,7 @@ class AuthService {
         phoneNumber: phone,
         timeout: Duration(seconds: 60),
         verificationCompleted: (AuthCredential credential) async{
+          print("Entering verificationCompleted flow of signIn");
           //Navigator.of(context).pop();
 
           await dbConnection.checkIfPhoneExists(phone);
@@ -78,7 +79,6 @@ class AuthService {
             await dbConnection.updatePhoneData(phone, user.uid);
           }else{
             print("Error");
-            type = 0;
           }
           print("Before returning from authentication");
           return _userFromFirebaseUser(user);
@@ -88,6 +88,7 @@ class AuthService {
           print(exception);
         },
         codeSent: (String verificationId, [int forceResendingToken]){
+          print("Entering codeSent flow of signIn");
           showDialog(
               context: context,
               barrierDismissible: false,

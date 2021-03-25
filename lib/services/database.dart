@@ -11,6 +11,78 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:bidding_market/services/auth.dart';
 
+class ProgressDialogBar extends StatefulWidget {
+  StorageUploadTask storageTask;
+  File Image;
+  String imageName;
+
+  ProgressDialogBar({Key key, this.Image, this.imageName, this.storageTask}) : super(key: key);
+  double progressPercent;
+
+  @override
+  _ProgressDialogBarState createState() => _ProgressDialogBarState();
+}
+class _ProgressDialogBarState extends State<ProgressDialogBar> {
+
+  void _startUpload() {
+    setState(() {
+      StorageReference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$widget.imageName');
+      widget.storageTask = dbFirestoreCollection.putFile(widget.Image);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print("Entering ProgressBar widget");
+    if (widget.storageTask != null) {
+      return StreamBuilder<StorageTaskEvent>(
+          stream: widget.storageTask.events,
+          builder: (context, snapshot) {
+            var event = snapshot?.data?.snapshot;
+            widget.progressPercent = event != null
+                ? event.bytesTransferred / event.totalByteCount
+                : 0;
+
+            return _showDialog(context);
+          }
+      );
+    }
+    else
+    {
+      _startUpload();
+    }
+  }
+
+  _showDialog(BuildContext context)
+  {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('File Upload'),
+            content: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  LinearProgressIndicator(value: widget.progressPercent),
+                  Text(
+                    '${(widget.progressPercent * 100).toStringAsFixed(2)} % ',
+                    style:  TextStyle(fontSize: 50),
+                  ),
+                  if(widget.storageTask.isComplete)
+                    Text("helle",
+                        style: TextStyle(
+                            color: Colors.greenAccent,
+                            height: 2,
+                            fontSize: 30)),
+                ]),);
+        });
+  }
+}
+
+
+
 class DatabaseService {
 
   final String uid;
@@ -25,8 +97,14 @@ class DatabaseService {
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
     String value = "File not uploaded";
+    //AlertDialog progressDialog = new AlertDialog();
+    StorageUploadTask uploadTask;
+
+    //ProgressDialogBar(Image: Image, imageName: imageName,storageTask: uploadTask);
     StorageReference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$imageName');
-    StorageUploadTask uploadTask = dbFirestoreCollection.putFile(Image);
+    uploadTask = dbFirestoreCollection.putFile(Image);
+
+    //dialogBar.createState();
     StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
     value = await taskSnapshot.ref.getDownloadURL().then((value) {
       print("Done: $value");
