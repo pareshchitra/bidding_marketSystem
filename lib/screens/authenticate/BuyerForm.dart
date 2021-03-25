@@ -64,14 +64,16 @@ class _buyerFormState extends State<buyerForm> {
   void retreiveImage(ImageSource source, int imageNumber) async {
       final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
       File _imageFile = File(pickedFile.path);
-      if(imageNumber == 1)
-      {
+      setState(() {
+        if(imageNumber == 1)
+        {
           _AadharFront = _imageFile;
-      }
-      else if(imageNumber == 2)
-      {
+        }
+        else if(imageNumber == 2)
+        {
           _AadharBack = _imageFile;
-      }
+        }
+      });
 }
 
   @override
@@ -190,6 +192,31 @@ class _buyerFormState extends State<buyerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                maxLength: 30,
+                decoration: new InputDecoration(
+                  labelText: "State",
+                  fillColor: Colors.white,
+                  border: new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(25.0),
+                    borderSide: new BorderSide(),
+                  ),
+                  //fillColor: Colors.green
+                ),
+                validator: (val) {
+                  if (val.length == 0) {
+                    return "State cannot be empty";
+                  } else {
+                    return null;
+                  }
+                },
+                keyboardType: TextInputType.text,
+                onChanged: (val) {},
+                onSaved: (String value) {
+                  buyerModel.State = value;
+                },
+              ),
+              SizedBox(height: 10.0),
+              TextFormField(
                 maxLength: 6,
                 decoration: new InputDecoration(
                   labelText: "Pincode",
@@ -249,6 +276,7 @@ class _buyerFormState extends State<buyerForm> {
                         builder: ((builder) => imageSourceSelector(context, 1)));
                   }
               ),
+              _AadharFront != null ? Container(height: 200, child: Image.file(_AadharFront)) : SizedBox(height: 5.0),
               RaisedButton(
                   color: Colors.green[700],
                   child: Text('Aadhar Back'),
@@ -257,6 +285,7 @@ class _buyerFormState extends State<buyerForm> {
                         builder: ((builder) => imageSourceSelector(context, 2)));
                   }
               ),
+              _AadharBack != null ? Container(height: 200, child: Image.file(_AadharBack)) : SizedBox(height: 5.0),
               RaisedButton(
                 onPressed: () async {
 

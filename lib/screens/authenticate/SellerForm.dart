@@ -1,20 +1,81 @@
+import 'dart:io';
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
+import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class sellerForm extends StatelessWidget {
+class sellerForm extends StatefulWidget {
+  @override
+  _sellerFormState createState() => _sellerFormState();
+}
+
+class _sellerFormState extends State<sellerForm> {
   final _formKey = GlobalKey<FormState>();
+
   User seller = User();
+
   DatabaseService dbConnection = DatabaseService();
 
+  File _Photo;
+
+  bool loading = false;
+
+  final ImagePicker _picker = ImagePicker();
+
+  Widget imageSourceSelector(BuildContext context, int imageNumber) {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 20.0),
+      child: Column (
+        children: <Widget>[
+          Text("Choose Photo Source",
+              style: TextStyle(fontSize: 20.0
+              )),
+          SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              FlatButton.icon(
+                  label: Text("Camera"),
+                  onPressed: () {
+                    retreiveImage(ImageSource.camera, imageNumber);
+                  },
+                  icon: Icon(Icons.camera_alt)
+              ),
+              FlatButton.icon(
+                  label: Text("Gallery"),
+                  onPressed: () {
+                    retreiveImage(ImageSource.gallery, imageNumber);}, icon: Icon(Icons.image)),
+            ],
+          )
+        ],
+      ),
+
+    );
+  }
+
+  void retreiveImage(ImageSource source, int imageNumber) async {
+    final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
+    File _imageFile = File(pickedFile.path);
+    setState(() {
+      if(imageNumber == 1)
+      {
+        _Photo = _imageFile;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    return Container(
+    return loading ? Container( height: 700, child:Loading()) :Container(
       child: Form(
         key: _formKey,
           child: Column(
@@ -51,31 +112,6 @@ class sellerForm extends StatelessWidget {
                   fontSize: 15.0,
                   fontFamily: "Georgia",
                 ),
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-                maxLength: 20,
-                decoration: new InputDecoration(
-                  labelText: "House Number",
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return "House Number cannot be empty";
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  seller.HouseNo = value;
-                },
               ),
               SizedBox(height: 10.0),
               TextFormField(
@@ -129,6 +165,31 @@ class sellerForm extends StatelessWidget {
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                maxLength: 30,
+                decoration: new InputDecoration(
+                  labelText: "State",
+                  fillColor: Colors.white,
+                  border: new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(25.0),
+                    borderSide: new BorderSide(),
+                  ),
+                  //fillColor: Colors.green
+                ),
+                validator: (val) {
+                  if (val.length == 0) {
+                    return "State cannot be empty";
+                  } else {
+                    return null;
+                  }
+                },
+                keyboardType: TextInputType.text,
+                onChanged: (val) {},
+                onSaved: (String value) {
+                  seller.State = value;
+                },
+              ),
+              SizedBox(height: 10.0),
+              TextFormField(
                 maxLength: 6,
                 decoration: new InputDecoration(
                   labelText: "Pincode",
@@ -152,6 +213,16 @@ class sellerForm extends StatelessWidget {
                   seller.Pincode = value;
                 },
               ),
+              SizedBox(height: 10.0),
+              RaisedButton(
+                  color: Colors.green[700],
+                  child: Text('Photo'),
+                  onPressed: () {
+                    showModalBottomSheet(context: context,
+                        builder: ((builder) => imageSourceSelector(context, 1)));
+                  }
+              ),
+              _Photo != null ? Container(height: 200, child: Image.file(_Photo)) : SizedBox(height: 5.0),
               SizedBox(height: 10.0),
               // TextFormField(
               //   decoration: new InputDecoration(
@@ -177,13 +248,16 @@ class sellerForm extends StatelessWidget {
                 onPressed: () async {
                   if(_formKey.currentState.validate())
                     {
+                      setState(() => loading = true);
                       _formKey.currentState.save();
                       seller.uid = user.uid;
-                      await dbConnection.updateSellerData(seller);
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => Home()
-                      ));
-
+                      await dbConnection.updateSellerData(seller, _Photo);
+                      setState(() {
+                        loading = false;
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => Home()
+                        ));
+                      });
                     }
                 },
                 color: Colors.green[700],

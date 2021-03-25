@@ -133,21 +133,27 @@ class DatabaseService {
     }
 }
 
-  Future<void> updateSellerData(User seller) async {
+  Future<void> updateSellerData(User seller, File photo) async {
     print("Entering UpdateSellerData");
     loggedUser.type = 2;
     print(seller.uid);
     print(seller.Name);
-    print(seller.HouseNo);
     print(seller.Village);
     print(seller.District);
+    print(seller.State);
     print(seller.Pincode);
+    String PhotoFileName = "seller/${seller.uid}/Photo";
+    String PhotoUrl = await uploadImage(photo, PhotoFileName);
+    print("PhotoUrl value is $PhotoUrl");
+
+    await updatePhoneData(seller.PhoneNo, seller.uid);
     return await dbSellerCollection.document(seller.uid).setData({
       'Name': seller.Name,
-      'HouseNo': seller.HouseNo,
       'Village': seller.Village,
       'District': seller.District,
+      'State': seller.State,
       'Pincode': seller.Pincode,
+      'Photo': PhotoUrl,
     });
   }
 
@@ -159,6 +165,7 @@ class DatabaseService {
     print(buyer.HouseNo);
     print(buyer.Village);
     print(buyer.District);
+    print(buyer.State);
     print(buyer.Pincode);
     print(buyer.AadharNo);
     // await dbBuyerCollection.document(buyer.uid).setData({
@@ -175,11 +182,13 @@ class DatabaseService {
     print("IdFrontUrl value is $IdFrontUrl");
     String IdBackUrl = await uploadImage(aadharBack, IdBackFileName);
     print("IdBackUrl value is $IdBackUrl");
+    await updatePhoneData(buyer.PhoneNo, buyer.uid);
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,
       'Village': buyer.Village,
       'District': buyer.District,
+      'State': buyer.State,
       'Pincode': buyer.Pincode,
       'AadharNo': buyer.AadharNo,
       'IdFrontUrl': IdFrontUrl,
@@ -325,6 +334,10 @@ class DatabaseService {
   });
     return productList;
         }
+
+  Future<void> deletePhoneData(String phone) async {
+    await dbPhoneCollection.document(phone).delete();
+  }
 
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
