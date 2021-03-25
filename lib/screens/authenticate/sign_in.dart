@@ -54,9 +54,12 @@ class _SignInState extends State<SignIn> {
                 children: <Widget>[
                   Container(
                   height: 200.0,
-                  width: 200.0,
-                    alignment: Alignment.bottomRight,
-                    child:Image.asset('assets/images/appLogo.png'),
+                  width: 600.0,
+                    alignment: Alignment.center,
+                    child:Image.asset(
+                        'assets/images/appLogo.jpg',
+                         scale: 0.6
+                         ),
                   ),
                   Text("Login", style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
 
@@ -91,11 +94,12 @@ class _SignInState extends State<SignIn> {
                     padding: EdgeInsets.all(16),
                     onPressed: () async {
                       setState(() => loading = true);
-                      final phone = _phoneController.text.trim();
+                      final phone = "+91"+ _phoneController.text.trim();
 
                       await dbConnection.checkIfPhoneExists(phone); //Workaround needed to bypass home after user authentication
                       dynamic result = await _auth.signInWithMobileNumber(phone , context);
                       if(result == null) {
+                        print("Result received null from signIn function");
                         setState(() {
                           loading = false;
                           error = 'Could not sign in with those credentials';

@@ -9,15 +9,15 @@ class NavDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text(
-              'Side menu',
-              style: TextStyle(color: Colors.white, fontSize: 25),
-            ),
+            // child: Text(
+            //   'Side menu',
+            //   style: TextStyle(color: Colors.white, fontSize: 25),
+            // ),
             decoration: BoxDecoration(
-                color: Colors.green,
+                color: Colors.lightGreen[100],
                 image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: AssetImage('assets/images/appLogo.png'))),
+                    fit: BoxFit.contain,
+                    image: AssetImage('assets/images/appLogo.jpg'))),
           ),
           ListTile(
             leading: Icon(Icons.input),

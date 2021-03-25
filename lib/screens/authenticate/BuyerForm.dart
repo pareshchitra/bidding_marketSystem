@@ -3,17 +3,28 @@ import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class buyerForm extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-  BuyerModel buyerModel = BuyerModel();
-  DatabaseService dbConnection = DatabaseService();
-  File _AadharFront;
-  File _AadharBack;
-  final ImagePicker _picker = ImagePicker();
+class buyerForm extends StatefulWidget {
+  @override
+  _buyerFormState createState() => _buyerFormState();
+}
 
+class _buyerFormState extends State<buyerForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  BuyerModel buyerModel = BuyerModel();
+
+  DatabaseService dbConnection = DatabaseService();
+  bool loading = false;
+
+  File _AadharFront;
+
+  File _AadharBack;
+
+  final ImagePicker _picker = ImagePicker();
 
   Widget imageSourceSelector(BuildContext context, int imageNumber) {
     return Container(
@@ -65,7 +76,7 @@ class buyerForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return loading ? Container( height: 700, child:Loading()) :Container(
       child: Form(
         key: _formKey,
           child: Column(
@@ -248,14 +259,22 @@ class buyerForm extends StatelessWidget {
               ),
               RaisedButton(
                 onPressed: () async {
+
                   if(_formKey.currentState.validate())
                   {
+                    setState(() => loading = true);
                     _formKey.currentState.save();
                     buyerModel.uid = loggedUser.uid;
                     await dbConnection.updateBuyerData(buyerModel, _AadharFront, _AadharBack);
-                    Navigator.push(context, MaterialPageRoute(
-                        builder: (context) => Home()
-                    ));
+                    setState(() {
+                      loading = false;
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Home()
+                      ));
+                    });
+                    // Navigator.push(context, MaterialPageRoute(
+                    //     builder: (context) => Home()
+                    // ));
                   }
                 },
                 color: Colors.green[700],
