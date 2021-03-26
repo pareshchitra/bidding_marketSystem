@@ -129,13 +129,33 @@ class DatabaseService {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         //prefs = await _prefs;
         prefs.setString('PhoneNo', Phone);
+        prefs.setInt('RegisterState', 1);
         prefs.commit();
       }
     else if(type == 2)
       {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt('RegisterState', 2);
+        prefs.commit();
         return await dbPhoneCollection.document(Phone).setData({
           'Uid': uid
         });
+      }
+  }
+
+  Future<void> initialLoggedUserCheck() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //prefs = await _prefs;
+    bool _userState = prefs.containsKey('PhoneNo');
+    if(_userState == true)
+      {
+        int _state = prefs.getInt('RegisterState');
+       loggedUser.type = _state - 1;
+        print(_state);
+      }
+    else
+      {
+        loggedUser.type = 0; //NewUser
       }
   }
 
@@ -357,6 +377,11 @@ class DatabaseService {
 
   // product list from snapshot
   Future<List<Product>> productListFromSnapshot() async{
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('RegisterState', 2);
+    prefs.commit();
+
     List<Product> productList = new List<Product>();
     productList= [];
     print("Entering productList database func");

@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/main.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
 
@@ -75,7 +77,7 @@ class AuthService {
             //     builder: (context) => Home()
             // ));
 
-            //type = await dbConnection.checkIfUserExists(user.uid);
+            //loggedUser.type = await dbConnection.checkIfUserExists(user.uid);
             await dbConnection.updatePhoneData(phone, user.uid, 1);
           }else{
             print("Error");
@@ -89,6 +91,7 @@ class AuthService {
         },
         codeSent: (String verificationId, [int forceResendingToken]){
           print("Entering codeSent flow of signIn");
+          sleep(Duration(seconds:1));
           showDialog(
               context: context,
               barrierDismissible: false,
@@ -104,6 +107,12 @@ class AuthService {
                     ],
                   ),
                   actions: <Widget>[
+                    FlatButton(onPressed: ()
+                      {
+                        Navigator.of(context).pop();
+                    }, child: Text("Cancel"),
+                      textColor: Colors.white,
+                      color: Colors.blue,),
                     FlatButton(
                       child: Text("Confirm"),
                       textColor: Colors.white,
@@ -169,6 +178,10 @@ class AuthService {
   // sign out
   Future signOut() async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove('PhoneNo');
+      prefs.remove('RegisterState');
+      prefs.commit();
       return await _auth.signOut();
     } catch (error) {
       print(error.toString());

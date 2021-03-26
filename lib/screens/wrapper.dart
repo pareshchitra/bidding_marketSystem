@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
 import 'package:bidding_market/screens/authenticate/registerDetails.dart';
@@ -18,7 +20,8 @@ class Wrapper extends StatelessWidget {
 
     final user = Provider.of<User>(context);
 
-
+    dbConnection.initialLoggedUserCheck();
+    sleep(Duration(seconds: 1));
 
     // return either the Home or Authenticate widget
     if (user == null){
@@ -36,8 +39,10 @@ class Wrapper extends StatelessWidget {
       //       {
       //         register = false;
       //       }
-
-
+      // if(loggedUser.type == 0) {
+      //   dbConnection.initialLoggedUserCheck();
+      //   sleep(Duration(seconds: 1));
+      // }
       if(loggedUser.type == 0) //New User
       {
         print("New User");

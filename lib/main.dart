@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:bidding_market/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/wrapper.dart';
 import 'package:bidding_market/services/auth.dart';
@@ -5,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:bidding_market/models/user.dart';
 
 User loggedUser = User(type:0, PhoneNo: "NA");
+
 
 void main() => runApp(MyApp());
 
