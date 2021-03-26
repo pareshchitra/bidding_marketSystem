@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:bidding_market/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressDialogBar extends StatefulWidget {
   StorageUploadTask storageTask;
@@ -94,6 +96,13 @@ class DatabaseService {
   final CollectionReference dbPhoneCollection = Firestore.instance.collection('PhoneNo');
   final CollectionReference dbProductCollection = Firestore.instance.collection('Product');
 
+  // //Shared_preference Object
+  // Future<void> _initSharedPreference() async {
+  //   SharedPreferences _prefs = await SharedPreferences.getInstance();
+  //   prefs = await _prefs;
+  // }
+
+
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
     String value = "File not uploaded";
@@ -113,10 +122,21 @@ class DatabaseService {
     return value;
   }
 
-  Future <void> updatePhoneData(String Phone, String uid) async {
-    return await dbPhoneCollection.document(Phone).setData({
-      'Uid': uid
-    });
+  Future <void> updatePhoneData(String Phone, String uid, int type) async {
+    if(type == 1)
+      {
+        //SharedPreference Update
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        //prefs = await _prefs;
+        prefs.setString('PhoneNo', Phone);
+        prefs.commit();
+      }
+    else if(type == 2)
+      {
+        return await dbPhoneCollection.document(Phone).setData({
+          'Uid': uid
+        });
+      }
   }
 
   Future<void> checkIfPhoneExists(String Phone) async {
@@ -133,21 +153,43 @@ class DatabaseService {
     }
 }
 
-  Future<void> updateSellerData(User seller) async {
+  Future<void> updateSellerData(User seller, File photo) async {
     print("Entering UpdateSellerData");
     loggedUser.type = 2;
     print(seller.uid);
     print(seller.Name);
-    print(seller.HouseNo);
     print(seller.Village);
     print(seller.District);
+    print(seller.State);
     print(seller.Pincode);
+    print(loggedUser.PhoneNo);
+
+    // loggedUser.PhoneNo = "0000";
+    // print(loggedUser.PhoneNo);
+    String PhotoUrl = "";
+
+    String PhotoFileName = "seller/${seller.uid}/Photo";
+    if(photo != null) {
+      PhotoUrl = await uploadImage(photo, PhotoFileName);
+    }
+    print("PhotoUrl value is $PhotoUrl");
+    if(loggedUser.PhoneNo == "NA")
+      {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+    //prefs = await _prefs;
+        String Phone = prefs.getString('PhoneNo');
+        loggedUser.PhoneNo = Phone;
+      }
+    print(loggedUser.PhoneNo);
+
+    await updatePhoneData(loggedUser.PhoneNo, seller.uid, 2);
     return await dbSellerCollection.document(seller.uid).setData({
       'Name': seller.Name,
-      'HouseNo': seller.HouseNo,
       'Village': seller.Village,
       'District': seller.District,
+      'State': seller.State,
       'Pincode': seller.Pincode,
+      'Photo': PhotoUrl,
     });
   }
 
@@ -159,6 +201,7 @@ class DatabaseService {
     print(buyer.HouseNo);
     print(buyer.Village);
     print(buyer.District);
+    print(buyer.State);
     print(buyer.Pincode);
     print(buyer.AadharNo);
     // await dbBuyerCollection.document(buyer.uid).setData({
@@ -169,17 +212,41 @@ class DatabaseService {
     //   'Pincode': buyer.Pincode,
     //   'AadharNo': buyer.AadharNo,
     // });
+
+    String IdFrontUrl = "";
+    String IdBackUrl = "";
+
     String IdFrontFileName = "buyer/${buyer.uid}/IdFront";
     String IdBackFileName = "buyer/${buyer.uid}/IdBack";
-    String IdFrontUrl = await uploadImage(aadharFront, IdFrontFileName);
+    if(aadharFront != null) {
+      IdFrontUrl = await uploadImage(aadharFront, IdFrontFileName);
+    }
     print("IdFrontUrl value is $IdFrontUrl");
-    String IdBackUrl = await uploadImage(aadharBack, IdBackFileName);
+
+    if(aadharBack != null) {
+      IdBackUrl = await uploadImage(aadharBack, IdBackFileName);
+    }
     print("IdBackUrl value is $IdBackUrl");
+
+    // final FirebaseAuth auth = FirebaseAuth.instance;
+    //
+    // FirebaseUser user = await auth.currentUser();
+    // String phoneNumber = user.get();
+    if(loggedUser.PhoneNo == "NA")
+    {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      //prefs = await _prefs;
+      String Phone = await prefs.getString('PhoneNo') ?? 0;
+      loggedUser.PhoneNo = Phone;
+    }
+
+    await updatePhoneData(loggedUser.PhoneNo, buyer.uid, 2) ;
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,
       'Village': buyer.Village,
       'District': buyer.District,
+      'State': buyer.State,
       'Pincode': buyer.Pincode,
       'AadharNo': buyer.AadharNo,
       'IdFrontUrl': IdFrontUrl,
@@ -212,7 +279,10 @@ class DatabaseService {
     String photo2Url='';
     String photo3Url= '';
 
-    photo1Url = await uploadImage(productPhoto1, photo1);
+
+    if(productPhoto1 != null) {
+      photo1Url = await uploadImage(productPhoto1, photo1);
+    }
     print("photo1Url value is $photo1Url");
 
     if(productPhoto2 != null) {
@@ -310,11 +380,16 @@ class DatabaseService {
         p.location = result.data['Location'] ?? '';
         //print("Location " + result.data['Location']);
         print("Age " + result.data['Age'].toString());
-        p.age = result.data['Age'] .toDate()?? '';
+        p.age = result.data['Age'] .toDate() ?? '';
         p.image1 = result.data['Image1'] ?? '';
         print("Image1 " + result.data['Image1']);
         //p.isVerfied = result.data['IsVerfied'] ?? '';
         p.reservePrice = result.data['ReservePrice'] ?? '';
+        p.noOfPlants = result.data['NoOfPlants'] ?? '';
+        p.size = result.data['Size'] ?? '';
+        p.location = result.data['Location'] ?? '';
+        p.lastUpdatedOn = result.data['LastUpdatedOn'] .toDate() ?? '';
+
         //p.lastUpdatedOn = result.data['LastUpdatedOn'] ?? '';
         //print("LastUpdatedOn " + result.data['LastUpdatedOn']);
         //p.lastUpdatedBy = result.data['LastUpdateBy'] ?? '';
@@ -325,6 +400,10 @@ class DatabaseService {
   });
     return productList;
         }
+
+  Future<void> deletePhoneData(String phone) async {
+    await dbPhoneCollection.document(phone).delete();
+  }
 
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');

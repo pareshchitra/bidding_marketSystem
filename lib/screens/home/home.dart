@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
 class ABC {
   var productsList = new List<Product>();
 
@@ -52,38 +53,56 @@ class _HomeState extends State<Home> {
                   ),
                 ));
           }
-          if(productsList == null) {
-            print("PARESH productList");
-            productsList = [];
+          if(snapshot.hasData) {
+            if (productsList == null) {
+              print("PARESH productList");
+              productsList = [];
+            }
+            productsList.sort((a,b) => a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
           }
+          final border = RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          );
+          final padding = const EdgeInsets.all(4.0);
+
           return Column(
               children:[
-                Text(
-                  "Product Count is " + (productsList.length).toString(),
-                  style: TextStyle(
-                    fontFamily: "Montesserat",
-                    fontWeight: FontWeight.w700,
-                    fontSize: 20.0,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
+                // Text(
+                //   "Product Count is " + (productsList.length).toString(),
+                //   style: TextStyle(
+                //     fontFamily: "Montesserat",
+                //     fontWeight: FontWeight.w700,
+                //     fontSize: 20.0,
+                //     fontStyle: FontStyle.italic,
+                //   ),
+                // ),
                 Expanded(child:
                 ListView.builder(
                   itemCount: productsList.length,
                   itemBuilder: (ctx, i) {
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 25),
+                    Duration dur = DateTime.now().difference(productsList[i].age);
+                    String differenceInYears = (dur.inDays/365).floor().toString();
+                    return Padding(
+                      padding: padding,
+                      //margin: const EdgeInsets.only(bottom: 25),
+                      child :Card(
+                        shape: border,
+                      color: Colors.green[100],
                       child: Row(
                         children: <Widget>[
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(15.0),
-                                color: Colors.white,
+                                color: Colors.green[500],
                               ),
-                              child: Image.network(
-                                "${productsList[i].image1}",
-                                fit: BoxFit.cover,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+
+                                child: Image.network(
+                                  "${productsList[i].image1}",
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
@@ -92,16 +111,100 @@ class _HomeState extends State<Home> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Text(
-                                  "${productsList[i].owner}",
-                                  style: Theme
-                                      .of(context)
-                                      .textTheme
-                                      .title,
-                                ),
-                                Text(
-                            "${productsList[i].reservePrice}",
-                          ),
+                                // Icon(Icons.account_circle),
+                                // Text(
+                                //   "${productsList[i].owner}",
+                                //   style: Theme
+                                //       .of(context)
+                                //       .textTheme
+                                //       .title,
+                                // ),
+                                RichText(
+                                    text: TextSpan(
+                                        children : [
+                                          WidgetSpan(
+                                              child: Icon(Icons.account_circle,size: 25)),
+                                          WidgetSpan(
+                                              child: SizedBox(width: 8.0)),
+                                          TextSpan(
+                                            text: "${productsList[i].owner}",
+                                            style: TextStyle(color: Colors.black,
+                                                fontSize: 20),
+                                          ),
+                                        ]
+                                    )),
+                                RichText(
+                                    text: TextSpan(
+                                        children : [
+                                          WidgetSpan(
+                                              child: Icon(Icons.place,size: 25)),
+                                          WidgetSpan(
+                                              child: SizedBox(width: 8.0)),
+                                          TextSpan(
+                                            text: "${productsList[i].location}",
+                                            style: TextStyle(color: Colors.black,
+                                                fontSize: 20),
+                                          ),
+                                        ]
+                                    )),
+                                RichText(
+                                    text: TextSpan(
+                                        children : [
+                                          WidgetSpan(
+                                              child: Icon(Icons.nature,size: 25)),
+                                          WidgetSpan(
+                                              child: SizedBox(width: 8.0)),
+                                          TextSpan(
+                                              text: "${productsList[i].noOfPlants} " + "Plants",
+                                              style: TextStyle(color: Colors.black,
+                                                               fontSize: 20),
+                                          ),
+                                        ]
+                                    )),
+                                RichText(
+                                    text: TextSpan(
+                                        children : [
+                                          WidgetSpan(
+                                              child: Icon(Icons.fence,size: 25)),
+                                          WidgetSpan(
+                                              child: SizedBox(width: 8.0)),
+                                          TextSpan(
+                                            text: "${productsList[i].size} " + "Bheega",
+                                            style: TextStyle(color: Colors.black,
+                                                             fontSize: 20),
+                                          ),
+                                        ]
+                                    )),
+                                RichText(
+                                    text: TextSpan(
+                                        children : [
+                                          WidgetSpan(
+                                              child: Icon(Icons.nature_people,size: 25)),
+                                          WidgetSpan(
+                                              child: SizedBox(width: 8.0)),
+                                          TextSpan(
+                                            text: "$differenceInYears " + "Years",
+                                            style: TextStyle(color: Colors.black,
+                                                fontSize: 20),
+                                          ),
+                                        ]
+                                    )),
+                                RichText(
+                                    text: TextSpan(
+                                        children : [
+                                          WidgetSpan(
+                                              child: Icon(Icons.monetization_on,size: 25)),
+                                          WidgetSpan(
+                                              child: SizedBox(width: 8.0)),
+                                          TextSpan(
+                                            text: "${productsList[i].reservePrice} " +"Rs.",
+                                            style: TextStyle(color: Colors.black,
+                                                             fontSize: 20),
+                                          ),
+                                        ]
+                                    )),
+
+
                           SizedBox(height: 15),
                           //MyCounter(),
                         ],
@@ -109,7 +212,7 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ),
-              );
+              ));
             },
           )
                 )

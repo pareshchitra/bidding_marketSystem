@@ -111,18 +111,18 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
   void retreiveImage(ImageSource source, int imageNumber) async {
     final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
     File _imageFile = File(pickedFile.path);
-    if(imageNumber == 1)
-    {
-      productPhoto1 = _imageFile;
-    }
-    else if(imageNumber == 2)
-    {
-      productPhoto2 = _imageFile;
-    }
-    else if(imageNumber == 3)
-    {
+    Navigator.pop(context);
+    setState(() {
+      if (imageNumber == 1) {
+        productPhoto1 = _imageFile;
+      }
+      else if (imageNumber == 2) {
+        productPhoto2 = _imageFile;
+      }
+      else if (imageNumber == 3) {
         productPhoto3 = _imageFile;
-    }
+      }
+    });
   }
 
   //TODO :: GUI change in Add image buttons
@@ -441,6 +441,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                           builder: ((builder) => imageSourceSelector(context, 1)));
                     }
                 ),
+                productPhoto1 != null ? Container(height: 200, child: Image.file(productPhoto1)) : SizedBox(height: 5.0),
+
                 RaisedButton(
                     color: Colors.green[700],
                     child: Text('Upload Image2'),
@@ -449,6 +451,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                           builder: ((builder) => imageSourceSelector(context, 2)));
                     }
                 ),
+                productPhoto2 != null ? Container(height: 200, child: Image.file(productPhoto2)) : SizedBox(height: 5.0),
+
                 RaisedButton(
                     color: Colors.green[700],
                     child: Text('Upload Image3'),
@@ -457,6 +461,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                           builder: ((builder) => imageSourceSelector(context, 3)));
                     }
                 ),
+                productPhoto3 != null ? Container(height: 200, child: Image.file(productPhoto3)) : SizedBox(height: 5.0),
 
                 // RaisedButton(
                 //   onPressed: () async {
@@ -511,6 +516,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                         if(documentSnapshot.exists)
                           {
                             product.owner = documentSnapshot['Name'];
+                            product.location = documentSnapshot['Village'];
                           }
                         else
                           product.owner = user.uid;

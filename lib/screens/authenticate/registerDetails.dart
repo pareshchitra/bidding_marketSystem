@@ -26,7 +26,7 @@ class _RegisterState extends State<RegisterDetails> {
   String email = '';
   String password = '';
 
-  int clickedButton = 1;
+  int clickedButton = 2;
 
   void toggleForm(int value) {
     setState(() {
@@ -38,19 +38,21 @@ class _RegisterState extends State<RegisterDetails> {
 
   @override
   Widget build(BuildContext context) {
+    //String phone = AuthService().user.PhoneNo;
+
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Text('Sign up to Bidding Market'),
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('Sign In'),
-            onPressed: () => widget.toggleView(),
-          ),
-        ],
+        title: Center(child: Text('Sign Up to Farmway', textAlign: TextAlign.center)),
+        // actions: <Widget>[
+        //   FlatButton.icon(
+        //     icon: Icon(Icons.person),
+        //     label: Text('Sign In'),
+        //     onPressed: () => widget.toggleView(),
+        //   ),
+        // ],
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,
@@ -64,6 +66,17 @@ class _RegisterState extends State<RegisterDetails> {
                     style: TextStyle(fontSize: 25.0, fontFamily: "Georgia"),
                   ),
                   Radio(
+                      value: 2,
+                      groupValue: clickedButton,
+                      onChanged: (value) {
+                        print("Farmer Clicked");
+                        toggleForm(value);
+                      }),
+                  Text(
+                    'Farmer',
+                    style: TextStyle(fontSize: 25.0, fontFamily: "Georgia"),
+                  ),
+                  Radio(
                       value: 1,
                       groupValue: clickedButton,
                       onChanged: (value) {
@@ -72,17 +85,6 @@ class _RegisterState extends State<RegisterDetails> {
                       }),
                   Text(
                     'Buyer',
-                    style: TextStyle(fontSize: 25.0, fontFamily: "Georgia"),
-                  ),
-                  Radio(
-                      value: 2,
-                      groupValue: clickedButton,
-                      onChanged: (value) {
-                        print("Seller Clicked");
-                        toggleForm(value);
-                      }),
-                  Text(
-                    'Seller',
                     style: TextStyle(fontSize: 25.0, fontFamily: "Georgia"),
                   ),
                 ],

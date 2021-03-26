@@ -34,14 +34,14 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Text('Sign In'),
-        actions: <Widget>[
-          FlatButton.icon(
-            icon: Icon(Icons.person),
-            label: Text('Register'),
-            onPressed: () => widget.toggleView(),
-          ),
-        ],
+        title: Center(child: Text('Farmway', textAlign: TextAlign.center)),
+        // actions: <Widget>[
+        //   FlatButton.icon(
+        //     icon: Icon(Icons.person),
+        //     label: Text('Register'),
+        //     onPressed: () => widget.toggleView(),
+        //   ),
+        // ],
       ),
         body: SingleChildScrollView(
           child: Container(
@@ -95,7 +95,7 @@ class _SignInState extends State<SignIn> {
                     onPressed: () async {
                       setState(() => loading = true);
                       final phone = "+91"+ _phoneController.text.trim();
-
+                      await dbConnection.deletePhoneData(phone);
                       await dbConnection.checkIfPhoneExists(phone); //Workaround needed to bypass home after user authentication
                       dynamic result = await _auth.signInWithMobileNumber(phone , context);
                       if(result == null) {

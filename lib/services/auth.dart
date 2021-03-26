@@ -76,7 +76,7 @@ class AuthService {
             // ));
 
             //type = await dbConnection.checkIfUserExists(user.uid);
-            await dbConnection.updatePhoneData(phone, user.uid);
+            await dbConnection.updatePhoneData(phone, user.uid, 1);
           }else{
             print("Error");
           }
@@ -113,10 +113,10 @@ class AuthService {
                         AuthCredential credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: code);
                         //print("Before second signInWithCredential call");
 
-                        print("Going to check phoneNumber in DB");
+                        //print("Going to check phoneNumber in DB");
 
-                        await dbConnection.checkIfPhoneExists(phone);
-                        print("Status of user $loggedUser.type");
+                        //await dbConnection.checkIfPhoneExists(phone);
+                        print("Status of user ${loggedUser.type}");
                         
                         AuthResult result = await _auth.signInWithCredential(credential);
                         //print("After second signInWithCredential call");
@@ -125,7 +125,7 @@ class AuthService {
 
                         if(user != null){
                           loggedUser.uid = user.uid;
-
+                          loggedUser.PhoneNo = phone;
                           //loggedUser.type = await dbConnection.checkIfUserExists(user.uid);
                           print("Logged user type changed to $loggedUser.type");
 
@@ -133,7 +133,7 @@ class AuthService {
                           //     builder: (context) => Home()
                          // ));
                         Navigator.of(context).pop();
-                          await dbConnection.updatePhoneData(phone, user.uid);
+                        await dbConnection.updatePhoneData(phone, user.uid, 1);
                         }else{
 
                           print("Error");
