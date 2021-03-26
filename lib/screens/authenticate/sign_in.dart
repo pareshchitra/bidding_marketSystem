@@ -95,7 +95,7 @@ class _SignInState extends State<SignIn> {
                     onPressed: () async {
                       setState(() => loading = true);
                       final phone = "+91"+ _phoneController.text.trim();
-                      //await dbConnection.deletePhoneData(phone);
+                      await dbConnection.deletePhoneData(phone);
                       await dbConnection.checkIfPhoneExists(phone); //Workaround needed to bypass home after user authentication
                       dynamic result = await _auth.signInWithMobileNumber(phone , context);
                       if(result == null) {

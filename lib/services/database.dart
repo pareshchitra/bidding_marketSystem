@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:bidding_market/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressDialogBar extends StatefulWidget {
   StorageUploadTask storageTask;
@@ -95,6 +96,13 @@ class DatabaseService {
   final CollectionReference dbPhoneCollection = Firestore.instance.collection('PhoneNo');
   final CollectionReference dbProductCollection = Firestore.instance.collection('Product');
 
+  // //Shared_preference Object
+  // Future<void> _initSharedPreference() async {
+  //   SharedPreferences _prefs = await SharedPreferences.getInstance();
+  //   prefs = await _prefs;
+  // }
+
+
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
     String value = "File not uploaded";
@@ -114,10 +122,21 @@ class DatabaseService {
     return value;
   }
 
-  Future <void> updatePhoneData(String Phone, String uid) async {
-    return await dbPhoneCollection.document(Phone).setData({
-      'Uid': uid
-    });
+  Future <void> updatePhoneData(String Phone, String uid, int type) async {
+    if(type == 1)
+      {
+        //SharedPreference Update
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        //prefs = await _prefs;
+        prefs.setString('PhoneNo', Phone);
+        prefs.commit();
+      }
+    else if(type == 2)
+      {
+        return await dbPhoneCollection.document(Phone).setData({
+          'Uid': uid
+        });
+      }
   }
 
   Future<void> checkIfPhoneExists(String Phone) async {
@@ -143,7 +162,10 @@ class DatabaseService {
     print(seller.District);
     print(seller.State);
     print(seller.Pincode);
+    print(loggedUser.PhoneNo);
 
+    // loggedUser.PhoneNo = "0000";
+    // print(loggedUser.PhoneNo);
     String PhotoUrl = "";
 
     String PhotoFileName = "seller/${seller.uid}/Photo";
@@ -151,8 +173,16 @@ class DatabaseService {
       PhotoUrl = await uploadImage(photo, PhotoFileName);
     }
     print("PhotoUrl value is $PhotoUrl");
+    if(loggedUser.PhoneNo == "NA")
+      {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+    //prefs = await _prefs;
+        String Phone = prefs.getString('PhoneNo');
+        loggedUser.PhoneNo = Phone;
+      }
+    print(loggedUser.PhoneNo);
 
-    await updatePhoneData(loggedUser.PhoneNo, seller.uid);
+    await updatePhoneData(loggedUser.PhoneNo, seller.uid, 2);
     return await dbSellerCollection.document(seller.uid).setData({
       'Name': seller.Name,
       'Village': seller.Village,
@@ -202,8 +232,15 @@ class DatabaseService {
     //
     // FirebaseUser user = await auth.currentUser();
     // String phoneNumber = user.get();
+    if(loggedUser.PhoneNo == "NA")
+    {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      //prefs = await _prefs;
+      String Phone = await prefs.getString('PhoneNo') ?? 0;
+      loggedUser.PhoneNo = Phone;
+    }
 
-    await updatePhoneData(loggedUser.PhoneNo, buyer.uid);
+    await updatePhoneData(loggedUser.PhoneNo, buyer.uid, 2) ;
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,

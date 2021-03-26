@@ -76,7 +76,7 @@ class AuthService {
             // ));
 
             //type = await dbConnection.checkIfUserExists(user.uid);
-            await dbConnection.updatePhoneData(phone, user.uid);
+            await dbConnection.updatePhoneData(phone, user.uid, 1);
           }else{
             print("Error");
           }
@@ -133,7 +133,7 @@ class AuthService {
                           //     builder: (context) => Home()
                          // ));
                         Navigator.of(context).pop();
-                          //await dbConnection.updatePhoneData(phone, user.uid);
+                        await dbConnection.updatePhoneData(phone, user.uid, 1);
                         }else{
 
                           print("Error");
