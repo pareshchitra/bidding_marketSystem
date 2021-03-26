@@ -4,7 +4,7 @@ import 'package:bidding_market/services/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:bidding_market/models/user.dart';
 
-User loggedUser = User();
+User loggedUser = User(type:0);
 
 void main() => runApp(MyApp());
 

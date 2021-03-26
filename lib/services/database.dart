@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:bidding_market/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ProgressDialogBar extends StatefulWidget {
   StorageUploadTask storageTask;
@@ -142,11 +143,16 @@ class DatabaseService {
     print(seller.District);
     print(seller.State);
     print(seller.Pincode);
+
+    String PhotoUrl = "";
+
     String PhotoFileName = "seller/${seller.uid}/Photo";
-    String PhotoUrl = await uploadImage(photo, PhotoFileName);
+    if(photo != null) {
+      PhotoUrl = await uploadImage(photo, PhotoFileName);
+    }
     print("PhotoUrl value is $PhotoUrl");
 
-    await updatePhoneData(seller.PhoneNo, seller.uid);
+    await updatePhoneData(loggedUser.PhoneNo, seller.uid);
     return await dbSellerCollection.document(seller.uid).setData({
       'Name': seller.Name,
       'Village': seller.Village,
@@ -176,13 +182,28 @@ class DatabaseService {
     //   'Pincode': buyer.Pincode,
     //   'AadharNo': buyer.AadharNo,
     // });
+
+    String IdFrontUrl = "";
+    String IdBackUrl = "";
+
     String IdFrontFileName = "buyer/${buyer.uid}/IdFront";
     String IdBackFileName = "buyer/${buyer.uid}/IdBack";
-    String IdFrontUrl = await uploadImage(aadharFront, IdFrontFileName);
+    if(aadharFront != null) {
+      IdFrontUrl = await uploadImage(aadharFront, IdFrontFileName);
+    }
     print("IdFrontUrl value is $IdFrontUrl");
-    String IdBackUrl = await uploadImage(aadharBack, IdBackFileName);
+
+    if(aadharBack != null) {
+      IdBackUrl = await uploadImage(aadharBack, IdBackFileName);
+    }
     print("IdBackUrl value is $IdBackUrl");
-    await updatePhoneData(buyer.PhoneNo, buyer.uid);
+
+    // final FirebaseAuth auth = FirebaseAuth.instance;
+    //
+    // FirebaseUser user = await auth.currentUser();
+    // String phoneNumber = user.get();
+
+    await updatePhoneData(loggedUser.PhoneNo, buyer.uid);
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,
@@ -221,7 +242,10 @@ class DatabaseService {
     String photo2Url='';
     String photo3Url= '';
 
-    photo1Url = await uploadImage(productPhoto1, photo1);
+
+    if(productPhoto1 != null) {
+      photo1Url = await uploadImage(productPhoto1, photo1);
+    }
     print("photo1Url value is $photo1Url");
 
     if(productPhoto2 != null) {
@@ -319,11 +343,16 @@ class DatabaseService {
         p.location = result.data['Location'] ?? '';
         //print("Location " + result.data['Location']);
         print("Age " + result.data['Age'].toString());
-        p.age = result.data['Age'] .toDate()?? '';
+        p.age = result.data['Age'] .toDate() ?? '';
         p.image1 = result.data['Image1'] ?? '';
         print("Image1 " + result.data['Image1']);
         //p.isVerfied = result.data['IsVerfied'] ?? '';
         p.reservePrice = result.data['ReservePrice'] ?? '';
+        p.noOfPlants = result.data['NoOfPlants'] ?? '';
+        p.size = result.data['Size'] ?? '';
+        p.location = result.data['Location'] ?? '';
+        p.lastUpdatedOn = result.data['LastUpdatedOn'] .toDate() ?? '';
+
         //p.lastUpdatedOn = result.data['LastUpdatedOn'] ?? '';
         //print("LastUpdatedOn " + result.data['LastUpdatedOn']);
         //p.lastUpdatedBy = result.data['LastUpdateBy'] ?? '';

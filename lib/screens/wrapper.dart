@@ -18,6 +18,8 @@ class Wrapper extends StatelessWidget {
 
     final user = Provider.of<User>(context);
 
+
+
     // return either the Home or Authenticate widget
     if (user == null){
       return Authenticate();
@@ -25,6 +27,16 @@ class Wrapper extends StatelessWidget {
       //     builder: (context) => Authenticate()
       // ));
     } else {
+
+      // var documents =  dbConnection.dbPhoneCollection.getDocuments();
+      // bool register = true;
+      // await documents.then((snapshot) {
+      //   snapshot.documents.forEach((result) {
+      //     if(user.uid.compareTo(result.data["Uid"]) == 0)
+      //       {
+      //         register = false;
+      //       }
+
 
       if(loggedUser.type == 0) //New User
       {

@@ -38,6 +38,8 @@ class _RegisterState extends State<RegisterDetails> {
 
   @override
   Widget build(BuildContext context) {
+    //String phone = AuthService().user.PhoneNo;
+
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
