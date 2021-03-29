@@ -112,7 +112,7 @@ class _buyerFormState extends State<buyerForm> {
               Text(
                 'Address',
                 style: TextStyle(
-                  fontSize: 15.0,
+                  fontSize: 20.0,
                   fontFamily: "Georgia",
                 ),
               ),
