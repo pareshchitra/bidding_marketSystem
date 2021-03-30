@@ -87,7 +87,7 @@ class AuthService {
           //This callback would gets called when verification is done automatically
         },
         verificationFailed: (AuthException exception){
-          print(exception);
+          print(exception.message);
         },
         codeSent: (String verificationId, [int forceResendingToken]){
           print("Entering codeSent flow of signIn");
