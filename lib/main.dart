@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:bidding_market/screens/authenticate/phone_auth.dart';
+import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/wrapper.dart';
@@ -18,11 +20,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return StreamProvider<User>.value(
-      value: AuthService().user,
+      value: PhoneAuthDataProvider().user,
       child: MaterialApp(debugShowCheckedModeBanner: false,
         home: Wrapper(),
       ),
     );
+
+    // return MultiProvider(
+    //   providers: [
+    //
+    //     ChangeNotifierProvider(
+    //       create: (context) => PhoneAuthDataProvider(),
+    //     ),
+    //   ],
+    //
+    //   child: MaterialApp(
+    //     home: Wrapper(),
+    //     debugShowCheckedModeBanner: false,
+    //   ),
+    // );
   }
 }
 

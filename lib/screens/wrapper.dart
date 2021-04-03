@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
-import 'package:bidding_market/screens/authenticate/registerDetails.dart';
+import 'package:bidding_market/screens/authenticate/phone_auth.dart';
+import 'package:bidding_market/screens/authenticate/sign_in.dart';
+import 'file:///C:/Users/my/StudioProjects/bidding_marketSystem/lib/screens/registeration/registerDetails.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +20,8 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final user = Provider.of<User>(context);
+
+  /*  final user = Provider.of<User>(context);
 
     dbConnection.initialLoggedUserCheck();
     sleep(Duration(seconds: 1));
@@ -60,6 +63,37 @@ class Wrapper extends StatelessWidget {
           // ));
       }
     }
+    */
+   final user = Provider.of<User>(context);
+
+   print("Inside Wrapper");
+   print("user status $user");
+   if(user == null)
+     {
+       return SignIn();
+     }
+   else
+     {
+        dbConnection.initialLoggedUserCheck();
+        sleep(Duration(seconds: 1));
+
+        if(loggedUser.type == 0) //New User
+            {
+          print("New User");
+          return RegisterDetails();
+          // Navigator.push(context, MaterialPageRoute(
+          //     builder: (context) => RegisterDetails()
+          // ));
+        }
+        else //Registered User
+            {
+          print("Old User");
+          return Home();
+          // Navigator.push(context, MaterialPageRoute(
+          //     builder: (context) => Home()
+          // ));
+        }
+     }
 
   }
 }
