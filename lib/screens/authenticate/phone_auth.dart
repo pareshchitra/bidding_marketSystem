@@ -2,6 +2,7 @@ import 'package:bidding_market/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart' show ChangeNotifier, VoidCallback;
 import 'package:flutter/widgets.dart' show TextEditingController;
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class FireBase {
@@ -30,7 +31,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
       onFailed,
       onError,
       onAutoRetrievalTimeout;
-  Future Function(FirebaseUser user, String phone) onVerified;
+  void Function(FirebaseUser user, String phone) onVerified;
 
   bool _loading = false;
 
@@ -49,7 +50,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
         VoidCallback onFailed,
         VoidCallback onError,
         VoidCallback onAutoRetrievalTimeout,
-        Future Function(FirebaseUser user, String phone) onVerified }) {
+        void Function(FirebaseUser user, String phone) onVerified }) {
     this.onStarted = onStarted;
     this.onCodeSent = onCodeSent;
     this.onCodeResent = onCodeResent;
@@ -69,7 +70,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
         VoidCallback onFailed,
         VoidCallback onError,
         VoidCallback onAutoRetrievalTimeout,
-        Future Function(FirebaseUser user, String phone) onVerified}) async {
+        void Function(FirebaseUser user, String phone) onVerified}) async {
     this.onStarted = onStarted;
     this.onCodeSent = onCodeSent;
     this.onCodeResent = onCodeResent;
@@ -240,4 +241,18 @@ class PhoneAuthDataProvider with ChangeNotifier {
   }
 
   TextEditingController get phoneNumberController => _phoneNumberController;
+
+  // sign out
+  Future signOut() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.remove('PhoneNo');
+      prefs.remove('RegisterState');
+      prefs.commit();
+      return await FireBase.auth.signOut();
+    } catch (error) {
+      print(error.toString());
+      return null;
+    }
+  }
 }

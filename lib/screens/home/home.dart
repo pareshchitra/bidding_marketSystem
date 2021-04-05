@@ -1,6 +1,7 @@
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
+import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/home/brew_list.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
@@ -245,7 +246,7 @@ class _HomeState extends State<Home> {
                 Navigator.push(context, MaterialPageRoute(
                     builder: (context) => Authenticate()
                 ));
-
+                //PhoneAuthDataProvider().signOut();
               },
             ),
           ],

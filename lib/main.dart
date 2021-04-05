@@ -19,26 +19,31 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return StreamProvider<User>.value(
-      value: PhoneAuthDataProvider().user,
-      child: MaterialApp(debugShowCheckedModeBanner: false,
-        home: Wrapper(),
-      ),
-    );
-
-    // return MultiProvider(
-    //   providers: [
-    //
-    //     ChangeNotifierProvider(
-    //       create: (context) => PhoneAuthDataProvider(),
-    //     ),
-    //   ],
-    //
-    //   child: MaterialApp(
+    // final provider = Provider.of<PhoneAuthDataProvider>(context , listen:false );
+    // return ChangeNotifierProvider<PhoneAuthDataProvider>.value(
+    //   value: provider,
+    //   child: MaterialApp(debugShowCheckedModeBanner: false,
     //     home: Wrapper(),
-    //     debugShowCheckedModeBanner: false,
     //   ),
     // );
+
+    return MultiProvider(
+      providers: [
+
+        ChangeNotifierProvider(
+          create: (context) => PhoneAuthDataProvider(),
+        ),
+
+        StreamProvider<User>.value(
+          value: PhoneAuthDataProvider().user,
+        )
+      ],
+
+      child: MaterialApp(
+        home: Wrapper(),
+        debugShowCheckedModeBanner: false,
+      ),
+    );
   }
 }
 

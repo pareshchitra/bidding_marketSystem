@@ -4,7 +4,7 @@ import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
-import 'file:///C:/Users/my/StudioProjects/bidding_marketSystem/lib/screens/registeration/registerDetails.dart';
+import 'package:bidding_market/screens/registeration/registerDetails.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +64,7 @@ class Wrapper extends StatelessWidget {
       }
     }
     */
+    //final provider = Provider.of<PhoneAuthDataProvider>(context , listen: false);
    final user = Provider.of<User>(context);
 
    print("Inside Wrapper");

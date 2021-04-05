@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bidding_market/screens/authenticate/productRegisteration.dart';
+import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 
 class NavDrawer extends StatelessWidget {
   @override

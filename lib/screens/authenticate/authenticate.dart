@@ -1,5 +1,5 @@
-import 'file:///C:/Users/my/StudioProjects/bidding_marketSystem/lib/screens/registeration/registerDetails.dart';
-import 'file:///C:/Users/my/StudioProjects/bidding_marketSystem/lib/screens/registeration/registerMobile.dart';
+import 'package:bidding_market/screens/registeration/registerDetails.dart';
+import 'package:bidding_market/screens/registeration/registerMobile.dart';
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:flutter/material.dart';
 

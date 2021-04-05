@@ -3,7 +3,7 @@ import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/models/user.dart';
-import 'file:///C:/Users/my/StudioProjects/bidding_marketSystem/lib/screens/registeration/BuyerForm.dart';
+import 'package:bidding_market/screens/registeration/BuyerForm.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
