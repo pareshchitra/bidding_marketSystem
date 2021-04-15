@@ -7,7 +7,7 @@ import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -194,7 +194,7 @@ class _SignInState extends State<SignIn> {
           Navigator.of(context).pushReplacement(CupertinoPageRoute(
               builder: (BuildContext context) => PhoneAuthVerify()));
         },
-        onVerified: (FirebaseUser user, String phone) async{
+        onVerified: (FirebaseAuth.User user, String phone) async{
           loggedUser.uid = user.uid;
           await dbConnection.updatePhoneData(phone, user.uid, 1);
         },

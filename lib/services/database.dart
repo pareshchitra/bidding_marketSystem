@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:bidding_market/services/auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressDialogBar extends StatefulWidget {
@@ -91,10 +91,13 @@ class DatabaseService {
   DatabaseService({ this.uid });
 
   // collection reference
-  final CollectionReference dbSellerCollection = Firestore.instance.collection('Seller');
-  final CollectionReference dbBuyerCollection = Firestore.instance.collection('Buyer');
-  final CollectionReference dbPhoneCollection = Firestore.instance.collection('PhoneNo');
-  final CollectionReference dbProductCollection = Firestore.instance.collection('Product');
+  //FirebaseFirestore db = FirebaseFirestore.instance;
+  final CollectionReference dbSellerCollection = FirebaseFirestore.instance.collection('Seller');
+  final CollectionReference dbBuyerCollection = FirebaseFirestore.instance.collection('Buyer');
+  final CollectionReference dbPhoneCollection = FirebaseFirestore.instance.collection('PhoneNo');
+  final CollectionReference dbProductCollection = FirebaseFirestore.instance.collection('Product');
+
+
 
   // //Shared_preference Object
   // Future<void> _initSharedPreference() async {
@@ -376,15 +379,29 @@ class DatabaseService {
   // }
 
   // product list from snapshot
-  Future<List<Product>> productListFromSnapshot() async{
+  List<Product> productListFromSnapshot() {
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs =  SharedPreferences.getInstance();
     prefs.setInt('RegisterState', 2);
     prefs.commit();
 
     List<Product> productList = new List<Product>();
     productList= [];
     print("Entering productList database func");
+
+
+    dbProductCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    @Override
+    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+    if (task.isSuccessful()) {
+    for (QueryDocumentSnapshot document : task.getResult()) {
+    Log.d(TAG, document.getId() + " => " + document.getData());
+    }
+    } else {
+    Log.d(TAG, "Error getting documents: ", task.getException());
+    }
+    }
+    });
     var documents =  dbProductCollection.getDocuments();
 
     await documents.then((snapshot) {
@@ -430,6 +447,29 @@ class DatabaseService {
     await dbPhoneCollection.document(phone).delete();
   }
 
+
+  // product list from snapshot
+  Future<List<Product>> myProducts() async{
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('RegisterState', 2);
+    prefs.commit();
+
+    List<Product> productList = new List<Product>();
+    productList= [];
+    print("Entering myProducts database func");
+    var documents =  dbProductCollection.getDocuments();
+
+    FirebaseFirestore.instance.collection("Products")
+        .where("Owner", isEqualTo: "")
+        .get().then((event) {
+      if (event.docs.isNotEmpty) {
+        Map<String, dynamic> documentData = event.docs.; //if it is a single document
+      }
+    }).catchError((e) => print("error fetching data: $e"));
+
+    return productList;
+  }
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
 

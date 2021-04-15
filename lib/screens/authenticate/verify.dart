@@ -281,7 +281,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
     await DatabaseService().updatePhoneData(phone, user.uid, 1);
     await Future.delayed(Duration(seconds: 1));
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (BuildContext context) => Home()));
+        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) => Home()));
   }
 
   onFailed() {

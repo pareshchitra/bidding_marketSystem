@@ -48,7 +48,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.border_color),
-            title: Text('Feedback'),
+            title: Text('My Products'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(

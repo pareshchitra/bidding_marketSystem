@@ -1,12 +1,12 @@
 import 'package:bidding_market/models/user.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:flutter/foundation.dart' show ChangeNotifier, VoidCallback;
 import 'package:flutter/widgets.dart' show TextEditingController;
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class FireBase {
-  static FirebaseAuth auth = FirebaseAuth.instance;
+  static FirebaseAuth.FirebaseAuth auth = FirebaseAuth.FirebaseAuth.instance;
 
   static instantiate(){
 
@@ -31,7 +31,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
       onFailed,
       onError,
       onAutoRetrievalTimeout;
-  void Function(FirebaseUser user, String phone) onVerified;
+  void Function(FirebaseAuth.User user, String phone) onVerified;
 
   bool _loading = false;
 
@@ -50,7 +50,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
         VoidCallback onFailed,
         VoidCallback onError,
         VoidCallback onAutoRetrievalTimeout,
-        void Function(FirebaseUser user, String phone) onVerified }) {
+        void Function(FirebaseAuth.User user, String phone) onVerified }) {
     this.onStarted = onStarted;
     this.onCodeSent = onCodeSent;
     this.onCodeResent = onCodeResent;
@@ -70,7 +70,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
         VoidCallback onFailed,
         VoidCallback onError,
         VoidCallback onAutoRetrievalTimeout,
-        void Function(FirebaseUser user, String phone) onVerified}) async {
+        void Function(FirebaseAuth.User user, String phone) onVerified}) async {
     this.onStarted = onStarted;
     this.onCodeSent = onCodeSent;
     this.onCodeResent = onCodeResent;
@@ -90,7 +90,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
   }
 
   _startAuth() {
-    final PhoneCodeSent codeSent =
+    final FirebaseAuth.PhoneCodeSent codeSent =
         (String verificationId, [int forceResendingToken]) async {
       actualCode = verificationId;
       _addStatusMessage("\nEnter the code sent to " + phone);
@@ -98,7 +98,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
       if (onCodeSent != null) onCodeSent();
     };
 
-    final PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
+    final FirebaseAuth.PhoneCodeAutoRetrievalTimeout codeAutoRetrievalTimeout =
         (String verificationId) {
       actualCode = verificationId;
       _addStatusMessage("\nAuto retrieval time out");
@@ -106,8 +106,8 @@ class PhoneAuthDataProvider with ChangeNotifier {
       if (onAutoRetrievalTimeout != null) onAutoRetrievalTimeout();
     };
 
-    final PhoneVerificationFailed verificationFailed =
-        (AuthException authException) {
+    final FirebaseAuth.PhoneVerificationFailed verificationFailed =
+        (FirebaseAuth.FirebaseAuthException authException) {
       _addStatusMessage('${authException.message}');
       _addStatus(PhoneAuthState.Failed);
       if (onFailed != null) onFailed();
@@ -121,11 +121,11 @@ class PhoneAuthDataProvider with ChangeNotifier {
             authException.message);
     };
 
-    final PhoneVerificationCompleted verificationCompleted =
-        (AuthCredential auth) {
+    final FirebaseAuth.PhoneVerificationCompleted verificationCompleted =
+        (FirebaseAuth.AuthCredential auth) {
       _addStatusMessage('Auto retrieving verification code');
 
-      FireBase.auth.signInWithCredential(auth).then((AuthResult value) {
+      FireBase.auth.signInWithCredential(auth).then((FirebaseAuth.UserCredential value) {
         if (value.user != null) {
           _addStatusMessage('Authentication successful');
           _addStatus(PhoneAuthState.Verified);
@@ -163,12 +163,12 @@ class PhoneAuthDataProvider with ChangeNotifier {
   }
 
   void verifyOTPAndLogin({String smsCode}) async {
-    _authCredential = PhoneAuthProvider.getCredential(
+    _authCredential = FirebaseAuth.PhoneAuthProvider.credential(
         verificationId: actualCode, smsCode: smsCode);
 
     FireBase.auth
         .signInWithCredential(_authCredential)
-        .then((AuthResult result) async {
+        .then((FirebaseAuth.UserCredential result) async {
       _addStatusMessage('Authentication successful');
       _addStatus(PhoneAuthState.Verified);
       if (onVerified != null) onVerified(result.user, phone);
@@ -230,12 +230,12 @@ class PhoneAuthDataProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  User _userFromFirebaseUser(FirebaseUser user) {
+  User _userFromFirebaseUser(FirebaseAuth.User user) {
     return user != null ? User(uid: user.uid ) : null;
   }
 
   Stream<User> get user {
-    return FireBase.auth.onAuthStateChanged
+    return FireBase.auth.authStateChanges()
     //.map((FirebaseUser user) => _userFromFirebaseUser(user));
         .map(_userFromFirebaseUser);
   }
