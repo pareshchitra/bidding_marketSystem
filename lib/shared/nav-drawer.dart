@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:bidding_market/screens/authenticate/productRegisteration.dart';
+import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
@@ -48,7 +48,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.border_color),
-            title: Text('Feedback'),
+            title: Text('My Products'),
             onTap: () => {Navigator.of(context).pop()},
           ),
           ListTile(

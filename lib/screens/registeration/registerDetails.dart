@@ -39,7 +39,7 @@ class _RegisterState extends State<RegisterDetails> {
   @override
   Widget build(BuildContext context) {
     //String phone = AuthService().user.PhoneNo;
-
+    double width = MediaQuery.of(context).size.width;
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -59,12 +59,12 @@ class _RegisterState extends State<RegisterDetails> {
         child: Container(
             margin: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
             child: Column(children: <Widget>[
-              Row(
+              Row(mainAxisAlignment: MainAxisAlignment.center ,
                 children: <Widget>[
-                  Text(
-                    'I am ',
-                    style: TextStyle(fontSize: 25.0, fontFamily: "Georgia"),
-                  ),
+                  // Text(
+                  //   'I am ',
+                  //   style: TextStyle(fontSize: width * 0.06, fontFamily: "Georgia"),
+                  // ),
                   Radio(
                       value: 2,
                       groupValue: clickedButton,
@@ -74,8 +74,9 @@ class _RegisterState extends State<RegisterDetails> {
                       }),
                   Text(
                     'Farmer',
-                    style: TextStyle(fontSize: 25.0, fontFamily: "Georgia"),
+                    style: TextStyle(fontSize: width * 0.06, fontFamily: "Georgia"),
                   ),
+                  SizedBox(width: 20,),
                   Radio(
                       value: 1,
                       groupValue: clickedButton,
@@ -85,7 +86,7 @@ class _RegisterState extends State<RegisterDetails> {
                       }),
                   Text(
                     'Buyer',
-                    style: TextStyle(fontSize: 25.0, fontFamily: "Georgia"),
+                    style: TextStyle(fontSize: width * 0.06, fontFamily: "Georgia"),
                   ),
                 ],
               ),

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bidding_market/screens/authenticate/registerDetails.dart';
+import 'package:bidding_market/screens/registeration/registerDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/shared/constants.dart';

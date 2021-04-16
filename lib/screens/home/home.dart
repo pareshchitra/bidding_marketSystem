@@ -1,6 +1,7 @@
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
+import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/home/brew_list.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
@@ -10,15 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 
-class ABC {
-  var productsList = new List<Product>();
-
-  ABC(productsList) {
-    Product p1 = new Product(id: '1');
-    this.productsList.add(p1);
-  }
-
-}
 
 class Home extends StatefulWidget {
 
@@ -123,7 +115,7 @@ class _HomeState extends State<Home> {
                                     text: TextSpan(
                                         children : [
                                           WidgetSpan(
-                                              child: Icon(Icons.account_circle,size: 25)),
+                                              child: Icon(Icons.account_circle,size: 25,color: Colors.green[700])),
                                           WidgetSpan(
                                               child: SizedBox(width: 8.0)),
                                           TextSpan(
@@ -137,7 +129,7 @@ class _HomeState extends State<Home> {
                                     text: TextSpan(
                                         children : [
                                           WidgetSpan(
-                                              child: Icon(Icons.place,size: 25)),
+                                              child: Icon(Icons.place,size: 25,color: Colors.green[700])),
                                           WidgetSpan(
                                               child: SizedBox(width: 8.0)),
                                           TextSpan(
@@ -151,7 +143,7 @@ class _HomeState extends State<Home> {
                                     text: TextSpan(
                                         children : [
                                           WidgetSpan(
-                                              child: Icon(Icons.nature,size: 25)),
+                                              child: Icon(Icons.nature,size: 25,color: Colors.green[700])),
                                           WidgetSpan(
                                               child: SizedBox(width: 8.0)),
                                           TextSpan(
@@ -165,7 +157,7 @@ class _HomeState extends State<Home> {
                                     text: TextSpan(
                                         children : [
                                           WidgetSpan(
-                                              child: Icon(Icons.fence,size: 25)),
+                                              child: Icon(Icons.fence,size: 25, color: Colors.green[700])),
                                           WidgetSpan(
                                               child: SizedBox(width: 8.0)),
                                           TextSpan(
@@ -179,7 +171,7 @@ class _HomeState extends State<Home> {
                                     text: TextSpan(
                                         children : [
                                           WidgetSpan(
-                                              child: Icon(Icons.nature_people,size: 25)),
+                                              child: Icon(Icons.nature_people,size: 25,color: Colors.green[700])),
                                           WidgetSpan(
                                               child: SizedBox(width: 8.0)),
                                           TextSpan(
@@ -193,7 +185,10 @@ class _HomeState extends State<Home> {
                                     text: TextSpan(
                                         children : [
                                           WidgetSpan(
-                                              child: Icon(Icons.monetization_on,size: 25)),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left:8.0),
+                                                child: Text('\u{20B9}',style: TextStyle(fontSize: 23, color:Colors.green[700]),),
+                                              )), //Rupee Symbol
                                           WidgetSpan(
                                               child: SizedBox(width: 8.0)),
                                           TextSpan(
@@ -242,10 +237,10 @@ class _HomeState extends State<Home> {
               onPressed: () async {
                 //Navigator.of(context).pop();
                 await _auth.signOut();
-                Navigator.push(context, MaterialPageRoute(
+                Navigator.pushReplacement(context, MaterialPageRoute(
                     builder: (context) => Authenticate()
                 ));
-
+                //PhoneAuthDataProvider().signOut();
               },
             ),
           ],
