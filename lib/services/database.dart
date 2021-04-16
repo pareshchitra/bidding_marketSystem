@@ -72,7 +72,7 @@ class _ProgressDialogBarState extends State<ProgressDialogBar> {
                     '${(widget.progressPercent * 100).toStringAsFixed(2)} % ',
                     style:  TextStyle(fontSize: 50),
                   ),
-                  if(widget.storageTask.isComplete)
+                  //if(widget.storageTask.isComplete)
                     Text("helle",
                         style: TextStyle(
                             color: Colors.greenAccent,
