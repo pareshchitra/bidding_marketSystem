@@ -34,7 +34,7 @@ class _UploadImagesFieldsState extends State<UploadImagesFields> {
   }
   @override
   Widget build(BuildContext context) {
-    _ProductRegisterFormState p = new _ProductRegisterFormState();
+    _ProductRegisterFormState p = new _ProductRegisterFormState(null);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       _nameController.text = _ProductRegisterFormState.imagesList[widget.index]
           ?? '';
@@ -54,13 +54,20 @@ class _UploadImagesFieldsState extends State<UploadImagesFields> {
 
 
 class ProductRegisterForm extends StatefulWidget {
-
+  final Product prod;  // <--- generates the error, "Field doesn't override an inherited getter or setter"
+  ProductRegisterForm({
+    Product p
+  }): this.prod = p;
 
   @override
-  _ProductRegisterFormState createState() => _ProductRegisterFormState();
+  _ProductRegisterFormState createState() => _ProductRegisterFormState(prod);
 }
 
 class _ProductRegisterFormState extends State<ProductRegisterForm> {
+  final Product prod;
+  _ProductRegisterFormState(this.prod);
+
+
   final _formKey = GlobalKey<FormState>();
 
   Product product = Product();
@@ -345,6 +352,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 SizedBox(height: 10.0),
                 TextFormField(
+                  initialValue: prod !=null ? prod.size : "",
                   maxLength: 6,
                   decoration: new InputDecoration(
                     labelText: "Bheega",
@@ -371,6 +379,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 SizedBox(height: 2.0),
                 TextFormField(
+                  initialValue: prod !=null ? prod.noOfPlants : "",
                   maxLength: 6,
                   decoration: new InputDecoration(
                     labelText: "Number of Plants",
@@ -397,6 +406,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 SizedBox(height: 2.0),
                 TextFormField(
+                  initialValue: prod !=null ? prod.reservePrice : "",
                   maxLength: 6,
                   decoration: new InputDecoration(
                     labelText: "Reserve Price",
@@ -498,8 +508,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     int currentProductNo = 1;
                     await documents.then((snapshot) {
                     snapshot.documents.forEach((result) {
-                      String productUid = result.data['ID'].toString().split('#')[0];
-                      int productNum = int.parse( result.data['ID'].toString().split('#')[1].substring(1) );
+                      String productUid = result.data()['ID'].toString().split('#')[0];
+                      int productNum = int.parse( result.data()['ID'].toString().split('#')[1].substring(1) );
                       print("Product Uid is $productUid");
                       print(productNum);
                       if( productUid.compareTo(user.uid) == 0  && productNum >= currentProductNo) {

@@ -14,7 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProgressDialogBar extends StatefulWidget {
-  StorageUploadTask storageTask;
+  UploadTask storageTask;
   File Image;
   String imageName;
 
@@ -28,7 +28,7 @@ class _ProgressDialogBarState extends State<ProgressDialogBar> {
 
   void _startUpload() {
     setState(() {
-      StorageReference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$widget.imageName');
+      Reference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$widget.imageName');
       widget.storageTask = dbFirestoreCollection.putFile(widget.Image);
     });
   }
@@ -37,7 +37,7 @@ class _ProgressDialogBarState extends State<ProgressDialogBar> {
   Widget build(BuildContext context) {
     print("Entering ProgressBar widget");
     if (widget.storageTask != null) {
-      return StreamBuilder<StorageTaskEvent>(
+      return StreamBuilder(
           stream: widget.storageTask.events,
           builder: (context, snapshot) {
             var event = snapshot?.data?.snapshot;
@@ -110,14 +110,14 @@ class DatabaseService {
     print("Entering uploadImage");
     String value = "File not uploaded";
     //AlertDialog progressDialog = new AlertDialog();
-    StorageUploadTask uploadTask;
+    UploadTask uploadTask;
 
     //ProgressDialogBar(Image: Image, imageName: imageName,storageTask: uploadTask);
-    StorageReference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$imageName');
+    Reference dbFirestoreCollection = FirebaseStorage.instance.ref().child('$imageName');
     uploadTask = dbFirestoreCollection.putFile(Image);
 
     //dialogBar.createState();
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    TaskSnapshot taskSnapshot = await uploadTask.onComplete;
     value = await taskSnapshot.ref.getDownloadURL().then((value) {
       print("Done: $value");
       return value;
@@ -379,9 +379,9 @@ class DatabaseService {
   // }
 
   // product list from snapshot
-  List<Product> productListFromSnapshot() {
+  Future<List<Product>> productListFromSnapshot() async{
 
-    SharedPreferences prefs =  SharedPreferences.getInstance();
+    SharedPreferences prefs =  await SharedPreferences.getInstance();
     prefs.setInt('RegisterState', 2);
     prefs.commit();
 
@@ -390,47 +390,47 @@ class DatabaseService {
     print("Entering productList database func");
 
 
-    dbProductCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-    @Override
-    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-    if (task.isSuccessful()) {
-    for (QueryDocumentSnapshot document : task.getResult()) {
-    Log.d(TAG, document.getId() + " => " + document.getData());
-    }
-    } else {
-    Log.d(TAG, "Error getting documents: ", task.getException());
-    }
-    }
-    });
-    var documents =  dbProductCollection.getDocuments();
+    // dbProductCollection.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+    // @Override
+    // public void onComplete(@NonNull Task<QuerySnapshot> task) {
+    // if (task.isSuccessful()) {
+    // for (QueryDocumentSnapshot document : task.getResult()) {
+    // Log.d(TAG, document.getId() + " => " + document.getData());
+    // }
+    // } else {
+    // Log.d(TAG, "Error getting documents: ", task.getException());
+    // }
+    // }
+    // });
+    var documents =  dbProductCollection.get();
 
     await documents.then((snapshot) {
-      snapshot.documents.forEach((result) {
+      snapshot.docs.forEach((result) {
 
 
-        //print(result.data['category']);
+        //print(result.data(['category']);
         Product p = new Product();
-        p.id = result.data['ID'] ?? '';
-        print("ID " + result.data['ID']);
-        p.category = result.data['Category'] ?? '';
-        print("Category " + result.data['Category']);
+        p.id = result.data()['ID'] ?? '';
+        print("ID " + result.data()['ID']);
+        p.category = result.data()['Category'] ?? '';
+        print("Category " + result.data()['Category']);
         //p.description = result.data['Description'] ?? '';
         //print("Description " + result.data['Description']);
         //p.rating = result.data['Rating'] ?? '';
-        p.owner = result.data['Owner'] ?? '';
-        print("Owner " + result.data['Owner']);
-        p.location = result.data['Location'] ?? '';
+        p.owner = result.data()['Owner'] ?? '';
+        print("Owner " + result.data()['Owner']);
+        p.location = result.data()['Location'] ?? '';
         //print("Location " + result.data['Location']);
-        print("Age " + result.data['Age'].toString());
-        p.age = result.data['Age'] .toDate() ?? '';
-        p.image1 = result.data['Image1'] ?? '';
-        print("Image1 " + result.data['Image1']);
+        print("Age " + result.data()['Age'].toString());
+        p.age = result.data()['Age'] .toDate() ?? '';
+        p.image1 = result.data()['Image1'] ?? '';
+        print("Image1 " + result.data()['Image1']);
         //p.isVerfied = result.data['IsVerfied'] ?? '';
-        p.reservePrice = result.data['ReservePrice'] ?? '';
-        p.noOfPlants = result.data['NoOfPlants'] ?? '';
-        p.size = result.data['Size'] ?? '';
-        p.location = result.data['Location'] ?? '';
-        p.lastUpdatedOn = result.data['LastUpdatedOn'] .toDate() ?? '';
+        p.reservePrice = result.data()['ReservePrice'] ?? '';
+        p.noOfPlants = result.data()['NoOfPlants'] ?? '';
+        p.size = result.data()['Size'] ?? '';
+        p.location = result.data()['Location'] ?? '';
+        p.lastUpdatedOn = result.data()['LastUpdatedOn'] .toDate() ?? '';
 
         //p.lastUpdatedOn = result.data['LastUpdatedOn'] ?? '';
         //print("LastUpdatedOn " + result.data['LastUpdatedOn']);
@@ -449,22 +449,47 @@ class DatabaseService {
 
 
   // product list from snapshot
-  Future<List<Product>> myProducts() async{
+  Future<List<Product>> myProducts (User currentUser) async{
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('RegisterState', 2);
-    prefs.commit();
+    //SharedPreferences prefs = await SharedPreferences.getInstance();
+    //prefs.setInt('RegisterState', 2);
+    //prefs.commit();
 
     List<Product> productList = new List<Product>();
     productList= [];
     print("Entering myProducts database func");
     var documents =  dbProductCollection.getDocuments();
 
-    FirebaseFirestore.instance.collection("Products")
-        .where("Owner", isEqualTo: "")
+    await FirebaseFirestore.instance.collection("Products")
+        .where("Owner", isEqualTo: currentUser.Name)
         .get().then((event) {
       if (event.docs.isNotEmpty) {
-        Map<String, dynamic> documentData = event.docs.; //if it is a single document
+        event.docs.forEach((res) {
+          print(res.data());
+          Product p = new Product();
+          p.id = res.data()['ID'] ?? '';
+          print("ID " + res.data()['ID']);
+          p.category = res.data()['Category'] ?? '';
+          print("Category " + res.data()['Category']);
+          //p.description = result.data['Description'] ?? '';
+          //print("Description " + result.data['Description']);
+          //p.rating = result.data['Rating'] ?? '';
+          p.owner = res.data()['Owner'] ?? '';
+          print("Owner " + res.data()['Owner']);
+          p.location = res.data()['Location'] ?? '';
+          //print("Location " + result.data['Location']);
+          print("Age " + res.data()['Age'].toString());
+          p.age = res.data()['Age']() .toDate() ?? '';
+          p.image1 = res.data()['Image1'] ?? '';
+          print("Image1 " + res.data()['Image1']);
+          //p.isVerfied = result.data['IsVerfied'] ?? '';
+          p.reservePrice = res.data()['ReservePrice'] ?? '';
+          p.noOfPlants = res.data()['NoOfPlants'] ?? '';
+          p.size = res.data()['Size'] ?? '';
+          p.location = res.data()['Location'] ?? '';
+          p.lastUpdatedOn = res.data()['LastUpdatedOn'] .toDate() ?? '';
+          productList.add(p);
+        });
       }
     }).catchError((e) => print("error fetching data: $e"));
 
@@ -486,9 +511,9 @@ class DatabaseService {
     return snapshot.documents.map((doc){
       //print(doc.data);
       return Brew(
-          name: doc.data['name'] ?? '',
-          strength: doc.data['strength'] ?? 0,
-          sugars: doc.data['sugars'] ?? '0'
+          name: doc.data()['name'] ?? '',
+          strength: doc.data()['strength'] ?? 0,
+          sugars: doc.data()['sugars'] ?? '0'
       );
     }).toList();
   }
