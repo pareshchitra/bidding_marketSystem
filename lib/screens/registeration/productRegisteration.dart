@@ -188,7 +188,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
         appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Text('Add Your Product'),
+        title: (prod != null) ? Text('Update Your Product') : Text('Add Your Product'),
         ),
 
         body:  SingleChildScrollView(
@@ -344,7 +344,6 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                  ),
                  label: 'Age/Years Old',
                  dateFormat: DateFormat.yMd(),
-
                  firstDate: DateTime(1980, 1, 1),
                  lastDate: DateTime(2021, 31, 12),
                  selectedDate: product.age,
@@ -352,7 +351,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 SizedBox(height: 10.0),
                 TextFormField(
-                  initialValue: prod !=null ? prod.size : "",
+                  initialValue: prod !=null ? prod.size.toString() : "",
                   maxLength: 6,
                   decoration: new InputDecoration(
                     labelText: "Bheega",
@@ -379,7 +378,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 SizedBox(height: 2.0),
                 TextFormField(
-                  initialValue: prod !=null ? prod.noOfPlants : "",
+                  initialValue: prod !=null ? prod.noOfPlants.toString() : "",
                   maxLength: 6,
                   decoration: new InputDecoration(
                     labelText: "Number of Plants",
@@ -406,8 +405,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 SizedBox(height: 2.0),
                 TextFormField(
-                  initialValue: prod !=null ? prod.reservePrice : "",
-                  maxLength: 6,
+                  initialValue: prod !=null ? prod.reservePrice.toString() : "",
+                  maxLength: 8,
                   decoration: new InputDecoration(
                     labelText: "Reserve Price",
                     fillColor: Colors.white,
@@ -544,7 +543,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     }
                   },
                   color: Colors.green[700],
-                  child: Text('ADD'),
+                  child: (prod != null) ? Text('UPDATE') : Text('ADD'),
                 ),
               ],
             ),

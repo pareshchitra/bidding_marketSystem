@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/wrapper.dart';
 import 'package:bidding_market/services/auth.dart';
@@ -11,7 +12,11 @@ import 'package:bidding_market/models/user.dart';
 User loggedUser = User(type:0, PhoneNo: "NA");
 
 
-void main() => runApp(MyApp());
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
 

@@ -117,11 +117,11 @@ class DatabaseService {
     uploadTask = dbFirestoreCollection.putFile(Image);
 
     //dialogBar.createState();
-    TaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    value = await taskSnapshot.ref.getDownloadURL().then((value) {
-      print("Done: $value");
-      return value;
-    });
+    // TaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    // value = await taskSnapshot.ref.getDownloadURL().then((value) {
+    //   print("Done: $value");
+    //   return value;
+    // });
     return value;
   }
 
@@ -340,12 +340,20 @@ class DatabaseService {
   }
 
   Future<int> checkIfUserExists(String documentId/*documentId is uid of user*/) async {
+
+
     DocumentSnapshot ds;
     ds = await dbSellerCollection.document(documentId).get();
     print('Document in Seller: ${ds.exists}');
     if(ds.exists == true)
     {
+      loggedUser.Name = ds.data()["Name"];
+      loggedUser.District = ds.data()["District"];
+      loggedUser.State = ds.data()["State"];
+      loggedUser.Village = ds.data()["Village"];
+      loggedUser.uid = documentId;
       return 2; //Seller
+
     }
 
     ds = await dbBuyerCollection.document(documentId).get();
@@ -353,6 +361,11 @@ class DatabaseService {
     print('Document in Buyer: ${ds.exists}');
     if(ds.exists == true)
       {
+        loggedUser.Name = ds.data()["Name"];
+        loggedUser.District = ds.data()["District"];
+        loggedUser.State = ds.data()["State"];
+        loggedUser.Village = ds.data()["Village"];
+        loggedUser.uid = documentId;
         return 1; //Buyer
       }
     else
@@ -457,12 +470,10 @@ class DatabaseService {
 
     List<Product> productList = new List<Product>();
     productList= [];
-    print("Entering myProducts database func");
-    var documents =  dbProductCollection.getDocuments();
+    print("Entering myProducts database func with currentUserName " + currentUser.Name);
+    var documents =  dbProductCollection.where("Owner" , isEqualTo: currentUser.Name).get();
 
-    await FirebaseFirestore.instance.collection("Products")
-        .where("Owner", isEqualTo: currentUser.Name)
-        .get().then((event) {
+    await documents.then((event) {
       if (event.docs.isNotEmpty) {
         event.docs.forEach((res) {
           print(res.data());
@@ -479,7 +490,7 @@ class DatabaseService {
           p.location = res.data()['Location'] ?? '';
           //print("Location " + result.data['Location']);
           print("Age " + res.data()['Age'].toString());
-          p.age = res.data()['Age']() .toDate() ?? '';
+          p.age = res.data()['Age'].toDate() ?? '';
           p.image1 = res.data()['Image1'] ?? '';
           print("Image1 " + res.data()['Image1']);
           //p.isVerfied = result.data['IsVerfied'] ?? '';

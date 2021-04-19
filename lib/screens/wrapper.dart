@@ -83,7 +83,8 @@ class Wrapper extends StatelessWidget {
            future: dbConnection.checkIfUserExists(user.uid),
     builder: (BuildContext context, AsyncSnapshot snapshot) {
       print(snapshot);
-
+      int userExists = snapshot.data;
+      print("Snapshot of user exits : $userExists");
 
       if (!snapshot.hasData) {
         return Center(
@@ -98,9 +99,8 @@ class Wrapper extends StatelessWidget {
             ));
       }
 
-      int userExists = snapshot.data;
-      print("Snapshot of user exits : $userExists");
-      if(userExists == 1)
+
+      if(userExists == 1 || userExists == 2)
         return Home();
       else
         return RegisterDetails();

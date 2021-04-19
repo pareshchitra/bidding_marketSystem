@@ -1,3 +1,5 @@
+import 'package:bidding_market/main.dart';
+import 'package:bidding_market/screens/myProducts.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 
@@ -9,10 +11,10 @@ class NavDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            // child: Text(
-            //   'Side menu',
-            //   style: TextStyle(color: Colors.white, fontSize: 25),
-            // ),
+            child: Text(
+              'WELCOME     ' + loggedUser.Name +' !!!!',
+              style: TextStyle(color: Colors.black, fontSize: 20),
+            ),
             decoration: BoxDecoration(
                 color: Colors.lightGreen[100],
                 image: DecorationImage(
@@ -20,14 +22,13 @@ class NavDrawer extends StatelessWidget {
                     image: AssetImage('assets/images/appLogo.jpg'))),
           ),
           ListTile(
-            leading: Icon(Icons.input),
-            title: Text('Welcome'),
+            leading: Icon(Icons.verified_user_outlined),
+            title: Text('Welcome  '+  loggedUser.Name + ' !!!'),
             onTap: () => {},
           ),
           ListTile(
             leading: Icon(Icons.input),
-            title: Text('Add Product'
-                ''),
+            title: Text('Add Product'),
             onTap:() {
                       //Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
@@ -37,7 +38,7 @@ class NavDrawer extends StatelessWidget {
 
           ),
           ListTile(
-            leading: Icon(Icons.verified_user),
+            leading: Icon(Icons.details),
             title: Text('Profile'),
             onTap: () => {Navigator.of(context).pop()},
           ),
@@ -49,7 +50,11 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('My Products'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+                          Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => MyProducts()
+            ))
+                          },
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),

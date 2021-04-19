@@ -1,3 +1,4 @@
+import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/models/user.dart';
@@ -31,9 +32,9 @@ class _MyProductsState extends State<MyProducts> {
 
 
   Widget showList() {
-    final currentUser = Provider.of<User>(context);
+    //final currentUser = Provider.of<User>(context);
     return FutureBuilder(
-        future: dbConnection.myProducts(currentUser),
+        future: dbConnection.myProducts(loggedUser),
         builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           print(snapshot);
           productsList = snapshot.data;
@@ -215,8 +216,10 @@ class _MyProductsState extends State<MyProducts> {
                                 ],
                               ),
                               Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                 children:[
                                   RaisedButton.icon(onPressed: () => { update(productsList[i]) }, icon: Icon(Icons.update), label: Text("UPDATE")),
+                                  SizedBox(width: 10.0),
                                   RaisedButton.icon(onPressed: () => { delete() }, icon: Icon(Icons.delete_forever), label: Text("DELETE"))
                               ])
                             ],
@@ -241,7 +244,7 @@ class _MyProductsState extends State<MyProducts> {
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Home'),
+          title: Text('My Products'),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
@@ -279,9 +282,9 @@ class _MyProductsState extends State<MyProducts> {
     );
 
   }
-  void update(Product p)
+  Future<Widget> update(Product p)
   {
-    Navigator.push(context, MaterialPageRoute(
+    return Navigator.push(context, MaterialPageRoute(
         builder: (context) => ProductRegisterForm(p:p)
     ));
   }
