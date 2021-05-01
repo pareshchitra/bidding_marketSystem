@@ -1,5 +1,9 @@
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/myProducts.dart';
+import 'package:bidding_market/screens/registeration/BuyerForm.dart';
+import 'package:bidding_market/screens/registeration/SellerForm.dart';
+import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 
@@ -11,10 +15,10 @@ class NavDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           DrawerHeader(
-            child: Text(
-              'WELCOME     ' + loggedUser.Name +' !!!!',
-              style: TextStyle(color: Colors.black, fontSize: 20),
-            ),
+            // child: Text(
+            //   'WELCOME     ' + loggedUser.Name +' !!!!',
+            //   style: TextStyle(color: Colors.black, fontSize: 20),
+            // ),
             decoration: BoxDecoration(
                 color: Colors.lightGreen[100],
                 image: DecorationImage(
@@ -23,8 +27,16 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.verified_user_outlined),
-            title: Text('Welcome  '+  loggedUser.Name + ' !!!'),
+            title: (loggedUser.Name == null )? Text('Welcome  '+  ' !!!'): Text('Welcome  '+  loggedUser.Name  + ' !!!'),
             onTap: () => {},
+          ),
+          ListTile(
+            leading: Icon(Icons.home_outlined),
+            title: Text('Home'),
+            onTap: () => {
+                          Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Home()
+            ))},
           ),
           ListTile(
             leading: Icon(Icons.input),
@@ -40,7 +52,14 @@ class NavDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.details),
             title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: ()  {
+
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Profile(loggedUser)
+              ));
+            }
+
+
           ),
           ListTile(
             leading: Icon(Icons.settings),

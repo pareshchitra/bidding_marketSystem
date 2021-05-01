@@ -103,7 +103,7 @@ class Wrapper extends StatelessWidget {
       if(userExists == 1 || userExists == 2)
         return Home();
       else
-        return RegisterDetails();
+        return RegisterDetails(user: null);
     });
 
 

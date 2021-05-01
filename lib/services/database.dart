@@ -176,8 +176,8 @@ class DatabaseService {
     }
 }
 
-  Future<void> updateSellerData(User seller, File photo) async {
-    print("Entering UpdateSellerData");
+  Future<void> addSellerData(User seller, File photo) async {
+    print("Entering addSellerData");
     loggedUser.type = 2;
     print(seller.uid);
     print(seller.Name);
@@ -216,8 +216,8 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateBuyerData(BuyerModel buyer, File aadharFront, File aadharBack) async {
-    print("Entering UpdateBuyerData");
+  Future<void> addBuyerData(User buyer, File aadharFront, File aadharBack) async {
+    print("Entering addBuyerData");
     loggedUser.type = 1;
     print(buyer.uid);
     print(buyer.Name);
@@ -277,7 +277,100 @@ class DatabaseService {
     });
   }
 
-  Future<void> updateProductData(Product  product, File productPhoto1, File productPhoto2, File productPhoto3) async {
+
+
+  Future<void> updateUserData(User  orgUser, User updatedUser, File photo)
+  async {
+    print("Entering updateUserData");
+    User oldUser = new User(Name: orgUser.Name , Village: orgUser.Village , District: orgUser.District, State: orgUser.State) ;
+    print(updatedUser.uid);
+    print(updatedUser.Name);
+    print(updatedUser.Village);
+    print(updatedUser.District);
+    print(updatedUser.State);
+    print(updatedUser.Pincode);
+    print(loggedUser.PhoneNo);
+
+    // loggedUser.PhoneNo = "0000";
+    // print(loggedUser.PhoneNo);
+    String PhotoUrl = "";
+
+    String PhotoFileName = "seller/${orgUser.uid}/Photo";
+    if(photo != null) {
+      PhotoUrl = await uploadImage(photo, PhotoFileName);
+    }
+    print("PhotoUrl value is $PhotoUrl");
+
+    //print(loggedUser.PhoneNo);
+//TODO: to update user phone number
+    //await updatePhoneData(loggedUser.PhoneNo, seller.uid, 2);
+    print("${updatedUser.Village}  ${orgUser.Village}");
+    if( updatedUser.type == 2) {
+      await dbSellerCollection.doc(orgUser.uid).update({
+        if(orgUser.Name != updatedUser.Name) 'Name': updatedUser.Name,
+        if(orgUser.Village != updatedUser.Village) 'Village': updatedUser.Village,
+        if(orgUser.District != updatedUser.District) 'District': updatedUser.District,
+        if(orgUser.State != updatedUser.State) 'State': updatedUser.State,
+        if(orgUser.Pincode != updatedUser.Pincode) 'Pincode': updatedUser.Pincode,
+        if(PhotoUrl != '') 'Photo': PhotoUrl,
+      }).then((value) {
+        loggedUser.Name = updatedUser.Name;
+        loggedUser.Village = updatedUser.Village;
+        loggedUser.District = updatedUser.District;
+        loggedUser.State = updatedUser.State;
+        loggedUser.Pincode = updatedUser.Pincode;
+        if(PhotoUrl != '') loggedUser.photo = PhotoUrl;
+      });
+    }
+    else {
+      await dbBuyerCollection.doc(orgUser.uid).update({
+        if(orgUser.Name != updatedUser.Name) 'Name': updatedUser.Name,
+        if(orgUser.Village != updatedUser.Village) 'Village': updatedUser.Village,
+        if(orgUser.District != updatedUser.District) 'District': updatedUser.District,
+        if(orgUser.State != updatedUser.State) 'State': updatedUser.State,
+        if(orgUser.Pincode != updatedUser.Pincode) 'Pincode': updatedUser.Pincode,
+        if(orgUser.HouseNo != updatedUser.HouseNo) 'HouseNo': updatedUser.HouseNo,
+        if(orgUser.AadharNo != updatedUser.AadharNo) 'AadharNo': updatedUser.AadharNo,
+        if(PhotoUrl != '') 'Photo': PhotoUrl,
+      }).then((value) {
+        loggedUser.Name = updatedUser.Name;
+        loggedUser.Village = updatedUser.Village;
+        loggedUser.District = updatedUser.District;
+        loggedUser.State = updatedUser.State;
+        loggedUser.Pincode = updatedUser.Pincode;
+        if(PhotoUrl != '') loggedUser.photo = PhotoUrl;
+      });
+    }
+
+    print("to update myproducts");
+    print("${updatedUser.Village}  ${oldUser.Village}");
+    //TODO :: Both updates in a single transaction
+    if( oldUser.Name != updatedUser.Name || oldUser.Village != updatedUser.Village )
+      {
+        print("Entering update Product data");
+        var documents =  dbProductCollection.where("Owner" , isEqualTo: oldUser.Name).get();
+        await documents.then((event) {
+          if (event.docs.isNotEmpty) {
+            event.docs.forEach((doc) {
+              doc.reference.update({
+                if(oldUser.Name != updatedUser.Name) 'Owner': updatedUser.Name,
+                if(oldUser.Village != updatedUser.Village) 'Location': updatedUser.Village,
+              });
+            });
+            }
+
+
+        });
+
+      }
+  }
+
+
+
+
+
+
+  Future<void> addProductData(Product  product, File productPhoto1, File productPhoto2, File productPhoto3) async {
     print("Entering UpdateProductData");
 
     print(product.id);
@@ -339,6 +432,69 @@ class DatabaseService {
     });
   }
 
+
+
+  Future<void> updateProductData(Product  orgProduct, Product updatedProduct, File productPhoto1, File productPhoto2, File productPhoto3) async {
+    print("Entering UpdateProductData");
+
+    print("ID : ${updatedProduct.id}");
+    print("Category : ${updatedProduct.category}");
+    print("Description : ${updatedProduct.description}");
+    print("Rating : ${updatedProduct.rating}");
+    //print(updatedProduct.owner);
+    //print(updatedProduct.location);
+    print("Age : ${updatedProduct.age}");
+    print("Price :  ${updatedProduct.reservePrice}");
+    //print(updatedProduct.lastUpdatedOn);
+    //print(updatedProduct.lastUpdatedBy);
+    print("Photo1 : $productPhoto1");
+    print("Photo2 : $productPhoto2");
+
+
+    String photo1 = "product/${updatedProduct.id}/Photo1";
+    String photo2 = "product/${updatedProduct.id}/Photo2";
+    String photo3 = "product/${updatedProduct.id}/Photo3";
+    String photo1Url='';
+    String photo2Url='';
+    String photo3Url= '';
+
+
+    if(productPhoto1 != null) {
+      photo1Url = await uploadImage(productPhoto1, photo1);
+    }
+    print("photo1Url value is $photo1Url");
+
+    if(productPhoto2 != null) {
+      photo2Url = await uploadImage(productPhoto2, photo2);
+
+    }
+    print("photo2Url value is $photo2Url");
+
+    if(productPhoto3 != null ) {
+      photo3Url = await uploadImage(productPhoto3, photo3);
+    }
+    print("photo3Url value is $photo3Url");
+
+    return await dbProductCollection.doc(orgProduct.id).update({
+      if(updatedProduct.category != null && orgProduct.category != updatedProduct.category) 'Category': updatedProduct.category,
+      //'Description': product.description,
+      if(updatedProduct.age != null && orgProduct.age != updatedProduct.age) 'Age': updatedProduct.age,
+      if(orgProduct.size != updatedProduct.size) 'Size': updatedProduct.size,
+      if(orgProduct.noOfPlants != updatedProduct.noOfPlants) 'NoOfPlants': updatedProduct.noOfPlants,
+      if(orgProduct.reservePrice != updatedProduct.reservePrice) 'ReservePrice': updatedProduct.reservePrice,
+      'LastUpdatedOn': updatedProduct.lastUpdatedOn,
+      'LastUpdatedBy': updatedProduct.lastUpdatedBy,
+      if( photo1Url != '') 'Image1': photo1Url,
+      if( photo2Url != '') 'Image2': photo2Url,
+      if( photo3Url != '') 'Image3': photo3Url
+
+    });
+  }
+
+  Future<void> deleteProduct(Product p)  async{
+    await dbProductCollection.doc(p.id).delete();
+  }
+
   Future<int> checkIfUserExists(String documentId/*documentId is uid of user*/) async {
 
 
@@ -351,7 +507,11 @@ class DatabaseService {
       loggedUser.District = ds.data()["District"];
       loggedUser.State = ds.data()["State"];
       loggedUser.Village = ds.data()["Village"];
+      loggedUser.Pincode = ds.data()["Pincode"];
       loggedUser.uid = documentId;
+      loggedUser.type = 2;
+      loggedUser.photo = ds.data()["Photo"];
+      print("Logged User is " + loggedUser.Name);
       return 2; //Seller
 
     }
@@ -365,7 +525,13 @@ class DatabaseService {
         loggedUser.District = ds.data()["District"];
         loggedUser.State = ds.data()["State"];
         loggedUser.Village = ds.data()["Village"];
+        loggedUser.Pincode = ds.data()["Pincode"];
         loggedUser.uid = documentId;
+        //TODO : PHOTO OF BUYER
+        loggedUser.photo = ds.data()["IdFrontUrl"];
+        loggedUser.type = 1;
+        loggedUser.HouseNo = ds.data()["HouseNo"];
+        loggedUser.AadharNo = ds.data()["AadharNo"];
         return 1; //Buyer
       }
     else
@@ -509,13 +675,13 @@ class DatabaseService {
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
 
-  Future<void> updateUserData(String sugars, String name, int strength) async {
-    return await brewCollection.document(uid).setData({
-      'sugars': sugars,
-      'name': name,
-      'strength': strength,
-    });
-  }
+  // Future<void> updateUserData(String sugars, String name, int strength) async {
+  //   return await brewCollection.document(uid).setData({
+  //     'sugars': sugars,
+  //     'name': name,
+  //     'strength': strength,
+  //   });
+  // }
 
   // brew list from snapshot
   List<Brew> _brewListFromSnapshot(QuerySnapshot snapshot) {

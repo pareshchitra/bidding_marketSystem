@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
+import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/services/database.dart';
@@ -9,11 +10,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class sellerForm extends StatefulWidget {
+  final User user;  // <--- generates the error, "Field doesn't override an inherited getter or setter"
+  sellerForm({
+    User user
+  }): this.user = user;
+
   @override
-  _sellerFormState createState() => _sellerFormState();
+  _sellerFormState createState() => _sellerFormState(user);
 }
 
 class _sellerFormState extends State<sellerForm> {
+  final User user;
+  _sellerFormState(this.user);
+
   final _formKey = GlobalKey<FormState>();
 
   User seller = User();
@@ -75,7 +84,7 @@ class _sellerFormState extends State<sellerForm> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final userStream = Provider.of<User>(context);
     return loading ? Container( height: 700, child:Loading()) :Container(
       child: Form(
         key: _formKey,
@@ -83,6 +92,7 @@ class _sellerFormState extends State<sellerForm> {
             children: <Widget>[
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.Name : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: "Name",
@@ -116,6 +126,7 @@ class _sellerFormState extends State<sellerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.Village : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: "Village/City",
@@ -141,6 +152,7 @@ class _sellerFormState extends State<sellerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.District : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: "District",
@@ -166,6 +178,7 @@ class _sellerFormState extends State<sellerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.State : '',
                 maxLength: 30,
                 decoration: new InputDecoration(
                   labelText: "State",
@@ -191,6 +204,7 @@ class _sellerFormState extends State<sellerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.Pincode : '',
                 maxLength: 6,
                 decoration: new InputDecoration(
                   labelText: "Pincode",
@@ -247,12 +261,12 @@ class _sellerFormState extends State<sellerForm> {
               // ),
               RaisedButton(
                 onPressed: () async {
-                  if(_formKey.currentState.validate())
-                    {
-                      setState(() => loading = true);
-                      _formKey.currentState.save();
-                      seller.uid = user.uid;
-                      await dbConnection.updateSellerData(seller, _Photo);
+                  if (_formKey.currentState.validate()) {
+                    setState(() => loading = true);
+                    _formKey.currentState.save();
+                    seller.uid = userStream.uid;
+                    if (user == null) {
+                      await dbConnection.addSellerData(seller, _Photo);
                       setState(() {
                         loading = false;
                         Navigator.push(context, MaterialPageRoute(
@@ -260,9 +274,23 @@ class _sellerFormState extends State<sellerForm> {
                         ));
                       });
                     }
+
+                    else // UPDATION OF PROFILE
+                        {
+                          seller.type = 2;
+
+                      await dbConnection.updateUserData(user, seller, _Photo);
+                      setState(() {
+                        loading = false;
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => Profile(loggedUser)
+                        ));
+                      });
+                    }
+                  }
                 },
                 color: Colors.green[700],
-                child: Text('Register'),
+                child: (user != null ) ? Text('UPDATE') : Text('Register'),
               ),
             ],
           )),

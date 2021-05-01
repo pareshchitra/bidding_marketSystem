@@ -74,8 +74,12 @@ class _MyProductsState extends State<MyProducts> {
                 //     fontStyle: FontStyle.italic,
                 //   ),
                 // ),
-                Expanded(child:
-                ListView.builder(
+                Expanded(
+                    child:productsList.length == 0
+                        ? Center(
+                      child: Text('No products to show of this user', style: TextStyle(fontSize: 20),),
+                    )
+                : ListView.builder(
                   itemCount: productsList.length,
                   itemBuilder: (ctx, i) {
                     Duration dur = DateTime.now().difference(productsList[i].age);
@@ -99,10 +103,10 @@ class _MyProductsState extends State<MyProducts> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
 
-                                        child: Image.network(
-                                          "${productsList[i].image1}",
+                                        child: (productsList[i].image1 != "File not uploaded" ) ? Image.network(
+                                          "${productsList[i].image1}" ,
                                           fit: BoxFit.cover,
-                                        ),
+                                        ) : Text("No Image Available")
                                       ),
                                     ),
                                   ),
@@ -220,7 +224,7 @@ class _MyProductsState extends State<MyProducts> {
                                 children:[
                                   RaisedButton.icon(onPressed: () => { update(productsList[i]) }, icon: Icon(Icons.update), label: Text("UPDATE")),
                                   SizedBox(width: 10.0),
-                                  RaisedButton.icon(onPressed: () => { delete() }, icon: Icon(Icons.delete_forever), label: Text("DELETE"))
+                                  RaisedButton.icon(onPressed: () => { delete( context,productsList[i]) }, icon: Icon(Icons.delete_forever), label: Text("DELETE"))
                               ])
                             ],
                           ),
@@ -254,9 +258,9 @@ class _MyProductsState extends State<MyProducts> {
               onPressed: () async {
                 //Navigator.of(context).pop();
                 await _auth.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) => Authenticate()
-                ));
+                Navigator.of(context)
+                    .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Authenticate() ), (Route<dynamic> route) => false
+                );
                 //PhoneAuthDataProvider().signOut();
               },
             ),
@@ -289,8 +293,36 @@ class _MyProductsState extends State<MyProducts> {
     ));
   }
 
-  void delete()
-  {
 
+
+  delete(BuildContext context, Product p) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Alert Dialog'),
+          content: Text("Are You Sure Want To Delete this product?"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("YES"),
+              onPressed: () async{
+                Navigator.of(context).pop();
+                await dbConnection.deleteProduct(p);
+                setState(() {  showList();  });
+              },
+            ),
+
+            FlatButton(
+              child: Text("NO"),
+              onPressed: () {
+
+                Navigator.of(context).pop();
+              },
+            ),
+
+          ],
+        );
+      },
+    );
   }
 }

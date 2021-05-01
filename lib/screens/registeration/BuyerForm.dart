@@ -1,21 +1,32 @@
 import 'dart:io';
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/buyerModel.dart';
+import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
+import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 class buyerForm extends StatefulWidget {
+  final User user;  // <--- generates the error, "Field doesn't override an inherited getter or setter"
+  buyerForm({
+    User user
+  }): this.user = user;
+
   @override
-  _buyerFormState createState() => _buyerFormState();
+  _buyerFormState createState() => _buyerFormState(user);
 }
 
 class _buyerFormState extends State<buyerForm> {
+  final User user;
+  _buyerFormState(this.user);
+
   final _formKey = GlobalKey<FormState>();
 
-  BuyerModel buyerModel = BuyerModel();
+  User buyer = User();
 
   DatabaseService dbConnection = DatabaseService();
   bool loading = false;
@@ -79,6 +90,7 @@ class _buyerFormState extends State<buyerForm> {
 
   @override
   Widget build(BuildContext context) {
+    final userStream = Provider.of<User>(context);
     return loading ? Container( height: 700, child:Loading()) :Container(
       child: Form(
         key: _formKey,
@@ -86,6 +98,7 @@ class _buyerFormState extends State<buyerForm> {
             children: <Widget>[
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.Name : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: "Name",
@@ -105,7 +118,7 @@ class _buyerFormState extends State<buyerForm> {
                 },
                 keyboardType: TextInputType.name,
                 onSaved: (String value) {
-                  buyerModel.Name = value;
+                  buyer.Name = value;
                 },
               ),
               SizedBox(height: 10.0),
@@ -118,6 +131,7 @@ class _buyerFormState extends State<buyerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? buyer.HouseNo : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: "House Number",
@@ -138,11 +152,12 @@ class _buyerFormState extends State<buyerForm> {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.HouseNo = value;
+                  buyer.HouseNo = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.Village : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: "Village/City",
@@ -163,11 +178,12 @@ class _buyerFormState extends State<buyerForm> {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.Village = value;
+                  buyer.Village = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.District : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: "District",
@@ -188,11 +204,12 @@ class _buyerFormState extends State<buyerForm> {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.District = value;
+                  buyer.District = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.State : '',
                 maxLength: 30,
                 decoration: new InputDecoration(
                   labelText: "State",
@@ -213,11 +230,12 @@ class _buyerFormState extends State<buyerForm> {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.State = value;
+                  buyer.State = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.Pincode : '',
                 maxLength: 6,
                 decoration: new InputDecoration(
                   labelText: "Pincode",
@@ -238,11 +256,12 @@ class _buyerFormState extends State<buyerForm> {
                 keyboardType: TextInputType.number,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.Pincode = value;
+                  buyer.Pincode = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
+                initialValue: (user != null) ? user.AadharNo : '',
                 maxLength: 12,
                 decoration: new InputDecoration(
                   labelText: "Aadhar Number",
@@ -263,7 +282,7 @@ class _buyerFormState extends State<buyerForm> {
                 keyboardType: TextInputType.number,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyerModel.AadharNo = value;
+                  buyer.AadharNo = value;
                 },
               ),
               // _AadharFront == null ?
@@ -294,21 +313,35 @@ class _buyerFormState extends State<buyerForm> {
                   {
                     setState(() => loading = true);
                     _formKey.currentState.save();
-                    buyerModel.uid = loggedUser.uid;
-                    await dbConnection.updateBuyerData(buyerModel, _AadharFront, _AadharBack);
+                    buyer.uid = userStream.uid;
+                  if( user == null ) {
+                    await dbConnection.addBuyerData(
+                        buyer, _AadharFront, _AadharBack);
                     setState(() {
                       loading = false;
                       Navigator.push(context, MaterialPageRoute(
                           builder: (context) => Home()
                       ));
                     });
+                  }
+                  else // UPDATION OF PROFILE
+                      {
+                        buyer.type = 1;
+                    await dbConnection.updateUserData(user, buyer, _AadharFront); // CHANGE PROFILE PHOTO HERE
+                    setState(() {
+                      loading = false;
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Profile(loggedUser)
+                      ));
+                    });
+                  }
                     // Navigator.push(context, MaterialPageRoute(
                     //     builder: (context) => Home()
                     // ));
                   }
                 },
                 color: Colors.green[700],
-                child: Text('Register'),
+                child: (user != null ) ? Text('UPDATE') : Text('Register'),
               ),
             ],
           )),

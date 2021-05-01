@@ -1,3 +1,4 @@
+import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
@@ -7,15 +8,19 @@ import 'BuyerForm.dart';
 import 'SellerForm.dart';
 
 class RegisterDetails extends StatefulWidget {
+  final User user;  // <--- generates the error, "Field doesn't override an inherited getter or setter"
+
 
   final Function toggleView;
-  RegisterDetails({ this.toggleView });
+  RegisterDetails({ this.user , this.toggleView });
 
   @override
-  _RegisterState createState() => _RegisterState();
+  _RegisterState createState() => _RegisterState(user);
 }
 
 class _RegisterState extends State<RegisterDetails> {
+  final User user;
+  _RegisterState(this.user);
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
@@ -28,6 +33,7 @@ class _RegisterState extends State<RegisterDetails> {
 
   int clickedButton = 2;
 
+
   void toggleForm(int value) {
     setState(() {
       clickedButton = value;
@@ -39,13 +45,16 @@ class _RegisterState extends State<RegisterDetails> {
   @override
   Widget build(BuildContext context) {
     //String phone = AuthService().user.PhoneNo;
+    if( user != null )
+      clickedButton = user.type;
+
     double width = MediaQuery.of(context).size.width;
     return loading ? Loading() : Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Center(child: Text('Sign Up to Farmway', textAlign: TextAlign.center)),
+        title: Center(child: (user!=null) ? Text('Update Profile', textAlign: TextAlign.center): Text('Sign Up to Farmway', textAlign: TextAlign.center)),
         // actions: <Widget>[
         //   FlatButton.icon(
         //     icon: Icon(Icons.person),
@@ -91,7 +100,7 @@ class _RegisterState extends State<RegisterDetails> {
                 ],
               ),
               Container(
-                child: clickedButton == 1 ? buyerForm() : sellerForm(),
+                child: clickedButton == 1 ? buyerForm(user: user) : sellerForm(user: user),
               )
             ])),
       ),

@@ -3,6 +3,7 @@ import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/home/home.dart';
+import 'package:bidding_market/screens/myProducts.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/shared/loading.dart';
@@ -99,14 +100,14 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
               FlatButton.icon(
                   label: Text("Camera"),
                   onPressed: () {
-                    retreiveImage(ImageSource.camera, imageNumber);
+                    retreiveImage(ImageSource.camera, imageNumber, context);
                   },
                   icon: Icon(Icons.camera_alt)
               ),
               FlatButton.icon(
                   label: Text("Gallery"),
                   onPressed: () {
-                    retreiveImage(ImageSource.gallery, imageNumber);}, icon: Icon(Icons.image)),
+                    retreiveImage(ImageSource.gallery, imageNumber, context);}, icon: Icon(Icons.image)),
             ],
           )
         ],
@@ -115,7 +116,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
     );
   }
 
-  void retreiveImage(ImageSource source, int imageNumber) async {
+  void retreiveImage(ImageSource source, int imageNumber ,BuildContext context) async {
     final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
     File _imageFile = File(pickedFile.path);
     Navigator.pop(context);
@@ -182,13 +183,14 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
     String _category;
+    final dateController = TextEditingController(text : (prod != null) ? prod.age.year.toString() : '');
 
     return  loading ? Loading() : Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: (prod != null) ? Text('Update Your Product') : Text('Add Your Product'),
+        title: (prod != null) ? Text('Update Your Farm') : Text('Add Your Farm'),
         ),
 
         body:  SingleChildScrollView(
@@ -198,7 +200,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
             key: _formKey,
             child: Column(
               children:[
-                SizedBox(height: 2.0),
+                SizedBox(height: 15.0),
                 // TextFormField(
                 //   maxLength: 20,
                 //   decoration: new InputDecoration(
@@ -224,6 +226,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                 // ),
                 DropdownButtonFormField<String>(
                   decoration: new InputDecoration(
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
                     labelText: "Category",
                     fillColor: Colors.white,
                     border: new OutlineInputBorder(
@@ -239,7 +242,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     value: label,
                   ))
                       .toList(),
-                  hint: Text('Category'),
+                  hint: Text( (prod != null) ? prod.category : 'Category'),
                   onChanged: (value) {
                     setState(() {
                       _category = value;
@@ -328,6 +331,36 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                 //   },
                 // ),
 
+               // TextFormField(
+               //   readOnly: true,
+               //   controller: dateController,
+               //   //initialValue : prod !=null ? prod.age.year.toString() : 'Age/Years Old',
+               //   decoration: InputDecoration(
+               //     hintText: prod !=null ? prod.age.year.toString() : 'Age/Years Old',
+               //     labelText: 'Age/Years Old',
+               //     fillColor: Colors.white,
+               //     border: new OutlineInputBorder(
+               //         borderRadius: new BorderRadius.circular(25.0),
+               //         borderSide: new BorderSide()
+               //         ),
+               //   ),
+               //   onTap: () async {
+               //     var date =  await showDatePicker(
+               //         context: context,
+               //         initialDate:DateTime.now(),
+               //         firstDate:DateTime(1900),
+               //         lastDate: DateTime(2100));
+               //    dateController.text = date.toString().substring(0,10);
+               //     product.age = date;
+               //     //if(date != null) setState(() => dateController.text = date.toString());
+               //   },
+               //
+               //   onSaved: (String value) {
+               //     product.age = DateTime( int.parse(dateController.text.substring(0,4)) , int.parse(dateController.text.substring(5,7)),
+               //                              int.parse(dateController.text.substring(8,10)));
+               //   },
+               // ),
+
                DateField(
                  onDateSelected: (DateTime value) {
                    setState(() {
@@ -335,17 +368,17 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                    });
                  },
                  decoration: new InputDecoration(
-                   labelText: "Age/Years Old",
+                   labelText:  "Age/Years Old",
                    fillColor: Colors.white,
                    border: new OutlineInputBorder(
                      borderRadius: new BorderRadius.circular(25.0),
                      borderSide: new BorderSide(),
                    ),
                  ),
-                 label: 'Age/Years Old',
+                 label: (prod!=null ) ? prod.age.year.toString() : "Age/Years Old",
                  dateFormat: DateFormat.yMd(),
                  firstDate: DateTime(1980, 1, 1),
-                 lastDate: DateTime(2021, 31, 12),
+                 lastDate: DateTime.now(),
                  selectedDate: product.age,
                ),
 
@@ -444,7 +477,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 RaisedButton(
                     color: Colors.green[700],
-                    child: Text('Upload Image1'),
+                    child: Text('Upload Farm Profile Image1'),
                     onPressed: () {
                       showModalBottomSheet(context: context,
                           builder: ((builder) => imageSourceSelector(context, 1)));
@@ -454,7 +487,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 RaisedButton(
                     color: Colors.green[700],
-                    child: Text('Upload Image2'),
+                    child: Text('Upload Farm Profile Image2'),
                     onPressed: () {
                       showModalBottomSheet(context: context,
                           builder: ((builder) => imageSourceSelector(context, 2)));
@@ -464,7 +497,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 RaisedButton(
                     color: Colors.green[700],
-                    child: Text('Upload Image3'),
+                    child: Text('Upload Farm Profile Image3'),
                     onPressed: () {
                       showModalBottomSheet(context: context,
                           builder: ((builder) => imageSourceSelector(context, 3)));
@@ -500,45 +533,76 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     {
                       setState(() => loading = true);
                       _formKey.currentState.save();
-                      //Filing out productId by first counting number of products already added by same user
 
-                      product.id = user.uid;
-                    var documents =  dbConnection.dbProductCollection.getDocuments();
-                    int currentProductNo = 1;
-                    await documents.then((snapshot) {
-                    snapshot.documents.forEach((result) {
-                      String productUid = result.data()['ID'].toString().split('#')[0];
-                      int productNum = int.parse( result.data()['ID'].toString().split('#')[1].substring(1) );
-                      print("Product Uid is $productUid");
-                      print(productNum);
-                      if( productUid.compareTo(user.uid) == 0  && productNum >= currentProductNo) {
-                        currentProductNo = productNum+1;
-                        print("CurrentProduct is $currentProductNo");
-                      }
-                    });
-                    });
-                      product.id = user.uid + "#p" + currentProductNo.toString();
-
-                      //TODO :: change owner field to user name
-                      //Owner Name will be displayed only if the product is added by Seller Login
-                      await dbConnection.dbSellerCollection.document(user.uid).get().then((DocumentSnapshot documentSnapshot) {
-                        if(documentSnapshot.exists)
+                      if( prod == null ) // ADDITION OF PRODUCT
                           {
+                        //Filing out productId by first counting number of products already added by same user
+
+                        product.id = user.uid;
+                        var documents = dbConnection.dbProductCollection
+                            .getDocuments();
+                        int currentProductNo = 1;
+                        await documents.then((snapshot) {
+                          snapshot.documents.forEach((result) {
+                            String productUid = result.data()['ID']
+                                .toString()
+                                .split('#')[0];
+                            int productNum = int.parse(
+                                result.data()['ID'].toString().split('#')[1]
+                                    .substring(1));
+                            print("Product Uid is $productUid");
+                            print(productNum);
+                            if (productUid.compareTo(user.uid) == 0 &&
+                                productNum >= currentProductNo) {
+                              currentProductNo = productNum + 1;
+                              print("CurrentProduct is $currentProductNo");
+                            }
+                          });
+                        });
+                        product.id =
+                            user.uid + "#p" + currentProductNo.toString();
+
+                        //TODO :: change owner field to user name
+                        //Owner Name will be displayed only if the product is added by Seller Login
+                        await dbConnection.dbSellerCollection.document(user.uid)
+                            .get()
+                            .then((DocumentSnapshot documentSnapshot) {
+                          if (documentSnapshot.exists) {
                             product.owner = documentSnapshot['Name'];
                             product.location = documentSnapshot['Village'];
                           }
-                        else
-                          product.owner = user.uid;
-                      });
-                      product.lastUpdatedOn = DateTime.now();
-                      product.lastUpdatedBy = user.uid;
-                      await dbConnection.updateProductData(product, productPhoto1, productPhoto2, productPhoto3);
-                      setState(() {
-                        loading = false;
-                        Navigator.push(context, MaterialPageRoute(
-                            builder: (context) => Home()
-                        ));
-                      });
+                          else
+                            product.owner = user.uid;
+                        });
+                        product.lastUpdatedOn = DateTime.now();
+                        product.lastUpdatedBy = user.uid;
+                        await dbConnection.addProductData(
+                            product, productPhoto1, productPhoto2,
+                            productPhoto3);
+
+                        setState(() {
+                          loading = false;
+                          Navigator.push(context, MaterialPageRoute(
+                              builder: (context) => Home()
+                          ));
+                        });
+                      }
+                      else  // UPDATION OF PRODUCT
+                        {
+                          product.lastUpdatedOn = DateTime.now();
+                          product.lastUpdatedBy = user.uid;
+                          await dbConnection.updateProductData(
+                            prod, product, productPhoto1, productPhoto2,
+                            productPhoto3);
+
+                          setState(() {
+                            loading = false;
+                            Navigator.push(context, MaterialPageRoute(
+                                builder: (context) => MyProducts()
+                            ));
+                          });
+                        }
+
 
                     }
                   },

@@ -1,11 +1,12 @@
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/home/home.dart';
+import 'package:bidding_market/screens/wrapper.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/main.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as FirbaseAuth;
 
 class PhoneAuthVerify extends StatefulWidget {
   /*
@@ -272,7 +273,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 //    _showSnackBar(phoneAuthDataProvider.message);
   }
 
-  onVerified(FirebaseUser user, String phone) async {
+  onVerified(FirbaseAuth.User user, String phone) async {
     _showSnackBar(
         "${Provider
             .of<PhoneAuthDataProvider>(context, listen: false)
@@ -281,7 +282,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
     await DatabaseService().updatePhoneData(phone, user.uid, 1);
     await Future.delayed(Duration(seconds: 1));
     Navigator.of(context)
-        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) => Home()));
+        .pushReplacement(MaterialPageRoute(builder: (BuildContext context) => Wrapper()));
   }
 
   onFailed() {

@@ -80,133 +80,142 @@ class _HomeState extends State<Home> {
                       child :Card(
                         shape: border,
                       color: Colors.green[100],
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                color: Colors.green[500],
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            title: Text( productsList[i].category+" - "+productsList[i].location,
+                                          style: TextStyle( color : Colors.green[600],
+                                                            fontSize: 25)),
+                          ),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    color: Colors.green[500],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
 
-                                child: Image.network(
-                                  "${productsList[i].image1}",
-                                  fit: BoxFit.cover,
+                                    child: (productsList[i].image1 != "File not uploaded" ) ? Image.network(
+                                      "${productsList[i].image1}" ,
+                                      fit: BoxFit.cover,
+                                    ) : Text("No Image Available"),
+                                  ),
                                 ),
                               ),
-                            ),
+                              SizedBox(width: 15),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    // Icon(Icons.account_circle),
+                                    // Text(
+                                    //   "${productsList[i].owner}",
+                                    //   style: Theme
+                                    //       .of(context)
+                                    //       .textTheme
+                                    //       .title,
+                                    // ),
+                                    RichText(
+                                        text: TextSpan(
+                                            children : [
+                                              WidgetSpan(
+                                                  child: Icon(Icons.account_circle,size: 25,color: Colors.green[700])),
+                                              WidgetSpan(
+                                                  child: SizedBox(width: 8.0)),
+                                              TextSpan(
+                                                text: "${productsList[i].owner}",
+                                                style: TextStyle(color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ]
+                                        )),
+                                    RichText(
+                                        text: TextSpan(
+                                            children : [
+                                              WidgetSpan(
+                                                  child: Icon(Icons.place,size: 25,color: Colors.green[700])),
+                                              WidgetSpan(
+                                                  child: SizedBox(width: 8.0)),
+                                              TextSpan(
+                                                text: "${productsList[i].location}",
+                                                style: TextStyle(color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ]
+                                        )),
+                                    RichText(
+                                        text: TextSpan(
+                                            children : [
+                                              WidgetSpan(
+                                                  child: Icon(Icons.nature,size: 25,color: Colors.green[700])),
+                                              WidgetSpan(
+                                                  child: SizedBox(width: 8.0)),
+                                              TextSpan(
+                                                  text: "${productsList[i].noOfPlants} " + "Plants",
+                                                  style: TextStyle(color: Colors.black,
+                                                                   fontSize: 20),
+                                              ),
+                                            ]
+                                        )),
+                                    RichText(
+                                        text: TextSpan(
+                                            children : [
+                                              WidgetSpan(
+                                                  child: Icon(Icons.fence,size: 25, color: Colors.green[700])),
+                                              WidgetSpan(
+                                                  child: SizedBox(width: 8.0)),
+                                              TextSpan(
+                                                text: "${productsList[i].size} " + "Bheega",
+                                                style: TextStyle(color: Colors.black,
+                                                                 fontSize: 20),
+                                              ),
+                                            ]
+                                        )),
+                                    RichText(
+                                        text: TextSpan(
+                                            children : [
+                                              WidgetSpan(
+                                                  child: Icon(Icons.nature_people,size: 25,color: Colors.green[700])),
+                                              WidgetSpan(
+                                                  child: SizedBox(width: 8.0)),
+                                              TextSpan(
+                                                text: "$differenceInYears " + "Years",
+                                                style: TextStyle(color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                            ]
+                                        )),
+                                    RichText(
+                                        text: TextSpan(
+                                            children : [
+                                              WidgetSpan(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left:8.0),
+                                                    child: Text('\u{20B9}',style: TextStyle(fontSize: 23, color:Colors.green[700]),),
+                                                  )), //Rupee Symbol
+                                              WidgetSpan(
+                                                  child: SizedBox(width: 8.0)),
+                                              TextSpan(
+                                                text: "${productsList[i].reservePrice} " +"Rs.",
+                                                style: TextStyle(color: Colors.black,
+                                                                 fontSize: 20),
+                                              ),
+                                            ]
+                                        )),
+
+
+                              SizedBox(height: 15),
+                              //MyCounter(),
+                            ],
                           ),
-                          SizedBox(width: 15),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                // Icon(Icons.account_circle),
-                                // Text(
-                                //   "${productsList[i].owner}",
-                                //   style: Theme
-                                //       .of(context)
-                                //       .textTheme
-                                //       .title,
-                                // ),
-                                RichText(
-                                    text: TextSpan(
-                                        children : [
-                                          WidgetSpan(
-                                              child: Icon(Icons.account_circle,size: 25,color: Colors.green[700])),
-                                          WidgetSpan(
-                                              child: SizedBox(width: 8.0)),
-                                          TextSpan(
-                                            text: "${productsList[i].owner}",
-                                            style: TextStyle(color: Colors.black,
-                                                fontSize: 20),
-                                          ),
-                                        ]
-                                    )),
-                                RichText(
-                                    text: TextSpan(
-                                        children : [
-                                          WidgetSpan(
-                                              child: Icon(Icons.place,size: 25,color: Colors.green[700])),
-                                          WidgetSpan(
-                                              child: SizedBox(width: 8.0)),
-                                          TextSpan(
-                                            text: "${productsList[i].location}",
-                                            style: TextStyle(color: Colors.black,
-                                                fontSize: 20),
-                                          ),
-                                        ]
-                                    )),
-                                RichText(
-                                    text: TextSpan(
-                                        children : [
-                                          WidgetSpan(
-                                              child: Icon(Icons.nature,size: 25,color: Colors.green[700])),
-                                          WidgetSpan(
-                                              child: SizedBox(width: 8.0)),
-                                          TextSpan(
-                                              text: "${productsList[i].noOfPlants} " + "Plants",
-                                              style: TextStyle(color: Colors.black,
-                                                               fontSize: 20),
-                                          ),
-                                        ]
-                                    )),
-                                RichText(
-                                    text: TextSpan(
-                                        children : [
-                                          WidgetSpan(
-                                              child: Icon(Icons.fence,size: 25, color: Colors.green[700])),
-                                          WidgetSpan(
-                                              child: SizedBox(width: 8.0)),
-                                          TextSpan(
-                                            text: "${productsList[i].size} " + "Bheega",
-                                            style: TextStyle(color: Colors.black,
-                                                             fontSize: 20),
-                                          ),
-                                        ]
-                                    )),
-                                RichText(
-                                    text: TextSpan(
-                                        children : [
-                                          WidgetSpan(
-                                              child: Icon(Icons.nature_people,size: 25,color: Colors.green[700])),
-                                          WidgetSpan(
-                                              child: SizedBox(width: 8.0)),
-                                          TextSpan(
-                                            text: "$differenceInYears " + "Years",
-                                            style: TextStyle(color: Colors.black,
-                                                fontSize: 20),
-                                          ),
-                                        ]
-                                    )),
-                                RichText(
-                                    text: TextSpan(
-                                        children : [
-                                          WidgetSpan(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(left:8.0),
-                                                child: Text('\u{20B9}',style: TextStyle(fontSize: 23, color:Colors.green[700]),),
-                                              )), //Rupee Symbol
-                                          WidgetSpan(
-                                              child: SizedBox(width: 8.0)),
-                                          TextSpan(
-                                            text: "${productsList[i].reservePrice} " +"Rs.",
-                                            style: TextStyle(color: Colors.black,
-                                                             fontSize: 20),
-                                          ),
-                                        ]
-                                    )),
-
-
-                          SizedBox(height: 15),
-                          //MyCounter(),
-                        ],
-                      ),
                     ),
                   ],
                 ),
+                        ],
+                      ),
               ));
             },
           )
@@ -237,9 +246,9 @@ class _HomeState extends State<Home> {
               onPressed: () async {
                 //Navigator.of(context).pop();
                 await _auth.signOut();
-                Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) => Authenticate()
-                ));
+                Navigator.of(context)
+                    .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Authenticate() ), (Route<dynamic> route) => false
+                );
                 //PhoneAuthDataProvider().signOut();
               },
             ),

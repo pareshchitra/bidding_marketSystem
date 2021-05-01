@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:bidding_market/services/database.dart';
@@ -10,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:bidding_market/models/user.dart';
 
 User loggedUser = User(type:0, PhoneNo: "NA");
-
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
