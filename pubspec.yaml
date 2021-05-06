@@ -38,6 +38,7 @@ dependencies:
   date_field: ^0.1.2
   intl: ^0.16.0
   shared_preferences: ^0.5.12+4
+  filter_list: ^0.0.1
 
 
 dev_dependencies:

@@ -9,6 +9,7 @@ import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:filter_list/filter_list.dart';
 
 
 
@@ -24,14 +25,16 @@ class _HomeState extends State<Home> {
   DatabaseService dbConnection = DatabaseService();
 
   List<Product> productsList ;
+  List<String>  villageList = [];
+  List<String> selectedVillageList = [];
 
-
+  int pagesPerBatch = 10;
  Widget showList() {
     return FutureBuilder(
-        future: dbConnection.productListFromSnapshot(),
-        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-          print(snapshot);
-          productsList = snapshot.data;
+        future: dbConnection.getProducts(),
+        builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
+          print("Snapshot is " + snapshot.toString());
+          //productsList.addAll(snapshot.data);
 
           if (!snapshot.hasData) {
             return Center(
@@ -45,12 +48,22 @@ class _HomeState extends State<Home> {
                   ),
                 ));
           }
-          if(snapshot.hasData) {
-            if (productsList == null) {
-              print("PARESH productList");
-              productsList = [];
+          if(snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              if (productsList == null) {
+                productsList = [];
+              }
+              print("Length of snapshot data is ${snapshot.data.length}");
+              productsList.addAll(snapshot.data);
+              print("products list is now");
+              print(productsList);
+              // productsList.sort((a, b) =>
+              // a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
+              for( Product product in productsList )
+                villageList.add(product.location);
+              villageList = villageList.toSet().toList();
+              print("Village List is $villageList");
             }
-            productsList.sort((a,b) => a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
           }
           final border = RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -70,11 +83,39 @@ class _HomeState extends State<Home> {
                 // ),
                 Expanded(child:
                 ListView.builder(
-                  itemCount: productsList.length,
-                  itemBuilder: (ctx, i) {
-                    Duration dur = DateTime.now().difference(productsList[i].age);
-                    String differenceInYears = (dur.inDays/365).floor().toString();
-                    return Padding(
+                  itemCount: productsList.length + 2, // +1 for the load button , +1 for the filter button
+                  itemBuilder: (ctx, index) {
+                    String differenceInYears = '';
+                    if( index == 0 )
+                      {
+                        return FloatingActionButton(
+                          onPressed: _openFilterList,
+                          tooltip: 'Filter Village',
+                          child: Icon(Icons.filter_alt_outlined),
+                        );
+                      }
+                    if( index <= productsList.length ) {
+                      Duration dur = DateTime.now().difference(
+                          productsList[index-1].age);
+                      differenceInYears = (dur.inDays / 365)
+                          .floor()
+                          .toString();
+                    }
+                    print("Length of snapshot data is ${snapshot.data.length} && index is $index");
+                   return ( (index == productsList.length + 1)   && (snapshot.data.length <= pagesPerBatch || snapshot.data.length == 0 )) ?
+                   (snapshot.data.length == 0 || snapshot.data.length < pagesPerBatch) ? SizedBox(height: 5): Container(
+                        color: Colors.greenAccent,
+                        child: FlatButton(
+                          child: Text("Load More"),
+                          onPressed: () async{
+                            //List<Product> newProducts = await dbConnection.getProducts();
+                            setState(()  {
+                              //productsList.addAll(newProducts);
+                            });
+                          },
+                        ),
+                      )
+                     : Padding(
                       padding: padding,
                       //margin: const EdgeInsets.only(bottom: 25),
                       child :Card(
@@ -83,7 +124,7 @@ class _HomeState extends State<Home> {
                       child: Column(
                         children: [
                           ListTile(
-                            title: Text( productsList[i].category+" - "+productsList[i].location,
+                            title: Text( productsList[index-1].category+" - "+productsList[index-1].location,
                                           style: TextStyle( color : Colors.green[600],
                                                             fontSize: 25)),
                           ),
@@ -98,8 +139,8 @@ class _HomeState extends State<Home> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
 
-                                    child: (productsList[i].image1 != "File not uploaded" ) ? Image.network(
-                                      "${productsList[i].image1}" ,
+                                    child: (productsList[index-1].image1 != "File not uploaded" ) ? Image.network(
+                                      "${productsList[index-1].image1}" ,
                                       fit: BoxFit.cover,
                                     ) : Text("No Image Available"),
                                   ),
@@ -126,7 +167,7 @@ class _HomeState extends State<Home> {
                                               WidgetSpan(
                                                   child: SizedBox(width: 8.0)),
                                               TextSpan(
-                                                text: "${productsList[i].owner}",
+                                                text: "${productsList[index-1].owner}",
                                                 style: TextStyle(color: Colors.black,
                                                     fontSize: 20),
                                               ),
@@ -140,7 +181,7 @@ class _HomeState extends State<Home> {
                                               WidgetSpan(
                                                   child: SizedBox(width: 8.0)),
                                               TextSpan(
-                                                text: "${productsList[i].location}",
+                                                text: "${productsList[index-1].location}",
                                                 style: TextStyle(color: Colors.black,
                                                     fontSize: 20),
                                               ),
@@ -154,7 +195,7 @@ class _HomeState extends State<Home> {
                                               WidgetSpan(
                                                   child: SizedBox(width: 8.0)),
                                               TextSpan(
-                                                  text: "${productsList[i].noOfPlants} " + "Plants",
+                                                  text: "${productsList[index-1].noOfPlants} " + "Plants",
                                                   style: TextStyle(color: Colors.black,
                                                                    fontSize: 20),
                                               ),
@@ -168,7 +209,7 @@ class _HomeState extends State<Home> {
                                               WidgetSpan(
                                                   child: SizedBox(width: 8.0)),
                                               TextSpan(
-                                                text: "${productsList[i].size} " + "Bheega",
+                                                text: "${productsList[index-1].size} " + "Bheega",
                                                 style: TextStyle(color: Colors.black,
                                                                  fontSize: 20),
                                               ),
@@ -199,7 +240,7 @@ class _HomeState extends State<Home> {
                                               WidgetSpan(
                                                   child: SizedBox(width: 8.0)),
                                               TextSpan(
-                                                text: "${productsList[i].reservePrice} " +"Rs.",
+                                                text: "${productsList[index-1].reservePrice} " +"Rs.",
                                                 style: TextStyle(color: Colors.black,
                                                                  fontSize: 20),
                                               ),
@@ -207,7 +248,8 @@ class _HomeState extends State<Home> {
                                         )),
 
 
-                              SizedBox(height: 15),
+                              SizedBox(height: 5),
+
                               //MyCounter(),
                             ],
                           ),
@@ -313,5 +355,41 @@ class _HomeState extends State<Home> {
 
       );
 
+  }
+
+  void _openFilterList() async {
+    FilterListDialog.display<String>(
+        context,
+        listData: villageList,
+        selectedListData: selectedVillageList,
+        height: 480,
+        headlineText: "Select Count",
+        searchFieldHintText: "Search Here",
+        label: (item) {
+          return item;
+        },
+        validateSelectedItem: (list, val) {
+          return list.contains(val);
+        },
+        onItemSearch: (list, text) {
+          if (list.any((element) =>
+              element.toLowerCase().contains(text.toLowerCase()))) {
+            return list
+                .where((element) =>
+                element.toLowerCase().contains(text.toLowerCase()))
+                .toList();
+          }
+          else{
+            return [];
+          }
+        },
+        onApplyButtonClick: (list) {
+          if (list != null) {
+            setState(() {
+              selectedVillageList = List.from(list);
+            });
+          }
+          Navigator.pop(context);
+        });
   }
 }

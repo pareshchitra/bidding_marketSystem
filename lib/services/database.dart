@@ -557,6 +557,59 @@ class DatabaseService {
   //   return posts;
   // }
 
+
+
+  //Pagination approach to get Products list
+  List<Product> products = new List<Product>();
+  bool hasMore = true; // flag for more products available or not
+  int documentLimit = 10; // documents to be fetched per request
+  DocumentSnapshot lastDocument; // flag for last document from where next 10 records to be fetched
+
+  Future<List<Product>> getProducts() async {
+    print("getProducts called");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('RegisterState', 2);
+    prefs.commit();
+
+    QuerySnapshot querySnapshot;
+    if (lastDocument == null) {
+      querySnapshot = await dbProductCollection.orderBy('LastUpdatedOn', descending: true)
+          .limit(documentLimit)
+          .get();
+    } else {
+      querySnapshot = await dbProductCollection.orderBy('LastUpdatedOn', descending: true).startAfterDocument(lastDocument)
+          .limit(documentLimit)
+          .get();
+      print(1);
+      print("Query is ${querySnapshot.docs}");
+      //print("QuerySnapshot data is ${querySnapshot.docs.last.data()}");
+      print("Length of querySnapshot is ${querySnapshot.docs.length}");
+    }
+    if (querySnapshot.docs.length < documentLimit) {
+      hasMore = false;
+    }
+    if (querySnapshot.docs.length == 0) {
+      hasMore = false;
+      return new List();//empty list
+    }
+    lastDocument = querySnapshot.docs[querySnapshot.docs.length - 1];
+    return querySnapshot.docs.map((document) => new Product(
+      id : document['ID'] ?? '',
+        category : document['Category'] ?? '',
+        owner : document['Owner'] ?? '',
+    location : document['Location'] ?? '',
+        age : document['Age'] .toDate() ?? '',
+    image1 : document['Image1'] ?? '',
+    reservePrice : document['ReservePrice'] ?? '',
+    noOfPlants : document['NoOfPlants'] ?? '',
+    size : document['Size'] ?? '',
+    lastUpdatedOn : document['LastUpdatedOn'] .toDate() ?? ''
+    )).toList();
+
+  }
+
+
+
   // product list from snapshot
   Future<List<Product>> productListFromSnapshot() async{
 
@@ -608,7 +661,6 @@ class DatabaseService {
         p.reservePrice = result.data()['ReservePrice'] ?? '';
         p.noOfPlants = result.data()['NoOfPlants'] ?? '';
         p.size = result.data()['Size'] ?? '';
-        p.location = result.data()['Location'] ?? '';
         p.lastUpdatedOn = result.data()['LastUpdatedOn'] .toDate() ?? '';
 
         //p.lastUpdatedOn = result.data['LastUpdatedOn'] ?? '';

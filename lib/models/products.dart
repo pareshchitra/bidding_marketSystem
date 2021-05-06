@@ -17,6 +17,7 @@ class Product {
   DateTime lastUpdatedOn;
   String lastUpdatedBy;
 
-  Product({ this.id });
+  Product({ this.id , this.category , this.description , this.rating , this.owner , this.location , this.age ,
+            this.size , this.noOfPlants , this.image1 , this.reservePrice , this.lastUpdatedOn , this.lastUpdatedBy});
 
 }
