@@ -3,6 +3,7 @@ import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/home/brew_list.dart';
+import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
@@ -29,6 +30,180 @@ class _HomeState extends State<Home> {
   List<String> selectedVillageList = [];
 
   int pagesPerBatch = 10;
+
+  Widget showProductTiles(BuildContext context, List<Product> productsList,int index) {
+
+    final border = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10.0),
+    );
+    final padding = const EdgeInsets.all(4.0);
+
+    String differenceInYears = '';
+    if( index < productsList.length ) {
+      Duration dur = DateTime.now().difference(
+          productsList[index].age);
+      differenceInYears = (dur.inDays / 365)
+          .floor()
+          .toString();
+    }
+
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return ProductDetails(product: productsList[index]);
+            },
+          ),
+        );
+      },
+      child: Padding(
+          padding: padding,
+          //margin: const EdgeInsets.only(bottom: 25),
+          child :Card(
+            shape: border,
+            color: Colors.green[100],
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text( productsList[index].category + " - " + productsList[index].size.toString() + " Bheega - " + productsList[index].location,
+                      style: TextStyle( color : Colors.green[600],
+                          fontSize: 25)),
+                ),
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          color: Colors.green[500],
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+
+                          child: (productsList[index].image1 != "File not uploaded" ) ? Image.network(
+                            "${productsList[index].image1}" ,
+                            fit: BoxFit.cover,
+                          ) : Text("No Image Available"),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          // Icon(Icons.account_circle),
+                          // Text(
+                          //   "${productsList[i].owner}",
+                          //   style: Theme
+                          //       .of(context)
+                          //       .textTheme
+                          //       .title,
+                          // ),
+                          RichText(
+                              text: TextSpan(
+                                  children : [
+                                    WidgetSpan(
+                                        child: Icon(Icons.account_circle,size: 25,color: Colors.green[700])),
+                                    WidgetSpan(
+                                        child: SizedBox(width: 8.0)),
+                                    TextSpan(
+                                      text: "${productsList[index].owner}",
+                                      style: TextStyle(color: Colors.black,
+                                          fontSize: 20),
+                                    ),
+                                  ]
+                              )),
+                          RichText(
+                              text: TextSpan(
+                                  children : [
+                                    WidgetSpan(
+                                        child: Icon(Icons.place,size: 25,color: Colors.green[700])),
+                                    WidgetSpan(
+                                        child: SizedBox(width: 8.0)),
+                                    TextSpan(
+                                      text: "${productsList[index].location}",
+                                      style: TextStyle(color: Colors.black,
+                                          fontSize: 20),
+                                    ),
+                                  ]
+                              )),
+                          RichText(
+                              text: TextSpan(
+                                  children : [
+                                    WidgetSpan(
+                                        child: Icon(Icons.nature,size: 25,color: Colors.green[700])),
+                                    WidgetSpan(
+                                        child: SizedBox(width: 8.0)),
+                                    TextSpan(
+                                      text: "${productsList[index].noOfPlants} " + "Plants",
+                                      style: TextStyle(color: Colors.black,
+                                          fontSize: 20),
+                                    ),
+                                  ]
+                              )),
+                          RichText(
+                              text: TextSpan(
+                                  children : [
+                                    WidgetSpan(
+                                        child: Icon(Icons.fence,size: 25, color: Colors.green[700])),
+                                    WidgetSpan(
+                                        child: SizedBox(width: 8.0)),
+                                    TextSpan(
+                                      text: "${productsList[index].size} " + "Bheega",
+                                      style: TextStyle(color: Colors.black,
+                                          fontSize: 20),
+                                    ),
+                                  ]
+                              )),
+                          RichText(
+                              text: TextSpan(
+                                  children : [
+                                    WidgetSpan(
+                                        child: Icon(Icons.nature_people,size: 25,color: Colors.green[700])),
+                                    WidgetSpan(
+                                        child: SizedBox(width: 8.0)),
+                                    TextSpan(
+                                      text: "$differenceInYears " + "Years",
+                                      style: TextStyle(color: Colors.black,
+                                          fontSize: 20),
+                                    ),
+                                  ]
+                              )),
+                          RichText(
+                              text: TextSpan(
+                                  children : [
+                                    WidgetSpan(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left:10.0),
+                                          child: Text('\u{20B9}',style: TextStyle(fontSize: 23, color:Colors.green[700]),),
+                                        )), //Rupee Symbol
+                                    WidgetSpan(
+                                        child: SizedBox(width: 8.0)),
+                                    TextSpan(
+                                      text: "${productsList[index].reservePrice} " +"Rs.",
+                                      style: TextStyle(color: Colors.black,
+                                          fontSize: 20),
+                                    ),
+                                  ]
+                              )),
+
+
+                          SizedBox(height: 5),
+
+                          //MyCounter(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
  Widget showList() {
     return FutureBuilder(
         future: dbConnection.getProducts(),
@@ -65,10 +240,7 @@ class _HomeState extends State<Home> {
               print("Village List is $villageList");
             }
           }
-          final border = RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          );
-          final padding = const EdgeInsets.all(4.0);
+
 
           return Column(
               children:[
@@ -88,178 +260,49 @@ class _HomeState extends State<Home> {
                     String differenceInYears = '';
                     if( index == 0 )
                       {
-                        return FloatingActionButton(
-                          onPressed: _openFilterList,
-                          tooltip: 'Filter Village',
-                          child: Icon(Icons.filter_alt_outlined),
+                        return Container(
+                          alignment: Alignment.topRight,
+                          color: Colors.brown[200],
+                          child: RaisedButton.icon(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15.0),
+                                side: BorderSide(color: Colors.red)
+                            ),
+                            icon: Icon(Icons.filter_alt_outlined),
+                            onPressed: _openFilterList,
+                            label : Text('Filter'),
+                            color: Colors.red[100],
+
+                  ),
                         );
-                      }
-                    if( index <= productsList.length ) {
-                      Duration dur = DateTime.now().difference(
-                          productsList[index-1].age);
-                      differenceInYears = (dur.inDays / 365)
-                          .floor()
-                          .toString();
-                    }
-                    print("Length of snapshot data is ${snapshot.data.length} && index is $index");
-                   return ( (index == productsList.length + 1)   && (snapshot.data.length <= pagesPerBatch || snapshot.data.length == 0 )) ?
-                   (snapshot.data.length == 0 || snapshot.data.length < pagesPerBatch) ? SizedBox(height: 5): Container(
-                        color: Colors.greenAccent,
-                        child: FlatButton(
-                          child: Text("Load More"),
-                          onPressed: () async{
-                            //List<Product> newProducts = await dbConnection.getProducts();
-                            setState(()  {
-                              //productsList.addAll(newProducts);
-                            });
-                          },
-                        ),
-                      )
-                     : Padding(
-                      padding: padding,
-                      //margin: const EdgeInsets.only(bottom: 25),
-                      child :Card(
-                        shape: border,
-                      color: Colors.green[100],
-                      child: Column(
-                        children: [
-                          ListTile(
-                            title: Text( productsList[index-1].category+" - "+productsList[index-1].location,
-                                          style: TextStyle( color : Colors.green[600],
-                                                            fontSize: 25)),
-                          ),
-                          Row(
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15.0),
-                                    color: Colors.green[500],
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                }
 
-                                    child: (productsList[index-1].image1 != "File not uploaded" ) ? Image.network(
-                                      "${productsList[index-1].image1}" ,
-                                      fit: BoxFit.cover,
-                                    ) : Text("No Image Available"),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 15),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    // Icon(Icons.account_circle),
-                                    // Text(
-                                    //   "${productsList[i].owner}",
-                                    //   style: Theme
-                                    //       .of(context)
-                                    //       .textTheme
-                                    //       .title,
-                                    // ),
-                                    RichText(
-                                        text: TextSpan(
-                                            children : [
-                                              WidgetSpan(
-                                                  child: Icon(Icons.account_circle,size: 25,color: Colors.green[700])),
-                                              WidgetSpan(
-                                                  child: SizedBox(width: 8.0)),
-                                              TextSpan(
-                                                text: "${productsList[index-1].owner}",
-                                                style: TextStyle(color: Colors.black,
-                                                    fontSize: 20),
-                                              ),
-                                            ]
-                                        )),
-                                    RichText(
-                                        text: TextSpan(
-                                            children : [
-                                              WidgetSpan(
-                                                  child: Icon(Icons.place,size: 25,color: Colors.green[700])),
-                                              WidgetSpan(
-                                                  child: SizedBox(width: 8.0)),
-                                              TextSpan(
-                                                text: "${productsList[index-1].location}",
-                                                style: TextStyle(color: Colors.black,
-                                                    fontSize: 20),
-                                              ),
-                                            ]
-                                        )),
-                                    RichText(
-                                        text: TextSpan(
-                                            children : [
-                                              WidgetSpan(
-                                                  child: Icon(Icons.nature,size: 25,color: Colors.green[700])),
-                                              WidgetSpan(
-                                                  child: SizedBox(width: 8.0)),
-                                              TextSpan(
-                                                  text: "${productsList[index-1].noOfPlants} " + "Plants",
-                                                  style: TextStyle(color: Colors.black,
-                                                                   fontSize: 20),
-                                              ),
-                                            ]
-                                        )),
-                                    RichText(
-                                        text: TextSpan(
-                                            children : [
-                                              WidgetSpan(
-                                                  child: Icon(Icons.fence,size: 25, color: Colors.green[700])),
-                                              WidgetSpan(
-                                                  child: SizedBox(width: 8.0)),
-                                              TextSpan(
-                                                text: "${productsList[index-1].size} " + "Bheega",
-                                                style: TextStyle(color: Colors.black,
-                                                                 fontSize: 20),
-                                              ),
-                                            ]
-                                        )),
-                                    RichText(
-                                        text: TextSpan(
-                                            children : [
-                                              WidgetSpan(
-                                                  child: Icon(Icons.nature_people,size: 25,color: Colors.green[700])),
-                                              WidgetSpan(
-                                                  child: SizedBox(width: 8.0)),
-                                              TextSpan(
-                                                text: "$differenceInYears " + "Years",
-                                                style: TextStyle(color: Colors.black,
-                                                    fontSize: 20),
-                                              ),
-                                            ]
-                                        )),
-                                    RichText(
-                                        text: TextSpan(
-                                            children : [
-                                              WidgetSpan(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.only(left:8.0),
-                                                    child: Text('\u{20B9}',style: TextStyle(fontSize: 23, color:Colors.green[700]),),
-                                                  )), //Rupee Symbol
-                                              WidgetSpan(
-                                                  child: SizedBox(width: 8.0)),
-                                              TextSpan(
-                                                text: "${productsList[index-1].reservePrice} " +"Rs.",
-                                                style: TextStyle(color: Colors.black,
-                                                                 fontSize: 20),
-                                              ),
-                                            ]
-                                        )),
-
-
-                              SizedBox(height: 5),
-
-                              //MyCounter(),
-                            ],
-                          ),
-                    ),
-                  ],
-                ),
-                        ],
-                      ),
-              ));
-            },
+                print("Length of snapshot data is ${snapshot.data.length} && index is $index");
+                return ((index == productsList.length + 1) &&
+                        (snapshot.data.length <= pagesPerBatch ||
+                            snapshot.data.length == 0))
+                    ? (snapshot.data.length == 0 ||
+                            snapshot.data.length < pagesPerBatch)
+                        ? SizedBox(height: 5)
+                        : Container(
+                            color: Colors.greenAccent,
+                            child: FlatButton(
+                              child: Text("Load More"),
+                              onPressed: () async {
+                                //List<Product> newProducts = await dbConnection.getProducts();
+                                setState(() {
+                                  //productsList.addAll(newProducts);
+                                });
+                              },
+                            ),
+                          )
+                    : (filterCondition() == true)
+                        ? ((!selectedVillageList
+                                .contains(productsList[index - 1].location)) // if selected filter does not contain village
+                            ? SizedBox(height: 0)
+                            : showProductTiles(context, productsList, index - 1))
+                        : showProductTiles(context, productsList, index - 1);
+              },
           )
                 )
           ]);
@@ -363,7 +406,7 @@ class _HomeState extends State<Home> {
         listData: villageList,
         selectedListData: selectedVillageList,
         height: 480,
-        headlineText: "Select Count",
+        headlineText: "Select Village",
         searchFieldHintText: "Search Here",
         label: (item) {
           return item;
@@ -377,7 +420,7 @@ class _HomeState extends State<Home> {
             return list
                 .where((element) =>
                 element.toLowerCase().contains(text.toLowerCase()))
-                .toList();
+                .toList().toSet().toList();
           }
           else{
             return [];
@@ -391,5 +434,14 @@ class _HomeState extends State<Home> {
           }
           Navigator.pop(context);
         });
+  }
+
+  // Returns TRUE if any filter is selected otherwise false
+  bool filterCondition()
+  {
+    if( selectedVillageList == null || selectedVillageList.length == 0)
+      return false;
+    else
+      return true;
   }
 }
