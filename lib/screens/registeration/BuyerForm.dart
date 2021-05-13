@@ -73,7 +73,7 @@ class _buyerFormState extends State<buyerForm> {
   }
 
   void retreiveImage(ImageSource source, int imageNumber) async {
-      final pickedFile = await _picker.getImage(imageQuality: 25,source: source);
+      final pickedFile = await _picker.getImage(imageQuality: 5,source: source, maxWidth: 10.0 , maxHeight: 10.0);
       File _imageFile = File(pickedFile.path);
       Navigator.pop(context);
       setState(() {
