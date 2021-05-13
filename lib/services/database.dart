@@ -117,11 +117,11 @@ class DatabaseService {
     uploadTask = dbFirestoreCollection.putFile(Image);
 
     //dialogBar.createState();
-    // TaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    // value = await taskSnapshot.ref.getDownloadURL().then((value) {
-    //   print("Done: $value");
-    //   return value;
-    // });
+    //TaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    value = await (await uploadTask).ref.getDownloadURL().then((value) {
+      print("Done: $value");
+      return value;
+    });
     return value;
   }
 
