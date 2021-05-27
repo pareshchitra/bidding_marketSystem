@@ -1,4 +1,5 @@
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/screens/admin/adminLogin.dart';
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/authenticate/verify.dart';
 import 'package:bidding_market/screens/home/home.dart';
@@ -37,6 +38,8 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
+    double _screenWidth = MediaQuery.of(context).size.width;
+
     return loading ? Loading() : Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
@@ -153,6 +156,20 @@ class _SignInState extends State<SignIn> {
                       startPhoneAuth();//OTP CHANGE HERE
                     },
                     color: Colors.green[400],
+                  ),
+                ),
+                  SizedBox(height: 50.0),
+                Container(
+                    height : 4.0,
+                    width : _screenWidth * 0.8,
+                    color: Colors.green
+                ),
+                  SizedBox(height: 20.0),
+                Center(
+                  child: FlatButton.icon(
+                      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginPage())),
+                      icon: (Icon(Icons.nature_people, color : Colors.green)),
+                      label: Text("I'm an Admin" , style: TextStyle(color: Colors.green , fontSize: 20.0, fontWeight: FontWeight.bold),)
                   ),
                 ),
 
