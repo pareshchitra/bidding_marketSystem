@@ -600,6 +600,8 @@ class DatabaseService {
     location : document['Location'] ?? '',
         age : document['Age'] .toDate() ?? '',
     image1 : document['Image1'] ?? '',
+    image2 : document['Image2'] ?? '',
+    image3 : document['Image3'] ?? '',
     reservePrice : document['ReservePrice'] ?? '',
     noOfPlants : document['NoOfPlants'] ?? '',
     size : document['Size'] ?? '',

@@ -18,6 +18,6 @@ class Product {
   String lastUpdatedBy;
 
   Product({ this.id , this.category , this.description , this.rating , this.owner , this.location , this.age ,
-            this.size , this.noOfPlants , this.image1 , this.reservePrice , this.lastUpdatedOn , this.lastUpdatedBy});
+            this.size , this.noOfPlants , this.image1 , this.image2 , this.image3, this.reservePrice , this.lastUpdatedOn , this.lastUpdatedBy});
 
 }
