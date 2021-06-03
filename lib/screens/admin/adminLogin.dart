@@ -1,5 +1,6 @@
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:bidding_market/shared/loading.dart';
+import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -178,6 +179,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
             isPwdCorrect = true;
             Scaffold.of(context).showSnackBar(SnackBar(
                 content: Text("Welcome Dear Admin, " + result.data()["name"])));
+
+            SharedPrefs().adminId = result.data()['id'];
 
             setState(() {
               isLoading = false;
