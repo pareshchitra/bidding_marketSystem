@@ -1,4 +1,5 @@
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/models/products.dart';
@@ -96,6 +97,7 @@ class DatabaseService {
   final CollectionReference dbBuyerCollection = FirebaseFirestore.instance.collection('Buyer');
   final CollectionReference dbPhoneCollection = FirebaseFirestore.instance.collection('PhoneNo');
   final CollectionReference dbProductCollection = FirebaseFirestore.instance.collection('Product');
+  final CollectionReference dbBidCollection = FirebaseFirestore.instance.collection('Bid');
 
 
 
@@ -713,6 +715,8 @@ class DatabaseService {
           p.age = res.data()['Age'].toDate() ?? '';
           p.image1 = res.data()['Image1'] ?? '';
           print("Image1 " + res.data()['Image1']);
+          p.image2 = res.data()['Image2'];
+          p.image3 = res.data()['Image3'];
           //p.isVerfied = result.data['IsVerfied'] ?? '';
           p.reservePrice = res.data()['ReservePrice'] ?? '';
           p.noOfPlants = res.data()['NoOfPlants'] ?? '';
@@ -726,6 +730,268 @@ class DatabaseService {
 
     return productList;
   }
+
+  Future<Product> getProduct(String productId) async {
+    DocumentSnapshot ds;
+    ds = await dbProductCollection.doc(productId).get();
+
+    if(ds.exists == true)
+    {
+      Product product = new Product();
+      product.id = ds.data()['ID'] ?? '';
+      print("ID " + ds.data()['ID']);
+      product.category = ds.data()['Category'] ?? '';
+      print("Category " + ds.data()['Category']);
+      //p.description = result.data['Description'] ?? '';
+      //print("Description " + result.data['Description']);
+      //p.rating = result.data['Rating'] ?? '';
+      product.owner = ds.data()['Owner'] ?? '';
+      print("Owner " + ds.data()['Owner']);
+      product.location = ds.data()['Location'] ?? '';
+      //print("Location " + result.data['Location']);
+      print("Age " + ds.data()['Age'].toString());
+      product.age = ds.data()['Age'].toDate() ?? '';
+      product.image1 = ds.data()['Image1'] ?? '';
+      print("Image1 " + ds.data()['Image1']);
+      product.image2 = ds.data()['Image2'];
+      product.image3 = ds.data()['Image3'];
+      //p.isVerfied = result.data['IsVerfied'] ?? '';
+      product.reservePrice = ds.data()['ReservePrice'] ?? '';
+      product.noOfPlants = ds.data()['NoOfPlants'] ?? '';
+      product.size = ds.data()['Size'] ?? '';
+      product.location = ds.data()['Location'] ?? '';
+      product.lastUpdatedOn = ds.data()['LastUpdatedOn'] .toDate() ?? '';
+      return product;
+    }
+    else
+    {
+      print("Product with Id $productId does not exists");
+      return null;
+    }
+  }
+
+
+  Future<void> addNewBid(Bid bid) async {
+    print("Entering addNewBid");
+    print(bid.productId);
+    print(bid.startTime);
+    print(bid.basePrice);
+    print(bid.endTime);
+
+    bid.id = bid.productId + "#" + bid.startTime.toString();
+    bid.status = "Active";
+    bid.priceIncrement = bid.basePrice * 0.1;
+    return await dbBidCollection.doc(bid.id).set({
+      'ProductId': bid.productId,
+      'StartTime': bid.startTime,
+      'EndTime': bid.endTime,
+      'BasePrice': bid.basePrice,
+      'Status' : bid.status,
+      'Type' : bid.type
+      //'PriceIncrement' : bid.priceIncrement,
+    });
+  }
+
+  Future<Bid> getBid(String bidId) async {
+    DocumentSnapshot ds;
+    ds = await dbBidCollection.doc(bidId).get();
+
+    if(ds.exists == true)
+    {
+      Bid bid = new Bid();
+      bid.id = bidId;
+      bid.productId = ds.data()['ProductId'];
+      bid.startTime = ds.data()['StartTime'];
+      bid.endTime = ds.data()['EndTime'];
+      bid.basePrice = ds.data()['BasePrice'];
+      bid.status = ds.data()['Status'];
+      bid.type = ds.data()['Type'];
+      List bidders = ds.data()['Bids'];
+      for(var bidder in bidders)
+        {
+          bid.bidders.add(bidder['name']);
+          bid.bidVal.add(double.parse(bidder['price']));
+        }
+      bid.priceIncrement = bid.basePrice * 0.1;
+      return bid;
+    }
+    else
+    {
+      print("Bid with Id $bidId does not exists");
+      return null;
+    }
+  }
+
+  Future<void> deleteBid(String bidId)  async{
+    await dbBidCollection.doc(bidId).delete();
+  }
+
+
+  Future<void> updateBidder(String bidId, String bidderId, String bidderName, double bidPrice) async {
+    print("Entering updateBidder");
+    print("Bidder Id is " + bidderId);
+    print("Bid Price is " + bidPrice.toString());
+
+    DocumentSnapshot ds = await dbBidCollection.doc(bidId).get();
+
+    if( ds.exists == true )
+      {
+        List<Map<String,String>> bidders = ds.data()["Bids"] ?? '';
+
+        if( bidders.length < 3 )
+          {
+            Map<String,String> bidMap = {
+              'id': bidderId,
+              'name': bidderName,
+              'price': bidPrice.toString()
+            };
+            bidders.add(bidMap);
+
+            bidders.sort( (a,b) => (double.parse(a['price']) > (double.parse(b['price']))) ? -1 : 1 );
+          }
+        else {
+          for (Map<String, String> bidder in bidders) {
+            //bidderId.add(bidder['id']);
+            //bidderName.add(bidder['name']);
+            if (bidPrice > double.parse(bidder['price'])) {
+              bidder['id'] = bidderId;
+              bidder['name'] = bidderName;
+              bidder['price'] = bidPrice.toString();
+              break;
+            }
+          }
+        }
+
+        return await dbBidCollection.doc(bidId).update({
+          'Bids': FieldValue.arrayUnion(bidders),
+          //'PriceIncrement' : bid.priceIncrement,
+        });
+      }
+    else
+      {
+        print("BidId Not found for this product in Database !!! Bidding has not yet started");
+      }
+
+  }
+
+  Future<void> updateBidStatus(String bidId, String status) async {
+    print("Entering updateBidStatus");
+
+    DocumentSnapshot ds = await dbBidCollection.doc(bidId).get();
+    if( ds.exists == true )
+    {
+      return await dbBidCollection.doc(bidId).update({
+        'Status': status,
+        //'PriceIncrement' : bid.priceIncrement,
+      });
+    }
+    else
+    {
+      print("BidId Not found for this product in Database !!! Bidding has not yet started");
+    }
+
+  }
+
+  closeBid(String bidId)
+  {
+    updateBidStatus(bidId, "Closed");
+  }
+
+
+  Future<List<Bid>> myBids (User currentUser) async{
+
+    List<Bid> bidList = new List<Bid>();
+    bidList = [];
+
+    print("Entering myBids database func with currentUserName " + currentUser.Name);
+
+    var documents =  dbBidCollection.where( 'Bids.id' , arrayContains: currentUser.uid).get();
+
+    await documents.then((event) {
+      if (event.docs.isNotEmpty) {
+        event.docs.forEach((res) {
+          print(res.data());
+
+          Bid bid = new Bid();
+          bid.productId = res.data()['ProductId'];
+          print("ProductId " + res.data()['ProductId']);
+          bid.startTime = res.data()['StartTime'];
+          print("Start Time " + res.data()['StartTime']);
+          bid.endTime = res.data()['EndTime'];
+          print("End Time " + res.data()['EndTime']);
+          bid.basePrice = res.data()['BasePrice'];
+          print("Base Price " + res.data()['BasePrice']);
+          bid.status = res.data()['Status'];
+          print("Status " + res.data()['Status']);
+          bid.type = res.data()['Type'];
+          print("Type " + res.data()['Type']);
+          List bidders = res.data()['Bids'];
+          for(var bidder in bidders)
+          {
+            bid.bidders.add(bidder['name']);
+            bid.bidVal.add(double.parse(bidder['price']));
+          }
+
+          bidList.add(bid);
+        });
+      }
+    }).catchError((e) => print("error fetching data: $e"));
+
+    return bidList;
+  }
+
+
+  //Pagination approach to get Bids List
+  List<Bid> bids = new List<Bid>();
+  bool bidHasMore = true; // flag for more products available or not
+  int bidDocumentLimit = 10; // documents to be fetched per request
+  DocumentSnapshot bidLastDocument; // flag for last document from where next 10 records to be fetched
+
+  Future<List<Bid>> getAllBids() async {
+    print("getProducts called");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setInt('RegisterState', 2);
+    prefs.commit();
+
+    QuerySnapshot querySnapshot;
+    if (bidLastDocument == null) {
+      querySnapshot = await dbBidCollection.orderBy('EndTime', descending: true)
+          .limit(bidDocumentLimit)
+          .get();
+    } else {
+      querySnapshot = await dbBidCollection.orderBy('EndTime', descending: true).startAfterDocument(bidLastDocument)
+          .limit(bidDocumentLimit)
+          .get();
+      print(1);
+      print("Query is ${querySnapshot.docs}");
+      //print("QuerySnapshot data is ${querySnapshot.docs.last.data()}");
+      print("Length of querySnapshot is ${querySnapshot.docs.length}");
+    }
+    if (querySnapshot.docs.length < bidDocumentLimit) {
+      bidHasMore = false;
+    }
+    if (querySnapshot.docs.length == 0) {
+      bidHasMore = false;
+      return new List();//empty list
+    }
+    bidLastDocument = querySnapshot.docs[querySnapshot.docs.length - 1];
+    return querySnapshot.docs.map((document) => new Bid(
+        //id : document['ID'] ?? '',
+        productId : document['ProductId'] ?? '',
+        startTime : document['StartTime'].toDate() ?? '',
+        endTime : document['EndTime'].toDate() ?? '',
+        basePrice : document['BasePrice']  ?? '',
+        status : document['Status'] ?? '',
+        type : document['Type'] ?? '',
+
+        bidders : document['Bids.name'] ?? '',
+        bidVal : document['Bids.price'].toDouble()  // ERROR
+    )).toList();
+
+  }
+  
+
+
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
 

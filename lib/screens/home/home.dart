@@ -7,7 +7,9 @@ import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:filter_list/filter_list.dart';
@@ -173,16 +175,20 @@ class _HomeState extends State<Home> {
                               )),
                           RichText(
                               text: TextSpan(
-                                  children : [
+                                  children: [
                                     WidgetSpan(
                                         child: Padding(
-                                          padding: const EdgeInsets.only(left:10.0),
-                                          child: Text('\u{20B9}',style: TextStyle(fontSize: 23, color:Colors.green[700]),),
+                                          padding: const EdgeInsets.only(
+                                              left: 10.0),
+                                          child: Text('\u{20B9}',
+                                            style: TextStyle(fontSize: 23,
+                                                color: Colors.green[700]),),
                                         )), //Rupee Symbol
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].reservePrice} " +"Rs.",
+                                      text: "${productsList[index]
+                                          .reservePrice} " + "Rs.",
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -192,17 +198,22 @@ class _HomeState extends State<Home> {
 
                           SizedBox(height: 5),
 
+
                           //MyCounter(),
                         ],
                       ),
                     ),
                   ],
                 ),
-              ],
+                if( SharedPrefs().adminId != "" &&
+                    FireBase.auth.currentUser == null ) //Admin is Logged In
+                    biddingWindow(),
+
+                        ],
             ),
           )),
     );
-  }
+    }
 
  Widget showList() {
     return FutureBuilder(
@@ -437,11 +448,63 @@ class _HomeState extends State<Home> {
   }
 
   // Returns TRUE if any filter is selected otherwise false
-  bool filterCondition()
-  {
-    if( selectedVillageList == null || selectedVillageList.length == 0)
+  bool filterCondition() {
+    if (selectedVillageList == null || selectedVillageList.length == 0)
       return false;
     else
       return true;
+  }
+
+
+  // FOR ADMIN HOME PAGE
+  Widget biddingWindow() {
+    return Row(
+        children: [
+                    dropDownList(),
+                    RaisedButton.icon(
+                        icon: Icon(CupertinoIcons.hammer_fill),
+                        label: Text('START BIDDING'),
+                        
+                        onPressed: ()  {}
+                    ),
+                    RaisedButton.icon(
+                        icon: Icon(Icons.stop),
+                        label: Text('STOP BIDDING'),
+                        onPressed: ()  {}
+                    )
+                  ],
+              );
+
+    }
+
+    String selectedDuration;
+  Widget dropDownList()
+  {
+    return DropdownButton<String>(
+      value: selectedDuration,
+      //elevation: 5,
+      style: TextStyle(color: Colors.black),
+
+      items: <String>[
+        '5', '7', '10', '14', '21', '28', '30'
+      ].map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      hint: Text(
+        "Choose Duration",
+        style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w600),
+      ),
+      onChanged: (String value) {
+        setState(() {
+          selectedDuration = value;
+        });
+      },
+    );
   }
 }
