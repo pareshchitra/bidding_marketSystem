@@ -208,15 +208,15 @@ class _HomeState extends State<Home> {
                 ),
                 if( SharedPrefs().adminId != "" &&
                     FireBase.auth.currentUser == null ) //Admin is Logged In
-                    biddingWindow(index),
+                  biddingWindow(index),
 
-                        ],
+              ],
             ),
           )),
     );
-    }
+  }
 
- Widget showList() {
+  Widget showList() {
     return FutureBuilder(
         future: dbConnection.getProducts(),
         builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
@@ -271,53 +271,53 @@ class _HomeState extends State<Home> {
                   itemBuilder: (ctx, index) {
                     String differenceInYears = '';
                     if( index == 0 )
-                      {
-                        return Container(
-                          alignment: Alignment.topRight,
-                          color: Colors.brown[200],
-                          child: RaisedButton.icon(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                side: BorderSide(color: Colors.red)
-                            ),
-                            icon: Icon(Icons.filter_alt_outlined),
-                            onPressed: _openFilterList,
-                            label : Text('Filter'),
-                            color: Colors.red[100],
+                    {
+                      return Container(
+                        alignment: Alignment.topRight,
+                        color: Colors.brown[200],
+                        child: RaisedButton.icon(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side: BorderSide(color: Colors.red)
+                          ),
+                          icon: Icon(Icons.filter_alt_outlined),
+                          onPressed: _openFilterList,
+                          label : Text('Filter'),
+                          color: Colors.red[100],
 
-                  ),
-                        );
-                }
+                        ),
+                      );
+                    }
 
-                print("Length of snapshot data is ${snapshot.data.length} && index is $index");
-                return ((index == productsList.length + 1) &&
+                    print("Length of snapshot data is ${snapshot.data.length} && index is $index");
+                    return ((index == productsList.length + 1) &&
                         (snapshot.data.length <= pagesPerBatch ||
                             snapshot.data.length == 0))
-                    ? (snapshot.data.length == 0 ||
-                            snapshot.data.length < pagesPerBatch)
+                        ? (snapshot.data.length == 0 ||
+                        snapshot.data.length < pagesPerBatch)
                         ? SizedBox(height: 5)
                         : Container(
-                            color: Colors.greenAccent,
-                            child: FlatButton(
-                              child: Text("Load More"),
-                              onPressed: () async {
-                                //List<Product> newProducts = await dbConnection.getProducts();
-                                setState(() {
-                                  //productsList.addAll(newProducts);
-                                });
-                              },
-                            ),
-                          )
-                    : (filterCondition() == true)
+                      color: Colors.greenAccent,
+                      child: FlatButton(
+                        child: Text("Load More"),
+                        onPressed: () async {
+                          //List<Product> newProducts = await dbConnection.getProducts();
+                          setState(() {
+                            //productsList.addAll(newProducts);
+                          });
+                        },
+                      ),
+                    )
+                        : (filterCondition() == true)
                         ? ((!selectedVillageList
-                                .contains(productsList[index - 1].location)) // if selected filter does not contain village
-                            ? SizedBox(height: 0)
-                            : showProductTiles(context, productsList, index - 1))
+                        .contains(productsList[index - 1].location)) // if selected filter does not contain village
+                        ? SizedBox(height: 0)
+                        : showProductTiles(context, productsList, index - 1))
                         : showProductTiles(context, productsList, index - 1);
-              },
-          )
+                  },
                 )
-          ]);
+                )
+              ]);
         });
   }
 
@@ -333,7 +333,7 @@ class _HomeState extends State<Home> {
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Home'),
+          title: Text('LIVE BIDDING'),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
@@ -351,8 +351,8 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-         body:
-         //Column(
+        body:
+        //Column(
         //   children: [
         //   Text(
         //   "Product Count is " + (productsList.length).toString(),
@@ -364,51 +364,51 @@ class _HomeState extends State<Home> {
         //   ),
         //
         // ),
-    showList()
-    //])
-        // body:  ListView.builder(
-        //     itemCount: productsList.length,
-        //     itemBuilder: (ctx, i) {
-        //       return Container(
-        //         margin: const EdgeInsets.only(bottom: 25),
-        //         child: Row(
-        //           children: <Widget>[
-        //             Expanded(
-        //               child: Container(
-        //                 decoration: BoxDecoration(
-        //                   borderRadius: BorderRadius.circular(15.0),
-        //                   color: Colors.white,
-        //                 ),
-        //                 child: Image.network(
-        //                   "${productsList[i].image}",
-        //                   fit: BoxFit.cover,
-        //                 ),
-        //               ),
-        //             ),
-        //             SizedBox(width: 15),
-        //             Expanded(
-        //               child: Column(
-        //                 crossAxisAlignment: CrossAxisAlignment.start,
-        //                 children: <Widget>[
-        //                   Text(
-        //                     "${productsList[i].owner}",
-        //                     style: Theme.of(context).textTheme.title,
-        //                   ),
-        //                   Text(
-        //                     "${productsList[i].reservePrice}",
-        //                   ),
-        //                   SizedBox(height: 15),
-        //                   //MyCounter(),
-        //                 ],
-        //               ),
-        //             ),
-        //           ],
-        //         ),
-        //       );
-        //     },
-        //   ),
+        showList()
+      //])
+      // body:  ListView.builder(
+      //     itemCount: productsList.length,
+      //     itemBuilder: (ctx, i) {
+      //       return Container(
+      //         margin: const EdgeInsets.only(bottom: 25),
+      //         child: Row(
+      //           children: <Widget>[
+      //             Expanded(
+      //               child: Container(
+      //                 decoration: BoxDecoration(
+      //                   borderRadius: BorderRadius.circular(15.0),
+      //                   color: Colors.white,
+      //                 ),
+      //                 child: Image.network(
+      //                   "${productsList[i].image}",
+      //                   fit: BoxFit.cover,
+      //                 ),
+      //               ),
+      //             ),
+      //             SizedBox(width: 15),
+      //             Expanded(
+      //               child: Column(
+      //                 crossAxisAlignment: CrossAxisAlignment.start,
+      //                 children: <Widget>[
+      //                   Text(
+      //                     "${productsList[i].owner}",
+      //                     style: Theme.of(context).textTheme.title,
+      //                   ),
+      //                   Text(
+      //                     "${productsList[i].reservePrice}",
+      //                   ),
+      //                   SizedBox(height: 15),
+      //                   //MyCounter(),
+      //                 ],
+      //               ),
+      //             ),
+      //           ],
+      //         ),
+      //       );
+      //     },
+      //   ),
 
-      );
+    );
 
   }
 
@@ -460,26 +460,26 @@ class _HomeState extends State<Home> {
   // FOR ADMIN HOME PAGE
   Widget biddingWindow(int index) {
     return Row(
-        children: [
-                    dropDownList(),
-                    RaisedButton.icon(
-                        icon: Icon(CupertinoIcons.hammer_fill),
-                        label: Text('START BIDDING'),
-                        color: Colors.green,
-                        onPressed: startBidding(index)
-                    ),
-                    RaisedButton.icon(
-                        icon: Icon(Icons.stop),
-                        label: Text('STOP BIDDING'),
-                        color: Colors.red,
-                        onPressed: ()  {}
-                    )
-                  ],
-              );
+      children: [
+        dropDownList(),
+        RaisedButton.icon(
+            icon: Icon(CupertinoIcons.hammer_fill),
+            label: Text('START BIDDING'),
+            color: Colors.green,
+            onPressed: startBidding(index)
+        ),
+        RaisedButton.icon(
+            icon: Icon(Icons.stop),
+            label: Text('STOP BIDDING'),
+            color: Colors.red,
+            onPressed: ()  {}
+        )
+      ],
+    );
 
-    }
+  }
 
-    String selectedDuration;
+  String selectedDuration;
   Widget dropDownList()
   {
     return DropdownButton<String>(
