@@ -1,4 +1,5 @@
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
+import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -167,7 +168,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
       isLoading = true;
     });
 
-    //TODO : Flaw in logic
+
     bool isIdCorrect = false , isPwdCorrect = false;
     FirebaseFirestore.instance.collection("admins").get().then((snapshot){
       snapshot.docs.forEach((result) {
@@ -181,7 +182,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 content: Text("Welcome Dear Admin, " + result.data()["name"])));
 
             SharedPrefs().adminId = result.data()['id'];
-
+            Navigator.pushReplacement(context, MaterialPageRoute(
+                builder: (context) => Home()
+            ));
             setState(() {
               isLoading = false;
               _adminIdController.text = "";

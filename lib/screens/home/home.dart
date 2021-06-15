@@ -461,25 +461,26 @@ class _HomeState extends State<Home> {
   Widget biddingWindow(int index) {
     return Row(
         children: [
-                    dropDownList(),
-                    RaisedButton.icon(
-                        icon: Icon(CupertinoIcons.hammer_fill),
-                        label: Text('START BIDDING'),
-                        color: Colors.green,
-                        onPressed: startBidding(index)
-                    ),
-                    RaisedButton.icon(
-                        icon: Icon(Icons.stop),
-                        label: Text('STOP BIDDING'),
-                        color: Colors.red,
-                        onPressed: ()  {}
-                    )
-                  ],
-              );
+        dropDownList(),
+        RaisedButton.icon(
+            icon: Icon(CupertinoIcons.hammer_fill),
+            label: Text('START BIDDING'),
+            color: Colors.green,
+            onPressed: () {
+              startBidding(index);
+            }),
+        // Expanded(
+        //   child: RaisedButton.icon(
+        //       icon: Icon(Icons.stop),
+        //       label: Text('STOP BIDDING'),
+        //       color: Colors.red,
+        //       onPressed: () {}),
+        // )
+      ],
+    );
+  }
 
-    }
-
-    String selectedDuration;
+  String selectedDuration;
   Widget dropDownList()
   {
     return DropdownButton<String>(
@@ -516,7 +517,7 @@ class _HomeState extends State<Home> {
 
     DateTime now = new DateTime.now();
     DateTime date = new DateTime(now.year, now.month, now.day);
-    bid.id = productsList[index].id + "#" + date.toString();
+    bid.id = productsList[index].id ;
     bid.productId = productsList[index].id;
     bid.startTime = date;
     bid.endTime = date.add(new Duration( days: int.parse(selectedDuration) ));

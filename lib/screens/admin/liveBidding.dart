@@ -17,22 +17,60 @@ import 'package:filter_list/filter_list.dart';
 
 
 
-class Home extends StatefulWidget {
+class LiveBids extends StatefulWidget {
 
   @override
-  _HomeState createState() => _HomeState();
+  _LiveBidsState createState() => _LiveBidsState();
 }
 
-class _HomeState extends State<Home> {
+class _LiveBidsState extends State<LiveBids> {
   final AuthService _auth = AuthService();
 
   DatabaseService dbConnection = DatabaseService();
 
   List<Product> productsList ;
+  List<Bid> bidList = [];
   List<String>  villageList = [];
   List<String> selectedVillageList = [];
 
   int pagesPerBatch = 10;
+
+  Future<List<Product>> getActiveBidProducts() async {
+    List<Bid> bids = await dbConnection.getAllBids("Active");
+
+    List<Product> products = [];
+
+    for(Bid bid in bids)
+      {
+        Product prod = await dbConnection.getProduct(bid.productId);
+        products.add(prod);
+      }
+    bidList.addAll(bids); // ORDER OF GET IN PRODUCTS AND BIDS ??
+    return products;
+  }
+
+  Widget tilesInfo(String property, IconData icon, String propertyValue)
+  {
+    return Column(
+        children: [
+          Text(property),
+          RichText(
+              text: TextSpan(
+                  children : [
+                    WidgetSpan(
+                        child: Icon(icon,size: 25,color: Colors.green[700])),
+                    WidgetSpan(
+                        child: SizedBox(width: 8.0)),
+                    TextSpan(
+                      text: propertyValue,
+                      style: TextStyle(color: Colors.black,
+                          fontSize: 20),
+                    ),
+                  ]
+              )),
+
+        ]);
+  }
 
   Widget showProductTiles(BuildContext context, List<Product> productsList,int index) {
 
@@ -45,9 +83,7 @@ class _HomeState extends State<Home> {
     if( index < productsList.length ) {
       Duration dur = DateTime.now().difference(
           productsList[index].age);
-      differenceInYears = (dur.inDays / 365)
-          .floor()
-          .toString();
+      differenceInYears = (dur.inDays / 365).floor().toString();
     }
 
     return InkWell(
@@ -69,14 +105,14 @@ class _HomeState extends State<Home> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( productsList[index].category + " - " + productsList[index].size.toString() + " Bheega - " + productsList[index].location,
-                      style: TextStyle( color : Colors.green[600],
-                          fontSize: 25)),
+                  title: Text( productsList[index].category + " - " + productsList[index].size.toString() + " Bheega - "
+                               + productsList[index].location, style: TextStyle( color : Colors.green[600], fontSize: 25)),
                 ),
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
+                //Row(
+                  //children: <Widget>[
+                    //Expanded(
+                     // child:
+                      Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.0),
                           color: Colors.green[500],
@@ -90,122 +126,34 @@ class _HomeState extends State<Home> {
                           ) : Text("No Image Available"),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 15),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          // Icon(Icons.account_circle),
-                          // Text(
-                          //   "${productsList[i].owner}",
-                          //   style: Theme
-                          //       .of(context)
-                          //       .textTheme
-                          //       .title,
-                          // ),
-                          RichText(
-                              text: TextSpan(
-                                  children : [
-                                    WidgetSpan(
-                                        child: Icon(Icons.account_circle,size: 25,color: Colors.green[700])),
-                                    WidgetSpan(
-                                        child: SizedBox(width: 8.0)),
-                                    TextSpan(
-                                      text: "${productsList[index].owner}",
-                                      style: TextStyle(color: Colors.black,
-                                          fontSize: 20),
-                                    ),
-                                  ]
-                              )),
-                          RichText(
-                              text: TextSpan(
-                                  children : [
-                                    WidgetSpan(
-                                        child: Icon(Icons.place,size: 25,color: Colors.green[700])),
-                                    WidgetSpan(
-                                        child: SizedBox(width: 8.0)),
-                                    TextSpan(
-                                      text: "${productsList[index].location}",
-                                      style: TextStyle(color: Colors.black,
-                                          fontSize: 20),
-                                    ),
-                                  ]
-                              )),
-                          RichText(
-                              text: TextSpan(
-                                  children : [
-                                    WidgetSpan(
-                                        child: Icon(Icons.nature,size: 25,color: Colors.green[700])),
-                                    WidgetSpan(
-                                        child: SizedBox(width: 8.0)),
-                                    TextSpan(
-                                      text: "${productsList[index].noOfPlants} " + "Plants",
-                                      style: TextStyle(color: Colors.black,
-                                          fontSize: 20),
-                                    ),
-                                  ]
-                              )),
-                          RichText(
-                              text: TextSpan(
-                                  children : [
-                                    WidgetSpan(
-                                        child: Icon(Icons.fence,size: 25, color: Colors.green[700])),
-                                    WidgetSpan(
-                                        child: SizedBox(width: 8.0)),
-                                    TextSpan(
-                                      text: "${productsList[index].size} " + "Bheega",
-                                      style: TextStyle(color: Colors.black,
-                                          fontSize: 20),
-                                    ),
-                                  ]
-                              )),
-                          RichText(
-                              text: TextSpan(
-                                  children : [
-                                    WidgetSpan(
-                                        child: Icon(Icons.nature_people,size: 25,color: Colors.green[700])),
-                                    WidgetSpan(
-                                        child: SizedBox(width: 8.0)),
-                                    TextSpan(
-                                      text: "$differenceInYears " + "Years",
-                                      style: TextStyle(color: Colors.black,
-                                          fontSize: 20),
-                                    ),
-                                  ]
-                              )),
-                          RichText(
-                              text: TextSpan(
-                                  children: [
-                                    WidgetSpan(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0),
-                                          child: Text('\u{20B9}',
-                                            style: TextStyle(fontSize: 23,
-                                                color: Colors.green[700]),),
-                                        )), //Rupee Symbol
-                                    WidgetSpan(
-                                        child: SizedBox(width: 8.0)),
-                                    TextSpan(
-                                      text: "${productsList[index]
-                                          .reservePrice} " + "Rs.",
-                                      style: TextStyle(color: Colors.black,
-                                          fontSize: 20),
-                                    ),
-                                  ]
-                              )),
+                    //),
+                    //SizedBox(width: 15),
+                    //Expanded(
+                    //  child:
+                      Row(
+                        children: [
+                          //Text("${bidList[index].bidders[0]}" , style: TextStyle(fontSize: 23, color: Colors.black)),
+                          Container(
+                            alignment: Alignment.topRight,
+                            child: Text('\u{20B9} ' ,//+ "${bidList[index].bidVal[0]}",
+                                        style: TextStyle(fontSize: 23, color: Colors.black),
+                                        ),
 
-
-                          SizedBox(height: 5),
-
-
-                          //MyCounter(),
+                          ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          tilesInfo("Owner", Icons.account_circle, productsList[index].owner),
+                          tilesInfo("Location", Icons.place, productsList[index].location),
+                          tilesInfo("Age", Icons.nature_people, differenceInYears),
+                          tilesInfo("Size", Icons.fence, (productsList[index].size).toString()),
+                          tilesInfo("Plants", Icons.nature, (productsList[index].noOfPlants).toString()),
+                          //tilesInfo("Base Price", '\u{20B9} ', (productsList[index].reservePrice).toString()),
+                        ],
+                      ),
+
                 if( SharedPrefs().adminId != "" &&
                     FireBase.auth.currentUser == null ) //Admin is Logged In
                   biddingWindow(index),
@@ -218,7 +166,7 @@ class _HomeState extends State<Home> {
 
   Widget showList() {
     return FutureBuilder(
-        future: dbConnection.getProducts(),
+        future: getActiveBidProducts(),
         builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
           print("Snapshot is " + snapshot.toString());
           //productsList.addAll(snapshot.data);
@@ -253,10 +201,12 @@ class _HomeState extends State<Home> {
             }
           }
 
-
-          return Column(
-              children:[
-                // Text(
+          return (productsList.length == 0)
+              ? Center(
+                  child: Text("0 Active Bids !!!",
+                      style: TextStyle(color: Colors.black, fontSize: 30)))
+              : Column(children: [
+                  // Text(
                 //   "Product Count is " + (productsList.length).toString(),
                 //   style: TextStyle(
                 //     fontFamily: "Montesserat",
@@ -291,29 +241,26 @@ class _HomeState extends State<Home> {
 
                     print("Length of snapshot data is ${snapshot.data.length} && index is $index");
                     return ((index == productsList.length + 1) &&
-                        (snapshot.data.length <= pagesPerBatch ||
-                            snapshot.data.length == 0))
-                        ? (snapshot.data.length == 0 ||
-                        snapshot.data.length < pagesPerBatch)
-                        ? SizedBox(height: 5)
-                        : Container(
-                      color: Colors.greenAccent,
-                      child: FlatButton(
-                        child: Text("Load More"),
-                        onPressed: () async {
-                          //List<Product> newProducts = await dbConnection.getProducts();
-                          setState(() {
-                            //productsList.addAll(newProducts);
-                          });
-                        },
-                      ),
-                    )
+                            (snapshot.data.length <= pagesPerBatch || snapshot.data.length == 0))
+                        ? (snapshot.data.length == 0 || snapshot.data.length < pagesPerBatch)
+                          ? SizedBox(height: 5)
+                          : Container(
+                                color: Colors.greenAccent,
+                                child: FlatButton(
+                                    child: Text("Load More"),
+                                    onPressed: () async {
+                                    //List<Product> newProducts = await dbConnection.getProducts();
+                                    setState(() {
+                                    //productsList.addAll(newProducts);
+                                    });
+                                    },
+                                ),
+                          )
                         : (filterCondition() == true)
-                        ? ((!selectedVillageList
-                        .contains(productsList[index - 1].location)) // if selected filter does not contain village
-                        ? SizedBox(height: 0)
-                        : showProductTiles(context, productsList, index - 1))
-                        : showProductTiles(context, productsList, index - 1);
+                          ? ((!selectedVillageList.contains(productsList[index - 1].location)) // if selected filter does not contain village
+                            ? SizedBox(height: 0)
+                            : showProductTiles(context, productsList, index - 1))
+                          : showProductTiles(context, productsList, index - 1);
                   },
                 )
                 )
@@ -324,11 +271,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
 
-    print("products list is  $productsList");
-    if(productsList == null) {
-      print("PARESH productList");
-      productsList = [];
-    }
     return Scaffold(
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
@@ -466,14 +408,14 @@ class _HomeState extends State<Home> {
             icon: Icon(CupertinoIcons.hammer_fill),
             label: Text('START BIDDING'),
             color: Colors.green,
-            onPressed: startBidding(index)
-        ),
+            onPressed: () {
+              startBidding(index);
+            }),
         RaisedButton.icon(
             icon: Icon(Icons.stop),
             label: Text('STOP BIDDING'),
             color: Colors.red,
-            onPressed: ()  {}
-        )
+            onPressed: () {})
       ],
     );
 

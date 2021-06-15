@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/brew.dart';
@@ -778,16 +780,28 @@ class DatabaseService {
     print(bid.basePrice);
     print(bid.endTime);
 
-    bid.id = bid.productId + "#" + bid.startTime.toString();
+    bid.id = bid.productId;
     bid.status = "Active";
     bid.priceIncrement = bid.basePrice * 0.1;
+
+    List<Map<String,String>> bidders = [];
+
+    for( int i = 0; i < 3; i++ ) {
+      Map<String, String> bidMap = {
+        'id': null,
+        'name': null,
+        'price': null
+      };
+      bidders.add(bidMap);
+    }
     return await dbBidCollection.doc(bid.id).set({
       'ProductId': bid.productId,
       'StartTime': bid.startTime,
       'EndTime': bid.endTime,
       'BasePrice': bid.basePrice,
       'Status' : bid.status,
-      'Type' : bid.type
+      'Type' : bid.type,
+      'Bids' : FieldValue.arrayUnion(bidders),
       //'PriceIncrement' : bid.priceIncrement,
     });
   }
@@ -826,7 +840,7 @@ class DatabaseService {
     await dbBidCollection.doc(bidId).delete();
   }
 
-
+// This function assumes that a bidder can place a bid lesser than the current highest , so sorting has been done
   Future<void> updateBidder(String bidId, String bidderId, String bidderName, double bidPrice) async {
     print("Entering updateBidder");
     print("Bidder Id is " + bidderId);
@@ -947,19 +961,20 @@ class DatabaseService {
   int bidDocumentLimit = 10; // documents to be fetched per request
   DocumentSnapshot bidLastDocument; // flag for last document from where next 10 records to be fetched
 
-  Future<List<Bid>> getAllBids() async {
-    print("getProducts called");
+  Future<List<Bid>> getAllBids(String status) async {
+    print("getBids called");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('RegisterState', 2);
     prefs.commit();
 
     QuerySnapshot querySnapshot;
+
     if (bidLastDocument == null) {
-      querySnapshot = await dbBidCollection.orderBy('EndTime', descending: true)
+      querySnapshot = await dbBidCollection.where( 'Status' , isEqualTo: status).orderBy('EndTime')
           .limit(bidDocumentLimit)
           .get();
     } else {
-      querySnapshot = await dbBidCollection.orderBy('EndTime', descending: true).startAfterDocument(bidLastDocument)
+      querySnapshot = await dbBidCollection.where( 'Status' , isEqualTo: status).orderBy('EndTime').startAfterDocument(bidLastDocument)
           .limit(bidDocumentLimit)
           .get();
       print(1);
@@ -984,7 +999,7 @@ class DatabaseService {
         status : document['Status'] ?? '',
         type : document['Type'] ?? '',
 
-        bidders : document['Bids.name'] ?? '',
+        bidders : document['Bids']  ?? '',
         bidVal : document['Bids.price'].toDouble()  // ERROR
     )).toList();
 
