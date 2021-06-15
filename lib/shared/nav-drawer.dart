@@ -1,9 +1,11 @@
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/screens/admin/liveBidding.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/myProducts.dart';
 import 'package:bidding_market/screens/registeration/BuyerForm.dart';
 import 'package:bidding_market/screens/registeration/SellerForm.dart';
 import 'package:bidding_market/screens/viewProfile.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 
@@ -37,6 +39,17 @@ class NavDrawer extends StatelessWidget {
                           Navigator.push(context, MaterialPageRoute(
                           builder: (context) => Home()
             ))},
+          ),
+          ListTile(
+              leading: Icon(CupertinoIcons.hammer_fill),
+              title: Text('Live Bids'),
+              onTap:() {
+                //Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => LiveBids()
+                ));
+              }
+
           ),
           ListTile(
             leading: Icon(Icons.input),
