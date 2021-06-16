@@ -815,8 +815,8 @@ class DatabaseService {
       Bid bid = new Bid();
       bid.id = bidId;
       bid.productId = ds.data()['ProductId'];
-      bid.startTime = ds.data()['StartTime'];
-      bid.endTime = ds.data()['EndTime'];
+      bid.startTime = ds.data()['StartTime'].toDate();
+      bid.endTime = ds.data()['EndTime'].toDate();
       bid.basePrice = ds.data()['BasePrice'];
       bid.status = ds.data()['Status'];
       bid.type = ds.data()['Type'];
@@ -990,18 +990,32 @@ class DatabaseService {
       return new List();//empty list
     }
     bidLastDocument = querySnapshot.docs[querySnapshot.docs.length - 1];
-    return querySnapshot.docs.map((document) => new Bid(
-        //id : document['ID'] ?? '',
-        productId : document['ProductId'] ?? '',
-        startTime : document['StartTime'].toDate() ?? '',
-        endTime : document['EndTime'].toDate() ?? '',
-        basePrice : document['BasePrice']  ?? '',
-        status : document['Status'] ?? '',
-        type : document['Type'] ?? '',
 
-        bidders : document['Bids']  ?? '',
-        bidVal : document['Bids.price'].toDouble()  // ERROR
-    )).toList();
+    List<Bid> bidListPagination = new List();
+    bidListPagination = [];
+    for( QueryDocumentSnapshot doc in querySnapshot.docs )
+      {
+        Bid bid = new Bid();
+        //bid.id = bidId;
+        bid.productId = doc['ProductId'] ?? '';
+        bid.startTime = doc['StartTime'].toDate() ?? '';
+        bid.endTime = doc['EndTime'].toDate() ?? '';
+        bid.basePrice = doc['BasePrice'] ?? '';
+        bid.status = doc['Status'] ?? '';
+        bid.type = doc['Type'] ?? '';
+        List bidders = doc['Bids'] ?? '';
+        for(var bidder in bidders)
+        {
+          bid.bidders.add(bidder['name']);
+          bid.bidVal.add(double.parse(bidder['price']));
+        }
+        bid.priceIncrement = bid.basePrice * 0.1;
+        print("1 Bid added to list");
+        bidListPagination.add(bid);
+        print("Bid added to list");
+      }
+
+    return bidListPagination;
 
   }
   
