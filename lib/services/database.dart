@@ -821,11 +821,16 @@ class DatabaseService {
       bid.status = ds.data()['Status'];
       bid.type = ds.data()['Type'];
       List bidders = ds.data()['Bids'];
+      bid.bidders = [];
+      bid.bidVal = [];
       for(var bidder in bidders)
-        {
+      {
+        if( bidder['name'] != null )
           bid.bidders.add(bidder['name']);
+        if( bidder['price'] != null )
           bid.bidVal.add(double.parse(bidder['price']));
-        }
+      }
+      print("Bidders are $bidders");
       bid.priceIncrement = bid.basePrice * 0.1;
       return bid;
     }
@@ -859,10 +864,18 @@ class DatabaseService {
               'name': bidderName,
               'price': bidPrice.toString()
             };
-            bidders.add(bidMap);
 
-            bidders.sort( (a,b) => (double.parse(a['price']) > (double.parse(b['price']))) ? -1 : 1 );
-          }
+            if( bidders[0]['name'] == null ) // NO BIDDER IS PRESENT YET
+              {
+                bidders[0] = bidMap;
+              }
+            else {
+              bidders.add(bidMap);
+              bidders.sort((a, b) =>
+              (double.parse(a['price']) > (double.parse(b['price']))) ? -1 : 1);
+              }
+            }
+
         else {
           for (Map<String, String> bidder in bidders) {
             //bidderId.add(bidder['id']);
@@ -940,6 +953,7 @@ class DatabaseService {
           bid.type = res.data()['Type'];
           print("Type " + res.data()['Type']);
           List bidders = res.data()['Bids'];
+
           for(var bidder in bidders)
           {
             bid.bidders.add(bidder['name']);
@@ -1004,15 +1018,19 @@ class DatabaseService {
         bid.status = doc['Status'] ?? '';
         bid.type = doc['Type'] ?? '';
         List bidders = doc['Bids'] ?? '';
+        bid.bidders = [];
+        bid.bidVal = [];
         for(var bidder in bidders)
         {
-          bid.bidders.add(bidder['name']);
-          bid.bidVal.add(double.parse(bidder['price']));
+          if( bidder['name'] != null )
+            bid.bidders.add(bidder['name']);
+          if( bidder['price'] != null )
+            bid.bidVal.add(double.parse(bidder['price']));
         }
+        print("Bidders are $bidders");
         bid.priceIncrement = bid.basePrice * 0.1;
-        print("1 Bid added to list");
+
         bidListPagination.add(bid);
-        print("Bid added to list");
       }
 
     return bidListPagination;

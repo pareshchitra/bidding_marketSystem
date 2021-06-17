@@ -1,3 +1,4 @@
+import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,18 +6,18 @@ import 'package:flutter/material.dart';
 
 class ProductDetails extends StatefulWidget {
   final Product product;
-
-  ProductDetails({this.product});
+  final Bid bid;
+  ProductDetails({this.product, this.bid});
 
   @override
-  _ProductDetails createState() => _ProductDetails(product);
+  _ProductDetails createState() => _ProductDetails(product,bid);
 }
 
 class _ProductDetails extends State<ProductDetails>
     with TickerProviderStateMixin {
   final Product product;
-
-  _ProductDetails(this.product);
+  final Bid bid;
+  _ProductDetails(this.product, this.bid);
 
 
   @override
@@ -43,7 +44,7 @@ class _ProductDetails extends State<ProductDetails>
         ),
       ),
       body: _buildProductDetailsPage(context),
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: (bid != null)?_buildBottomNavigationBar() :SizedBox(),
     );
   }
 
@@ -380,6 +381,12 @@ class _ProductDetails extends State<ProductDetails>
           Flexible(
             fit: FlexFit.tight,
             flex: 1,
+            child: priceDropDownList(),
+          ),
+
+          Flexible(
+            fit: FlexFit.tight,
+            flex: 1,
             child: RaisedButton(
               onPressed: () {},
               color: Colors.green,
@@ -403,33 +410,53 @@ class _ProductDetails extends State<ProductDetails>
               ),
             ),
           ),
-          // Flexible(
-          //   flex: 2,
-          //   child: RaisedButton(
-          //     onPressed: () {},
-          //     color: Colors.greenAccent,
-          //     child: Center(
-          //       child: Row(
-          //         mainAxisAlignment: MainAxisAlignment.center,
-          //         children: <Widget>[
-          //           Icon(
-          //             Icons.card_travel,
-          //             color: Colors.white,
-          //           ),
-          //           SizedBox(
-          //             width: 4.0,
-          //           ),
-          //           Text(
-          //             "ADD TO BAG",
-          //             style: TextStyle(color: Colors.white),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ),
-          // ),
+
         ],
       ),
+    );
+  }
+
+
+  List<double> priceList(double currentPrice)
+  {
+    List<double> prList = [];
+    double price = currentPrice;
+
+    for(int i = 0; i<10; i++)
+      {
+        price = price + 0.1*currentPrice;
+        print(price);
+        prList.add(price);
+      }
+    return prList;
+  }
+
+  double selectedPrice;
+  Widget priceDropDownList()
+  {
+    return DropdownButton<String>(
+      value: selectedPrice.toString(),
+      //elevation: 5,
+      style: TextStyle(color: Colors.black),
+
+      items: priceList( (bid.bidVal.length >0 ) ? bid.bidVal[0] : bid.basePrice ).map<DropdownMenuItem<String>>((double value) {
+        return DropdownMenuItem<String>(
+          value: value.toString(),
+          child: Text(value.toString()),
+        );
+      }).toList(),
+      hint: Text(
+        "Choose Amount",
+        style: TextStyle(
+            color: Colors.black,
+            fontSize: 16,
+            fontWeight: FontWeight.w600),
+      ),
+      onChanged: (String value) {
+        setState(() {
+          selectedPrice = double.parse(value);
+        });
+      },
     );
   }
 }

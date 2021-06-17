@@ -52,15 +52,16 @@ class _LiveBidsState extends State<LiveBids> {
   Widget tilesInfo(String property, IconData icon, String propertyValue)
   {
     return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(property),
+          Text(property,style: TextStyle(color: Colors.grey, fontSize: 15)),
           RichText(
               text: TextSpan(
                   children : [
+                    // WidgetSpan(
+                    //     child: Icon(icon,size: 25,color: Colors.green[700])),
                     WidgetSpan(
-                        child: Icon(icon,size: 25,color: Colors.green[700])),
-                    WidgetSpan(
-                        child: SizedBox(width: 8.0)),
+                        child: SizedBox(width: 1.0)),
                     TextSpan(
                       text: propertyValue,
                       style: TextStyle(color: Colors.black,
@@ -91,7 +92,7 @@ class _LiveBidsState extends State<LiveBids> {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return ProductDetails(product: productsList[index]);
+              return ProductDetails(product: productsList[index], bid: bidList[index]);
             },
           ),
         );
@@ -127,32 +128,46 @@ class _LiveBidsState extends State<LiveBids> {
                         ),
                       ),
                     //),
-                    //SizedBox(width: 15),
+                    SizedBox(height: 15),
                     //Expanded(
                     //  child:
                       Row(
                         children: [
-                          //Text("${bidList[index].bidders[0]}" , style: TextStyle(fontSize: 23, color: Colors.black)),
-                          Container(
-                            alignment: Alignment.topRight,
-                            child: Text('\u{20B9} ' ,//+ "${bidList[index].bidVal[0]}",
-                                        style: TextStyle(fontSize: 23, color: Colors.black),
-                                        ),
+                          SizedBox(width: 10.0,),
+                          Text("Days Left : ",style: TextStyle(fontSize: 20, color: Colors.red)),
+                          Text("${(bidList[index].endTime.difference(DateTime.now())).inDays}",style: TextStyle(fontSize: 20)),
+                          SizedBox(width: 20.0,),
+                          ( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" , style: TextStyle(fontSize: 23, color: Colors.black))
+                                                                : Text("- No Bids ",style: TextStyle(fontSize: 20)),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.bottomRight,
+                              child:( bidList[index].bidders.length > 0 ) ? Text('\u{20B9} ' + "${bidList[index].bidVal[0]}",
+                                          style: TextStyle(fontSize: 23, color: Colors.black),) : Text('\u{20B9} ' + "-", style: TextStyle(fontSize: 23)),
 
+                            ),
                           ),
                         ],
                       ),
+                      SizedBox(height: 10.0,),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          SizedBox(width: 10.0,),
                           tilesInfo("Owner", Icons.account_circle, productsList[index].owner),
+                          SizedBox(width: 10.0,),
                           tilesInfo("Location", Icons.place, productsList[index].location),
+                          SizedBox(width: 10.0,),
                           tilesInfo("Age", Icons.nature_people, differenceInYears),
+                          SizedBox(width: 10.0,),
                           tilesInfo("Size", Icons.fence, (productsList[index].size).toString()),
+                          SizedBox(width: 10.0,),
                           tilesInfo("Plants", Icons.nature, (productsList[index].noOfPlants).toString()),
-                          //tilesInfo("Base Price", '\u{20B9} ', (productsList[index].reservePrice).toString()),
+                          SizedBox(width: 10.0,),
+                          tilesInfo("Base Price", Icons.monetization_on, (productsList[index].reservePrice).toString()),
                         ],
                       ),
+                SizedBox(height: 10.0,),
 
                 if( SharedPrefs().adminId != "" &&
                     FireBase.auth.currentUser == null ) //Admin is Logged In
@@ -402,20 +417,23 @@ class _LiveBidsState extends State<LiveBids> {
   // FOR ADMIN HOME PAGE
   Widget biddingWindow(int index) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        dropDownList(),
-        RaisedButton.icon(
-            icon: Icon(CupertinoIcons.hammer_fill),
-            label: Text('START BIDDING'),
-            color: Colors.green,
-            onPressed: () {
-              startBidding(index);
-            }),
-        RaisedButton.icon(
-            icon: Icon(Icons.stop),
-            label: Text('STOP BIDDING'),
-            color: Colors.red,
-            onPressed: () {})
+        //dropDownList(),
+        // RaisedButton.icon(
+        //     icon: Icon(CupertinoIcons.hammer_fill),
+        //     label: Text('START BIDDING'),
+        //     color: Colors.green,
+        //     onPressed: () {
+        //       startBidding(index);
+        //     }),
+
+          RaisedButton.icon(
+              icon: Icon(Icons.stop),
+              label: Text('STOP BIDDING'),
+              color: Colors.redAccent,
+              onPressed: () {}),
+
       ],
     );
 
