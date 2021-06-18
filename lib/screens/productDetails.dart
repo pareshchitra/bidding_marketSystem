@@ -1,5 +1,9 @@
+import 'dart:ffi';
+
+import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/products.dart';
+import 'package:bidding_market/services/database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +24,7 @@ class _ProductDetails extends State<ProductDetails>
   _ProductDetails(this.product, this.bid);
 
 
+  DatabaseService dbConnection = DatabaseService();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -388,7 +393,7 @@ class _ProductDetails extends State<ProductDetails>
             fit: FlexFit.tight,
             flex: 1,
             child: RaisedButton(
-              onPressed: () {},
+              onPressed: () { placeBid(); },
               color: Colors.green,
               child: Center(
                 child: Row(
@@ -417,32 +422,31 @@ class _ProductDetails extends State<ProductDetails>
   }
 
 
-  List<double> priceList(double currentPrice)
+  List<String> priceList(double currentPrice)
   {
-    List<double> prList = [];
+    List<String> prList = [];
     double price = currentPrice;
 
     for(int i = 0; i<10; i++)
       {
         price = price + 0.1*currentPrice;
-        print(price);
-        prList.add(price);
+        prList.add(price.toString());
       }
     return prList;
   }
 
-  double selectedPrice;
+  String selectedPrice;
   Widget priceDropDownList()
   {
     return DropdownButton<String>(
-      value: selectedPrice.toString(),
+      value: selectedPrice,
       //elevation: 5,
       style: TextStyle(color: Colors.black),
 
-      items: priceList( (bid.bidVal.length >0 ) ? bid.bidVal[0] : bid.basePrice ).map<DropdownMenuItem<String>>((double value) {
+      items: priceList( (bid.bidVal.length >0 ) ? bid.bidVal[0] : bid.basePrice ).map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
-          value: value.toString(),
-          child: Text(value.toString()),
+          value: value,
+          child: Text(value),
         );
       }).toList(),
       hint: Text(
@@ -454,9 +458,18 @@ class _ProductDetails extends State<ProductDetails>
       ),
       onChanged: (String value) {
         setState(() {
-          selectedPrice = double.parse(value);
+          selectedPrice = value;
         });
       },
     );
+  }
+
+  placeBid()
+  {
+    List<String> validPrices = priceList((bid.bidVal.length >0 ) ? bid.bidVal[0] : bid.basePrice);
+    if( validPrices.contains(selectedPrice))
+      dbConnection.updateBidder(bid.id, loggedUser.uid, loggedUser.Name, double.parse(selectedPrice));
+    else
+      AlertDialog(title: Text("Please choose valid amount from list !!"));
   }
 }
