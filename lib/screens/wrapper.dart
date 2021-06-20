@@ -87,16 +87,19 @@ class Wrapper extends StatelessWidget {
       print("Snapshot of user exits : $userExists");
 
       if (!snapshot.hasData) {
-        return Center(
-            child: Text(
-              "Loading...",
-              style: TextStyle(
-                fontFamily: "Montesserat",
-                fontWeight: FontWeight.w700,
-                fontSize: 40.0,
-                fontStyle: FontStyle.italic,
-              ),
-            ));
+        return Scaffold(
+          backgroundColor: Colors.white,
+          body: Center(
+              child: Text(
+                "Loading...",
+                style: TextStyle(
+                  fontFamily: "Montesserat",
+                  fontWeight: FontWeight.w700,
+                  fontSize: 40.0,
+                  fontStyle: FontStyle.italic,
+                ),
+              )),
+        );
       }
 
 

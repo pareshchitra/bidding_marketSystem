@@ -49,7 +49,7 @@ class _ProductDetails extends State<ProductDetails>
         ),
       ),
       body: _buildProductDetailsPage(context),
-      bottomNavigationBar: (bid != null)?_buildBottomNavigationBar() :SizedBox(),
+      bottomNavigationBar: (bid != null && loggedUser.type == 1)?_buildBottomNavigationBar() :SizedBox(),
     );
   }
 
@@ -427,10 +427,18 @@ class _ProductDetails extends State<ProductDetails>
     List<String> prList = [];
     double price = currentPrice;
 
-    for(int i = 0; i<10; i++)
+    int count = 0;
+    while( count < 10 )
       {
         price = price + 0.1*currentPrice;
-        prList.add(price.toString());
+        if( bid.bidVal.length > 0 && price > bid.bidVal[0]) {
+          prList.add(price.toString());
+          count++;
+        }
+        else if( bid.bidVal.length == 0 ) {
+          prList.add(price.toString());
+          count++;
+        }
       }
     return prList;
   }
@@ -443,7 +451,7 @@ class _ProductDetails extends State<ProductDetails>
       //elevation: 5,
       style: TextStyle(color: Colors.black),
 
-      items: priceList( (bid.bidVal.length >0 ) ? bid.bidVal[0] : bid.basePrice ).map<DropdownMenuItem<String>>((String value) {
+      items: priceList(bid.basePrice).map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -466,9 +474,9 @@ class _ProductDetails extends State<ProductDetails>
 
   placeBid()
   {
-    List<String> validPrices = priceList((bid.bidVal.length >0 ) ? bid.bidVal[0] : bid.basePrice);
+    List<String> validPrices = priceList(bid.basePrice);
     if( validPrices.contains(selectedPrice))
-      dbConnection.updateBidder(bid.id, loggedUser.uid, loggedUser.Name, double.parse(selectedPrice));
+      dbConnection.updateBidder(bid.id, loggedUser.uid, loggedUser.Name, double.parse(selectedPrice), product.id);
     else
       AlertDialog(title: Text("Please choose valid amount from list !!"));
   }

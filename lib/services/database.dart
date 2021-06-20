@@ -183,6 +183,7 @@ class DatabaseService {
   Future<void> addSellerData(User seller, File photo) async {
     print("Entering addSellerData");
     loggedUser.type = 2;
+    seller.type = 2;
     print(seller.uid);
     print(seller.Name);
     print(seller.Village);
@@ -206,6 +207,7 @@ class DatabaseService {
     //prefs = await _prefs;
         String Phone = prefs.getString('PhoneNo');
         loggedUser.PhoneNo = Phone;
+        seller.PhoneNo = Phone;
       }
     print(loggedUser.PhoneNo);
 
@@ -217,12 +219,16 @@ class DatabaseService {
       'State': seller.State,
       'Pincode': seller.Pincode,
       'Photo': PhotoUrl,
+    }).then((value) => loggedUser = seller).
+    catchError((error){
+      print("Database addition failed with error msg $error");
     });
   }
 
   Future<void> addBuyerData(User buyer, File aadharFront, File aadharBack) async {
     print("Entering addBuyerData");
     loggedUser.type = 1;
+    buyer.type = 1;
     print(buyer.uid);
     print(buyer.Name);
     print(buyer.HouseNo);
@@ -264,6 +270,7 @@ class DatabaseService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       //prefs = await _prefs;
       String Phone = await prefs.getString('PhoneNo') ?? 0;
+      buyer.PhoneNo = Phone;
       loggedUser.PhoneNo = Phone;
     }
 
@@ -278,6 +285,9 @@ class DatabaseService {
       'AadharNo': buyer.AadharNo,
       'IdFrontUrl': IdFrontUrl,
       'IdBackUrl': IdBackUrl
+    }).then((value) => loggedUser = buyer).
+    catchError((error){
+      print("Database addition failed with error msg $error");
     });
   }
 
@@ -846,7 +856,7 @@ class DatabaseService {
   }
 
 // This function assumes that a bidder can place a bid lesser than the current highest , so sorting has been done
-  Future<void> updateBidder(String bidId, String bidderId, String bidderName, double bidPrice) async {
+  Future<void> updateBidder(String bidId, String bidderId, String bidderName, double bidPrice, String productId) async {
     print("Entering updateBidder");
     print("Bidder Id is " + bidderId);
     print("Bid Price is " + bidPrice.toString());
@@ -855,7 +865,7 @@ class DatabaseService {
 
     if( ds.exists == true )
       {
-        List<Map<String,String>> bidders = ds.data()["Bids"] ?? '';
+        List bidders = ds.data()["Bids"] ?? '';
 
         if( bidders.length < 3 )
           {
@@ -870,6 +880,7 @@ class DatabaseService {
                 bidders[0] = bidMap;
               }
             else {
+              print("Bidders name is ${bidders[0]['name']}");
               bidders.add(bidMap);
               bidders.sort((a, b) =>
               (double.parse(a['price']) > (double.parse(b['price']))) ? -1 : 1);
@@ -889,8 +900,26 @@ class DatabaseService {
           }
         }
 
+        Map<String,String> buyerBidInfo = {
+          'ProductId' : productId,
+          'Price' : bidPrice.toString(),
+        };
+        DocumentSnapshot buyerDoc = await dbBuyerCollection.doc(bidderId).get();
+        bool buyerBidListExists = (buyerDoc.data()['ProductBids'] != null) ? true : false;
+
+        if(buyerBidListExists == true) {
+          await dbBuyerCollection.doc(bidderId).update({
+            'ProductBids': FieldValue.arrayUnion([buyerBidInfo]),
+          });
+        }
+        else {
+          await dbBuyerCollection.doc(bidderId).set({
+            'ProductBids': FieldValue.arrayUnion([buyerBidInfo]),
+          }, SetOptions(merge: true));
+        }
+
         return await dbBidCollection.doc(bidId).update({
-          'Bids': FieldValue.arrayUnion(bidders),
+          'Bids': bidders,
           //'PriceIncrement' : bid.priceIncrement,
         });
       }
@@ -925,47 +954,26 @@ class DatabaseService {
   }
 
 
-  Future<List<Bid>> myBids (User currentUser) async{
+  Future<List<Map<String,Product>>> myBids (User currentUser) async{
 
-    List<Bid> bidList = new List<Bid>();
-    bidList = [];
-
+    List<Map<String,Product>> productBidList = new List();
+    productBidList = [];
     print("Entering myBids database func with currentUserName " + currentUser.Name);
 
-    var documents =  dbBidCollection.where( 'Bids.id' , arrayContains: currentUser.uid).get();
-
-    await documents.then((event) {
-      if (event.docs.isNotEmpty) {
-        event.docs.forEach((res) {
-          print(res.data());
-
-          Bid bid = new Bid();
-          bid.productId = res.data()['ProductId'];
-          print("ProductId " + res.data()['ProductId']);
-          bid.startTime = res.data()['StartTime'];
-          print("Start Time " + res.data()['StartTime']);
-          bid.endTime = res.data()['EndTime'];
-          print("End Time " + res.data()['EndTime']);
-          bid.basePrice = res.data()['BasePrice'];
-          print("Base Price " + res.data()['BasePrice']);
-          bid.status = res.data()['Status'];
-          print("Status " + res.data()['Status']);
-          bid.type = res.data()['Type'];
-          print("Type " + res.data()['Type']);
-          List bidders = res.data()['Bids'];
-
-          for(var bidder in bidders)
+    await dbBuyerCollection.doc(currentUser.uid).get().then((value) async{
+      List bids = value.data()['ProductBids'];
+      for(var bid in bids)
+        {
+          Product product = await getProduct(bid['ProductId']);
+          Map<String,Product> userPriceProductMap =
           {
-            bid.bidders.add(bidder['name']);
-            bid.bidVal.add(double.parse(bidder['price']));
-          }
-
-          bidList.add(bid);
-        });
-      }
+            bid['Price'] : product
+          };
+          productBidList.add(userPriceProductMap);
+        }
     }).catchError((e) => print("error fetching data: $e"));
 
-    return bidList;
+    return productBidList;
   }
 
 
@@ -1010,7 +1018,7 @@ class DatabaseService {
     for( QueryDocumentSnapshot doc in querySnapshot.docs )
       {
         Bid bid = new Bid();
-        //bid.id = bidId;
+        bid.id = doc.id;
         bid.productId = doc['ProductId'] ?? '';
         bid.startTime = doc['StartTime'].toDate() ?? '';
         bid.endTime = doc['EndTime'].toDate() ?? '';
