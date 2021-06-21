@@ -64,7 +64,7 @@ class _LiveBidsState extends State<LiveBids> {
                         child: SizedBox(width: 1.0)),
                     TextSpan(
                       text: propertyValue,
-                      style: TextStyle(color: Colors.black,
+                      style: TextStyle(color: Colors.black54,
                           fontSize: 20),
                     ),
                   ]
@@ -132,18 +132,26 @@ class _LiveBidsState extends State<LiveBids> {
                     //Expanded(
                     //  child:
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" ,
+                            style: TextStyle(fontSize: 23, color: Colors.black))
+                            : Text("- No Bids ",style: TextStyle(fontSize: 20)),
+                      ]),
+                      Row(
                         children: [
                           SizedBox(width: 10.0,),
-                          Text("Days Left : ",style: TextStyle(fontSize: 20, color: Colors.red)),
+                          Text("Days Left :",style: TextStyle(fontSize: 20, color: Colors.red)),
                           Text("${(bidList[index].endTime.difference(DateTime.now())).inDays}",style: TextStyle(fontSize: 20)),
-                          SizedBox(width: 20.0,),
-                          ( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" , style: TextStyle(fontSize: 23, color: Colors.black))
-                                                                : Text("- No Bids ",style: TextStyle(fontSize: 20)),
+                          SizedBox(width: 10.0,),
+                          // ( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" ,
+                          //                                         style: TextStyle(fontSize: 23, color: Colors.cyan))
+                          //     : Text("- No Bids ",style: TextStyle(fontSize: 20)),
                           Expanded(
                             child: Align(
                               alignment: Alignment.bottomRight,
-                              child:( bidList[index].bidders.length > 0 ) ? Text('\u{20B9} ' + "${bidList[index].bidVal[0]}",
-                                          style: TextStyle(fontSize: 23, color: Colors.black),) : Text('\u{20B9} ' + "-", style: TextStyle(fontSize: 23)),
+                              child:( bidList[index].bidders.length > 0 ) ? Text('\u{20B9}' + "${bidList[index].bidVal[0]}",
+                                          style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),)
+                                  : Text('\u{20B9} ' + "-", style: TextStyle(fontSize: 23)),
 
                             ),
                           ),
@@ -158,9 +166,9 @@ class _LiveBidsState extends State<LiveBids> {
                           SizedBox(width: 10.0,),
                           tilesInfo("Location", Icons.place, productsList[index].location),
                           SizedBox(width: 10.0,),
-                          tilesInfo("Age", Icons.nature_people, differenceInYears),
+                          tilesInfo("Years", Icons.nature_people, differenceInYears),
                           SizedBox(width: 10.0,),
-                          tilesInfo("Size", Icons.fence, (productsList[index].size).toString()),
+                          tilesInfo("Bigha", Icons.fence, (productsList[index].size).toString()),
                           SizedBox(width: 10.0,),
                           tilesInfo("Plants", Icons.nature, (productsList[index].noOfPlants).toString()),
                           SizedBox(width: 10.0,),
