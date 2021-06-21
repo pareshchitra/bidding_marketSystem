@@ -462,6 +462,7 @@ class _HomeState extends State<Home> {
     return Row(
         children: [
         dropDownList(),
+        SizedBox(width: 20.0),
         RaisedButton.icon(
             icon: Icon(CupertinoIcons.hammer_fill),
             label: Text('START BIDDING'),
@@ -513,17 +514,37 @@ class _HomeState extends State<Home> {
 
   startBidding( int index )
   {
-    Bid bid = new Bid();
+    if (selectedDuration == null) {
+      // NO Duration has been selected
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text('Alert'),
+                content: Text("Please choose a duration from list!!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }
+    else {
+      Bid bid = new Bid();
 
-    DateTime now = new DateTime.now();
-    DateTime date = new DateTime(now.year, now.month, now.day);
-    bid.id = productsList[index].id ;
-    bid.productId = productsList[index].id;
-    bid.startTime = date;
-    bid.endTime = date.add(new Duration( days: int.parse(selectedDuration) ));
-    bid.basePrice = productsList[index].reservePrice;
-    bid.type = "Best Price";
+      DateTime now = new DateTime.now();
+      DateTime date = new DateTime(now.year, now.month, now.day);
+      bid.id = productsList[index].id;
+      bid.productId = productsList[index].id;
+      bid.startTime = date;
+      bid.endTime = date.add(new Duration(days: int.parse(selectedDuration)));
+      bid.basePrice = productsList[index].reservePrice;
+      bid.type = "Best Price";
 
-    dbConnection.addNewBid(bid);
+      dbConnection.addNewBid(bid);
+    }
   }
 }

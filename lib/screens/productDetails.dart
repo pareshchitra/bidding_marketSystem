@@ -475,9 +475,48 @@ class _ProductDetails extends State<ProductDetails>
   placeBid()
   {
     List<String> validPrices = priceList(bid.basePrice);
-    if( validPrices.contains(selectedPrice))
-      dbConnection.updateBidder(bid.id, loggedUser.uid, loggedUser.Name, double.parse(selectedPrice), product.id);
-    else
-      AlertDialog(title: Text("Please choose valid amount from list !!"));
+    if( validPrices.contains(selectedPrice)) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text('Alert'),
+                content: Text("Are you sure you want to place a bid of $selectedPrice for this product?"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("Yes"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      dbConnection.updateBidder(
+                          bid.id, loggedUser.uid, loggedUser.Name, double.parse(selectedPrice),
+                          product.id);
+                    },
+                  ),
+                  FlatButton(
+                    child: Text("No"),
+                    onPressed: () {
+                      Navigator.of(context).pop();;
+                    },
+                  ),
+                ]);
+          });
+    }
+    else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text('Alert'),
+                content: Text("Please choose valid amount from list !!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }
   }
 }

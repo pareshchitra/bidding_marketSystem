@@ -1,6 +1,7 @@
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/screens/admin/liveBidding.dart';
 import 'package:bidding_market/screens/home/home.dart';
+import 'package:bidding_market/screens/myBids.dart';
 import 'package:bidding_market/screens/myProducts.dart';
 import 'package:bidding_market/screens/registeration/BuyerForm.dart';
 import 'package:bidding_market/screens/registeration/SellerForm.dart';
@@ -51,6 +52,7 @@ class NavDrawer extends StatelessWidget {
               }
 
           ),
+          (loggedUser.type == 2) ?
           ListTile(
             leading: Icon(Icons.input),
             title: Text('Add Product'),
@@ -61,7 +63,8 @@ class NavDrawer extends StatelessWidget {
                       ));
                       }
 
-          ),
+          ) : SizedBox(),
+
           ListTile(
             leading: Icon(Icons.details),
             title: Text('Profile'),
@@ -79,6 +82,7 @@ class NavDrawer extends StatelessWidget {
             title: Text('Settings'),
             onTap: () => {Navigator.of(context).pop()},
           ),
+          (loggedUser.type == 2) ?
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('My Products'),
@@ -87,7 +91,17 @@ class NavDrawer extends StatelessWidget {
                           builder: (context) => MyProducts()
             ))
                           },
-          ),
+          ) : SizedBox(),
+          (loggedUser.type == 1) ?
+          ListTile(
+            leading: Icon(Icons.border_color),
+            title: Text('My Bids'),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MyBids()
+              ))
+            },
+          ) : SizedBox(),
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),

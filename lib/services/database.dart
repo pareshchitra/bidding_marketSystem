@@ -953,10 +953,10 @@ class DatabaseService {
     updateBidStatus(bidId, "Closed");
   }
 
+  //OPTIMIZATION : KEEP BID IDs IN PLACE OF PRODUCT IDs in Buyer Table
+  Future<List<dynamic>> myBids (User currentUser) async{
 
-  Future<List<Map<String,Product>>> myBids (User currentUser) async{
-
-    List<Map<String,Product>> productBidList = new List();
+    List<Map<String,dynamic>> productBidList = new List();
     productBidList = [];
     print("Entering myBids database func with currentUserName " + currentUser.Name);
 
@@ -965,9 +965,12 @@ class DatabaseService {
       for(var bid in bids)
         {
           Product product = await getProduct(bid['ProductId']);
-          Map<String,Product> userPriceProductMap =
+          Bid bidInfo = await getBid(bid['ProductId']);
+          Map<String,dynamic> userPriceProductMap =
           {
-            bid['Price'] : product
+            'Product' : product,
+            'QuotePrice' : bid['Price'],
+            'Bid' : bidInfo,
           };
           productBidList.add(userPriceProductMap);
         }
