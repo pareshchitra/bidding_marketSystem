@@ -1,14 +1,19 @@
+import 'dart:io';
+
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/models/language.dart';
 import 'package:bidding_market/screens/admin/adminLogin.dart';
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/authenticate/verify.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -34,6 +39,13 @@ class _SignInState extends State<SignIn> {
 
   // text field state
   final _phoneController = TextEditingController();
+
+  void _changeLanguage(Language language) async {
+    selectedLanguage = language.languageCode;
+    Locale _locale = await setLocale(language.languageCode);
+    MyApp.setLocale(context, _locale);
+    //_getTranslatedString(0);
+  }
 
 
   @override
@@ -73,7 +85,7 @@ class _SignInState extends State<SignIn> {
                          scale: 0.6
                          ),
                   ),
-                  Text("Login", style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
+                  Text(getTranslated(context, 'login_key'), style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
 
                   SizedBox(height: 16,),
 
@@ -89,9 +101,10 @@ class _SignInState extends State<SignIn> {
                         ),
                       filled: true,
                       fillColor: Colors.grey[100],
-                      hintText: "Mobile Number"
+                      hintText: getTranslated(context, 'mobile_number_key'),
 
                   ),
+                    keyboardType: TextInputType.number,
                   controller:     Provider
                       .of<PhoneAuthDataProvider>(context, listen: false)
                       .phoneNumberController ,//_phoneController,  //OTP CHANGE HERE
@@ -113,17 +126,17 @@ class _SignInState extends State<SignIn> {
                     child: RichText(
                         text: TextSpan(children: [
                           TextSpan(
-                              text: 'We will send ',
+                              text: getTranslated(context, 'OTP_send_key_1') + " ",
                               style: TextStyle(
                                   color: Colors.green, fontWeight: FontWeight.w400)),
                           TextSpan(
-                              text: 'One Time Password',
+                              text: getTranslated(context, 'OTP_send_key_2'),
                               style: TextStyle(
                                   color: Colors.green,
                                   fontSize: 16.0,
                                   fontWeight: FontWeight.w700)),
                           TextSpan(
-                              text: ' to this mobile number',
+                              text: " " + getTranslated(context, 'OTP_send_key_3'),
                               style: TextStyle(
                                   color: Colors.green, fontWeight: FontWeight.w400)),
                         ])),
@@ -137,7 +150,7 @@ class _SignInState extends State<SignIn> {
                   Container(
                   width: double.infinity,
                   child: FlatButton(
-                    child: Text("LOGIN"),
+                    child: Text(getTranslated(context, 'login_key').toUpperCase()),
                     textColor: Colors.white,
                     padding: EdgeInsets.all(16),
                     onPressed: () async {
@@ -169,7 +182,7 @@ class _SignInState extends State<SignIn> {
                   child: FlatButton.icon(
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginPage())),
                       icon: (Icon(Icons.nature_people, color : Colors.green)),
-                      label: Text("I'm an Admin" , style: TextStyle(color: Colors.green , fontSize: 20.0, fontWeight: FontWeight.bold),)
+                      label: Text(toBeginningOfSentenceCase(getTranslated(context, "admin_info_key")) , style: TextStyle(color: Colors.green , fontSize: 20.0, fontWeight: FontWeight.bold),)
                   ),
                 ),
 
@@ -177,7 +190,40 @@ class _SignInState extends State<SignIn> {
                 Text(
                   error,
                   style: TextStyle(color: Colors.red, fontSize: 14.0),
-                )
+                ),
+                  SizedBox(height: 40.0),
+                  Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                          children: <Widget>[
+                  DropdownButton<Language>(
+                    underline: SizedBox(),
+                    iconEnabledColor: Colors.green,
+                    // icon: Icon(
+                    //   Icons.language,
+                    //   color: Colors.green,size: 40,
+                    // ),
+                    hint: Text(getTranslated(context, 'language_key'),
+                    style: TextStyle(color: Colors.green, fontSize: 20)),
+                    onChanged: (Language language) {
+                      _changeLanguage(language);
+                    },
+                    items: Language.languageList()
+                        .map<DropdownMenuItem<Language>>(
+                          (e) => DropdownMenuItem<Language>(
+                        value: e,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: <Widget>[
+                            Text(e.name)
+                          ],
+                        ),
+                      ),
+                    ).toList(),
+                  ),
+              ]
+                  )
+                  )
               ],
             ),
           ),
@@ -223,7 +269,7 @@ class _SignInState extends State<SignIn> {
         });
     if (!validPhone) {
       phoneAuthDataProvider.loading = false;
-      _showSnackBar("Oops! Number seems invaild");
+      _showSnackBar(getTranslated(context, "number_invalid_key"));
       return;
     }
   }

@@ -5,9 +5,11 @@ import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class buyerForm extends StatefulWidget {
@@ -44,7 +46,7 @@ class _buyerFormState extends State<buyerForm> {
       margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 20.0),
       child: Column (
         children: <Widget>[
-          Text("Choose Photo Source",
+          Text(toBeginningOfSentenceCase(getTranslated(context, "choose_photo_key")),
               style: TextStyle(fontSize: 20.0
       )),
           SizedBox(
@@ -54,14 +56,14 @@ class _buyerFormState extends State<buyerForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton.icon(
-                label: Text("Camera"),
+                label: Text(toBeginningOfSentenceCase(getTranslated(context, "camera_key"))),
                   onPressed: () {
                     retreiveImage(ImageSource.camera, imageNumber);
               },
                   icon: Icon(Icons.camera_alt)
               ),
               FlatButton.icon(
-                label: Text("Gallery"),
+                label: Text(toBeginningOfSentenceCase(getTranslated(context, "gallery_key"))),
                   onPressed: () {
     retreiveImage(ImageSource.gallery, imageNumber);}, icon: Icon(Icons.image)),
             ],
@@ -101,7 +103,7 @@ class _buyerFormState extends State<buyerForm> {
                 initialValue: (user != null) ? user.Name : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "Name",
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "name_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -111,7 +113,7 @@ class _buyerFormState extends State<buyerForm> {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "Name cannot be empty";
+                    return toBeginningOfSentenceCase(getTranslated(context, "name_non_empty_key"));
                   } else {
                     return null;
                   }
@@ -123,7 +125,7 @@ class _buyerFormState extends State<buyerForm> {
               ),
               SizedBox(height: 10.0),
               Text(
-                'Address',
+                toBeginningOfSentenceCase(getTranslated(context, "address_key")),
                 style: TextStyle(
                   fontSize: 20.0,
                   fontFamily: "Georgia",
@@ -134,7 +136,7 @@ class _buyerFormState extends State<buyerForm> {
                 initialValue: (user != null) ? buyer.HouseNo : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "House Number",
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "house_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -144,7 +146,7 @@ class _buyerFormState extends State<buyerForm> {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "House Number cannot be empty";
+                    return toBeginningOfSentenceCase(getTranslated(context, "house_non_empty_key"));
                   } else {
                     return null;
                   }
@@ -160,7 +162,7 @@ class _buyerFormState extends State<buyerForm> {
                 initialValue: (user != null) ? user.Village : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "Village/City",
+                  labelText: getTranslated(context, "village_key"),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -170,7 +172,7 @@ class _buyerFormState extends State<buyerForm> {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "Village or city cannot be empty";
+                    return toBeginningOfSentenceCase(getTranslated(context, "village_non_empty_key"));
                   } else {
                     return null;
                   }
@@ -186,7 +188,7 @@ class _buyerFormState extends State<buyerForm> {
                 initialValue: (user != null) ? user.District : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
-                  labelText: "District",
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -196,7 +198,7 @@ class _buyerFormState extends State<buyerForm> {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "District cannot be empty";
+                    return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
                   } else {
                     return null;
                   }
@@ -212,7 +214,7 @@ class _buyerFormState extends State<buyerForm> {
                 initialValue: (user != null) ? user.State : '',
                 maxLength: 30,
                 decoration: new InputDecoration(
-                  labelText: "State",
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -222,7 +224,7 @@ class _buyerFormState extends State<buyerForm> {
                 ),
                 validator: (val) {
                   if (val.length == 0) {
-                    return "State cannot be empty";
+                    return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
                   } else {
                     return null;
                   }
@@ -238,7 +240,7 @@ class _buyerFormState extends State<buyerForm> {
                 initialValue: (user != null) ? user.Pincode : '',
                 maxLength: 6,
                 decoration: new InputDecoration(
-                  labelText: "Pincode",
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "pincode_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -248,7 +250,7 @@ class _buyerFormState extends State<buyerForm> {
                 ),
                 validator: (val) {
                   if (val.length < 6) {
-                    return "Pincode cannot be less than 6 digits";
+                    return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
                   } else {
                     return null;
                   }
@@ -264,7 +266,7 @@ class _buyerFormState extends State<buyerForm> {
                 initialValue: (user != null) ? user.AadharNo : '',
                 maxLength: 12,
                 decoration: new InputDecoration(
-                  labelText: "Aadhar Number",
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "aadhar_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -274,7 +276,7 @@ class _buyerFormState extends State<buyerForm> {
                 ),
                 validator: (val) {
                   if (val.length < 12) {
-                    return "Aadhaar cannot be less than 12 digits";
+                    return toBeginningOfSentenceCase(getTranslated(context, "aadhar_non_empty_key"));
                   } else {
                     return null;
                   }
@@ -290,7 +292,7 @@ class _buyerFormState extends State<buyerForm> {
               //     SizedBox(height:10),
               RaisedButton(
                 color: Colors.green[700],
-                  child: Text('Aadhar Front'),
+                  child: Text(toBeginningOfSentenceCase(getTranslated(context, "aadhar_front_key"))),
                   onPressed: () {
                     showModalBottomSheet(context: context,
                         builder: ((builder) => imageSourceSelector(context, 1)));
@@ -299,7 +301,7 @@ class _buyerFormState extends State<buyerForm> {
               _AadharFront != null ? Container(height: 200, child: Image.file(_AadharFront)) : SizedBox(height: 5.0),
               RaisedButton(
                   color: Colors.green[700],
-                  child: Text('Aadhar Back'),
+                  child: Text(toBeginningOfSentenceCase(getTranslated(context, "aadhar_back_key"))),
                   onPressed: () {
                     showModalBottomSheet(context: context,
                         builder: ((builder) => imageSourceSelector(context, 2)));
@@ -341,7 +343,7 @@ class _buyerFormState extends State<buyerForm> {
                   }
                 },
                 color: Colors.green[700],
-                child: (user != null ) ? Text('UPDATE') : Text('Register'),
+                child: (user != null ) ? Text(getTranslated(context, "update_key").toUpperCase()) : Text(toBeginningOfSentenceCase(getTranslated(context, "register_key"))),
               ),
             ],
           )),

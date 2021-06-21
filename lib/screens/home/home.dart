@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/products.dart';
@@ -7,6 +9,8 @@ import 'package:bidding_market/screens/home/brew_list.dart';
 import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/TranslatedText.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,6 +18,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:filter_list/filter_list.dart';
+import 'package:intl/intl.dart';
 
 
 
@@ -33,6 +38,70 @@ class _HomeState extends State<Home> {
   List<String> selectedVillageList = [];
 
   int pagesPerBatch = 10;
+
+//  List<Product> products = [];
+  //Translated values
+//   List<Product> _translatedProductsList = [] ;
+//   int callCount = 0;
+//   void _getTranslatedValues(BuildContext context)
+//   {
+//     callCount++;
+//     print("Called func- $callCount with productListnumber-${_translatedProductsList.length}");
+//       for (var i = 0; i < productsList.length; i++) {
+//         print(
+//             "Calling for Category- i=${i}, callCount=${callCount}, productId=${_translatedProductsList[i]
+//                 .id}");
+//         if(selectedLanguage == "hi") {
+//         getTranslatedOnline(context, _translatedProductsList[i].category, "0").then((
+//             value) =>
+//             setState(() {
+//               _translatedProductsList[i].category = value;
+//             }));
+//         print(
+//             "Calling for location- i=${i}, callCount=${callCount}, productId=${_translatedProductsList[i]
+//                 .id}");
+//         getTranslatedOnline(context, _translatedProductsList[i].location, "0").then((
+//             value) =>
+//             setState(() {
+//               _translatedProductsList[i].location = value;
+//             }));
+//         print(
+//             "Calling for Owner- i=${i}, callCount=${callCount}, productId=${_translatedProductsList[i]
+//                 .id}");
+//         getTranslatedOnline(context, _translatedProductsList[i].owner, "0").then((value) =>
+//             setState(() {
+//               _translatedProductsList[i].owner = value;
+//             }));
+//         }
+//         else if(selectedLanguage == "en")
+//         {
+//           _translatedProductsList[i].category = productsList[i].category;
+//           _translatedProductsList[i].location = productsList[i].location;
+//           _translatedProductsList[i].owner = productsList[i].owner;
+//         }
+//       }
+//
+//   }
+//
+//   Future<void> productsGet() async {
+//   products = await dbConnection.getProducts();
+// }
+//
+//   @override
+//   void initState() {
+//     productsGet();
+//     super.initState();
+//   }
+//
+//   @override
+//   // ignore: must_call_super
+//   Future<void> didChangeDependencies() async {
+//     //super.initState();
+//     //showList();
+//     await Future.delayed(const Duration(seconds: 1));
+//     _translatedProductsList = List.from(products);
+//     _getTranslatedValues(context);
+//   }
 
   Widget showProductTiles(BuildContext context, List<Product> productsList,int index) {
 
@@ -69,7 +138,7 @@ class _HomeState extends State<Home> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( productsList[index].category + " - " + productsList[index].size.toString() + " Bheega - " + productsList[index].location,
+                  title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + productsList[index].size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " +  productsList[index].location,
                       style: TextStyle( color : Colors.green[600],
                           fontSize: 25)),
                 ),
@@ -87,7 +156,7 @@ class _HomeState extends State<Home> {
                           child: (productsList[index].image1 != "File not uploaded" ) ? Image.network(
                             "${productsList[index].image1}" ,
                             fit: BoxFit.cover,
-                          ) : Text("No Image Available"),
+                          ) : Text(getTranslated(context, "no_image_key")),
                         ),
                       ),
                     ),
@@ -112,7 +181,7 @@ class _HomeState extends State<Home> {
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].owner}",
+                                      text: productsList[index].owner,
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -126,7 +195,7 @@ class _HomeState extends State<Home> {
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].location}",
+                                      text: productsList[index].location,
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -140,7 +209,7 @@ class _HomeState extends State<Home> {
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].noOfPlants} " + "Plants",
+                                      text: "${productsList[index].noOfPlants} " + toBeginningOfSentenceCase(getTranslated(context, "plants_key")),
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -154,7 +223,7 @@ class _HomeState extends State<Home> {
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].size} " + "Bheega",
+                                      text: "${productsList[index].size} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -168,7 +237,7 @@ class _HomeState extends State<Home> {
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "$differenceInYears " + "Years",
+                                      text: "$differenceInYears " + toBeginningOfSentenceCase(getTranslated(context, "years_key")),
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -188,8 +257,7 @@ class _HomeState extends State<Home> {
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index]
-                                          .reservePrice} " + "Rs.",
+                                      text: "${productsList[index].reservePrice}",
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -226,7 +294,7 @@ class _HomeState extends State<Home> {
           if (!snapshot.hasData) {
             return Center(
                 child: Text(
-                  "Loading...",
+                  toBeginningOfSentenceCase(getTranslated(context, "loading_key")) + "...",
                   style: TextStyle(
                     fontFamily: "Montesserat",
                     fontWeight: FontWeight.w700,
@@ -239,9 +307,12 @@ class _HomeState extends State<Home> {
             if (snapshot.hasData) {
               if (productsList == null) {
                 productsList = [];
+                //_translatedProductsList = [];
               }
               print("Length of snapshot data is ${snapshot.data.length}");
               productsList.addAll(snapshot.data);
+             // _translatedProductsList = List.from(productsList);
+              //_getTranslatedValues(context);
               print("products list is now");
               print(productsList);
               // productsList.sort((a, b) =>
@@ -282,7 +353,7 @@ class _HomeState extends State<Home> {
                             ),
                             icon: Icon(Icons.filter_alt_outlined),
                             onPressed: _openFilterList,
-                            label : Text('Filter'),
+                            label : Text(toBeginningOfSentenceCase(getTranslated(context, "filter_key"))),
                             color: Colors.red[100],
 
                   ),
@@ -299,7 +370,7 @@ class _HomeState extends State<Home> {
                         : Container(
                             color: Colors.greenAccent,
                             child: FlatButton(
-                              child: Text("Load More"),
+                              child: Text(toBeginningOfSentenceCase(getTranslated(context, "load_more_key"))),
                               onPressed: () async {
                                 //List<Product> newProducts = await dbConnection.getProducts();
                                 setState(() {
@@ -328,18 +399,19 @@ class _HomeState extends State<Home> {
     if(productsList == null) {
       print("PARESH productList");
       productsList = [];
+     // _translatedProductsList = [];
     }
     return Scaffold(
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('Home'),
+          title: Text(toBeginningOfSentenceCase(getTranslated(context, "home_key"))),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
             FlatButton.icon(
               icon: Icon(Icons.person),
-              label: Text('logout'),
+              label: Text(getTranslated(context, "logout_key")),
               onPressed: () async {
                 //Navigator.of(context).pop();
                 await _auth.signOut();
@@ -418,8 +490,8 @@ class _HomeState extends State<Home> {
         listData: villageList,
         selectedListData: selectedVillageList,
         height: 480,
-        headlineText: "Select Village",
-        searchFieldHintText: "Search Here",
+        headlineText: toBeginningOfSentenceCase(getTranslated(context, "select_village_key")),
+        searchFieldHintText: toBeginningOfSentenceCase(getTranslated(context, "search_here_key")),
         label: (item) {
           return item;
         },
@@ -462,9 +534,10 @@ class _HomeState extends State<Home> {
     return Row(
         children: [
         dropDownList(),
+        SizedBox(width: 20.0),
         RaisedButton.icon(
             icon: Icon(CupertinoIcons.hammer_fill),
-            label: Text('START BIDDING'),
+            label: Text(getTranslated(context, "start_bidding_key").toUpperCase()),
             color: Colors.green,
             onPressed: () {
               startBidding(index);
@@ -497,7 +570,7 @@ class _HomeState extends State<Home> {
         );
       }).toList(),
       hint: Text(
-        "Choose Duration",
+        toBeginningOfSentenceCase(getTranslated(context, "choose_duration_key")),
         style: TextStyle(
             color: Colors.black,
             fontSize: 16,
@@ -513,17 +586,37 @@ class _HomeState extends State<Home> {
 
   startBidding( int index )
   {
-    Bid bid = new Bid();
+    if (selectedDuration == null) {
+      // NO Duration has been selected
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
+                content: Text(getTranslated(context, "choose_duration_alert_key") + "!!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(getTranslated(context, "ok_key").toUpperCase()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }
+    else {
+      Bid bid = new Bid();
 
-    DateTime now = new DateTime.now();
-    DateTime date = new DateTime(now.year, now.month, now.day);
-    bid.id = productsList[index].id ;
-    bid.productId = productsList[index].id;
-    bid.startTime = date;
-    bid.endTime = date.add(new Duration( days: int.parse(selectedDuration) ));
-    bid.basePrice = productsList[index].reservePrice;
-    bid.type = "Best Price";
+      DateTime now = new DateTime.now();
+      DateTime date = new DateTime(now.year, now.month, now.day);
+      bid.id = productsList[index].id;
+      bid.productId = productsList[index].id;
+      bid.startTime = date;
+      bid.endTime = date.add(new Duration(days: int.parse(selectedDuration)));
+      bid.basePrice = productsList[index].reservePrice;
+      bid.type = "Best Price";
 
-    dbConnection.addNewBid(bid);
+      dbConnection.addNewBid(bid);
+    }
   }
 }

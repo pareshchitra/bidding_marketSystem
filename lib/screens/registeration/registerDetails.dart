@@ -1,8 +1,10 @@
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/services/auth.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'BuyerForm.dart';
 import 'SellerForm.dart';
@@ -54,7 +56,7 @@ class _RegisterState extends State<RegisterDetails> {
       appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Center(child: (user!=null) ? Text('Update Profile', textAlign: TextAlign.center): Text('Sign Up to Farmway', textAlign: TextAlign.center)),
+        title: Center(child: (user!=null) ? Text(toBeginningOfSentenceCase(getTranslated(context, "update_profile_key")), textAlign: TextAlign.center): Text(toBeginningOfSentenceCase(getTranslated(context, "sign_up_info_key")), textAlign: TextAlign.center)),
         // actions: <Widget>[
         //   FlatButton.icon(
         //     icon: Icon(Icons.person),
@@ -82,7 +84,7 @@ class _RegisterState extends State<RegisterDetails> {
                         toggleForm(value);
                       }),
                   Text(
-                    'Farmer',
+                    toBeginningOfSentenceCase(getTranslated(context, "farmer_key")),
                     style: TextStyle(fontSize: width * 0.06, fontFamily: "Georgia"),
                   ),
                   SizedBox(width: 20,),
@@ -94,7 +96,7 @@ class _RegisterState extends State<RegisterDetails> {
                         toggleForm(value);
                       }),
                   Text(
-                    'Buyer',
+                    toBeginningOfSentenceCase(getTranslated(context, "buyer_key")),
                     style: TextStyle(fontSize: width * 0.06, fontFamily: "Georgia"),
                   ),
                 ],

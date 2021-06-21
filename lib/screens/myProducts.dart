@@ -8,10 +8,12 @@ import 'package:bidding_market/screens/home/brew_list.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 
@@ -29,7 +31,40 @@ class _MyProductsState extends State<MyProducts> {
 
   List<Product> productsList ;
 
-
+  // //Translated values
+  // List<Product> _translatedProductsList = [];
+  //
+  // void _getTranslatedValues(BuildContext context)
+  // {
+  //   for (var i = 0; i < productsList.length;i++ ) {
+  //     if(selectedLanguage == "hi") {
+  //     getTranslatedOnline(context, _translatedProductsList[i].location, "0").then((
+  //         value) =>
+  //         setState(() {
+  //           _translatedProductsList[i].location = value;
+  //         }));
+  //     getTranslatedOnline(context, _translatedProductsList[i].owner, "0").then((
+  //         value) =>
+  //         setState(() {
+  //           _translatedProductsList[i].owner = value;
+  //         }));
+  //     }
+  //     else if(selectedLanguage == "en")
+  //     {
+  //       _translatedProductsList[i].location = productsList[i].location;
+  //       _translatedProductsList[i].owner = productsList[i].owner;
+  //     }
+  //   }
+  // }
+  //
+  // @override
+  // // ignore: must_call_super
+  // Future<void> didChangeDependencies() async {
+  //   //super.initState();
+  //   showList();
+  //   await Future.delayed(const Duration(seconds: 1));
+  //   _getTranslatedValues(context);
+  // }
 
   Widget showList() {
     //final currentUser = Provider.of<User>(context);
@@ -42,7 +77,7 @@ class _MyProductsState extends State<MyProducts> {
           if (!snapshot.hasData) {
             return Center(
                 child: Text(
-                  "Loading...",
+                  toBeginningOfSentenceCase(getTranslated(context, "loading_key")) + "...",
                   style: TextStyle(
                     fontFamily: "Montesserat",
                     fontWeight: FontWeight.w700,
@@ -55,8 +90,12 @@ class _MyProductsState extends State<MyProducts> {
             if (productsList == null) {
               print("PARESH productList");
               productsList = [];
+              //_translatedProductsList = [];
             }
             productsList.sort((a,b) => a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
+
+           // _translatedProductsList = List.from(productsList);
+            //_getTranslatedValues(context);
           }
           final border = RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -77,7 +116,7 @@ class _MyProductsState extends State<MyProducts> {
                 Expanded(
                     child:productsList.length == 0
                         ? Center(
-                      child: Text('No products to show of this user', style: TextStyle(fontSize: 20),),
+                      child: Text(toBeginningOfSentenceCase(getTranslated(context, "no_product_user_key")), style: TextStyle(fontSize: 20),),
                     )
                 : ListView.builder(
                   itemCount: productsList.length,
@@ -103,10 +142,10 @@ class _MyProductsState extends State<MyProducts> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
 
-                                        child: (productsList[i].image1 != "File not uploaded" ) ? Image.network(
+                                        child: (productsList[i].image1 != toBeginningOfSentenceCase(getTranslated(context, "file_not_uploaded_key")) ) ? Image.network(
                                           "${productsList[i].image1}" ,
                                           fit: BoxFit.cover,
-                                        ) : Text("No Image Available")
+                                        ) : Text(toBeginningOfSentenceCase(getTranslated(context, "no_image_key")))
                                       ),
                                     ),
                                   ),
@@ -131,7 +170,7 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "${productsList[i].owner}",
+                                                    text: productsList[i].owner,
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
@@ -145,7 +184,7 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "${productsList[i].location}",
+                                                    text: productsList[i].location,
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
@@ -159,7 +198,7 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "${productsList[i].noOfPlants} " + "Plants",
+                                                    text: "${productsList[i].noOfPlants} " + toBeginningOfSentenceCase(getTranslated(context, "plants_key")),
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
@@ -173,7 +212,7 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "${productsList[i].size} " + "Bheega",
+                                                    text: "${productsList[i].size} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
@@ -187,7 +226,7 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "$differenceInYears " + "Years",
+                                                    text: "$differenceInYears " + toBeginningOfSentenceCase(getTranslated(context, "years_key")),
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
@@ -204,7 +243,7 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "${productsList[i].reservePrice} " +"Rs.",
+                                                    text: "₹ " + "${productsList[i].reservePrice}",
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
@@ -222,9 +261,9 @@ class _MyProductsState extends State<MyProducts> {
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                 children:[
-                                  RaisedButton.icon(onPressed: () => { update(productsList[i]) }, icon: Icon(Icons.update), label: Text("UPDATE")),
+                                  RaisedButton.icon(onPressed: () => { update(productsList[i]) }, icon: Icon(Icons.update), label: Text(getTranslated(context, "update_key").toUpperCase())),
                                   SizedBox(width: 10.0),
-                                  RaisedButton.icon(onPressed: () => { delete( context,productsList[i]) }, icon: Icon(Icons.delete_forever), label: Text("DELETE"))
+                                  RaisedButton.icon(onPressed: () => { delete( context,productsList[i]) }, icon: Icon(Icons.delete_forever), label: Text(getTranslated(context, "delete_key").toUpperCase()))
                               ])
                             ],
                           ),
@@ -243,18 +282,19 @@ class _MyProductsState extends State<MyProducts> {
     if(productsList == null) {
       print("PARESH productList");
       productsList = [];
+      //_translatedProductsList = [];
     }
     return Scaffold(
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('My Products'),
+          title: Text(toBeginningOfSentenceCase(getTranslated(context, "my_products_key"))),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
             FlatButton.icon(
               icon: Icon(Icons.person),
-              label: Text('logout'),
+              label: Text(getTranslated(context, "logout_key")),
               onPressed: () async {
                 //Navigator.of(context).pop();
                 await _auth.signOut();
@@ -300,11 +340,11 @@ class _MyProductsState extends State<MyProducts> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Alert Dialog'),
-          content: Text("Are You Sure Want To Delete this product?"),
+          title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
+          content: Text(toBeginningOfSentenceCase(getTranslated(context, "delete_confirm_key"))),
           actions: <Widget>[
             FlatButton(
-              child: Text("YES"),
+              child: Text(getTranslated(context, "yes_key").toUpperCase()),
               onPressed: () async{
                 Navigator.of(context).pop();
                 await dbConnection.deleteProduct(p);
@@ -313,7 +353,7 @@ class _MyProductsState extends State<MyProducts> {
             ),
 
             FlatButton(
-              child: Text("NO"),
+              child: Text(getTranslated(context, "no_key").toUpperCase()),
               onPressed: () {
 
                 Navigator.of(context).pop();

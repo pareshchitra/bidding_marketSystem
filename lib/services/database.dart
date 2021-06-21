@@ -14,7 +14,10 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:bidding_market/services/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'language_constants.dart';
 
 class ProgressDialogBar extends StatefulWidget {
   UploadTask storageTask;
@@ -65,7 +68,7 @@ class _ProgressDialogBarState extends State<ProgressDialogBar> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('File Upload'),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "file_upload_key"))),
             content: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -953,10 +956,10 @@ class DatabaseService {
     updateBidStatus(bidId, "Closed");
   }
 
+  //OPTIMIZATION : KEEP BID IDs IN PLACE OF PRODUCT IDs in Buyer Table
+  Future<List<dynamic>> myBids (User currentUser) async{
 
-  Future<List<Map<String,Product>>> myBids (User currentUser) async{
-
-    List<Map<String,Product>> productBidList = new List();
+    List<Map<String,dynamic>> productBidList = new List();
     productBidList = [];
     print("Entering myBids database func with currentUserName " + currentUser.Name);
 
@@ -965,9 +968,12 @@ class DatabaseService {
       for(var bid in bids)
         {
           Product product = await getProduct(bid['ProductId']);
-          Map<String,Product> userPriceProductMap =
+          Bid bidInfo = await getBid(bid['ProductId']);
+          Map<String,dynamic> userPriceProductMap =
           {
-            bid['Price'] : product
+            'Product' : product,
+            'QuotePrice' : bid['Price'],
+            'Bid' : bidInfo,
           };
           productBidList.add(userPriceProductMap);
         }
