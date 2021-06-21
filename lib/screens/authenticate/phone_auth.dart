@@ -1,7 +1,8 @@
 import 'package:bidding_market/models/user.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:flutter/foundation.dart' show ChangeNotifier, VoidCallback;
-import 'package:flutter/widgets.dart' show TextEditingController;
+import 'package:flutter/widgets.dart' show BuildContext, TextEditingController;
 import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -162,21 +163,21 @@ class PhoneAuthDataProvider with ChangeNotifier {
     });
   }
 
-  void verifyOTPAndLogin({String smsCode}) async {
+  void verifyOTPAndLogin({String smsCode, BuildContext context}) async {
     _authCredential = FirebaseAuth.PhoneAuthProvider.credential(
         verificationId: actualCode, smsCode: smsCode);
 
     FireBase.auth
         .signInWithCredential(_authCredential)
         .then((FirebaseAuth.UserCredential result) async {
-      _addStatusMessage('Authentication successful');
+      _addStatusMessage(getTranslated(context, "auth_success_key"));
       _addStatus(PhoneAuthState.Verified);
       if (onVerified != null) onVerified(result.user, phone);
     }).catchError((error) {
       if (onError != null) onError();
       _addStatus(PhoneAuthState.Error);
       _addStatusMessage(
-          'Something has gone wrong, please try later(signInWithPhoneNumber) $error');
+          getTranslated(context, "try_later_error_key") + ' $error');
     });
   }
 

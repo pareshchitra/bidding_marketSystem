@@ -4,8 +4,10 @@ import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 
 class ProductDetails extends StatefulWidget {
@@ -42,7 +44,7 @@ class _ProductDetails extends State<ProductDetails>
         ),
         backgroundColor: Colors.white,
         title: Text(
-          "FARM DETAIL",
+          getTranslated(context, "farm_detail_key").toUpperCase(),
           style: TextStyle(
             color: Colors.black,
           ),
@@ -133,7 +135,7 @@ class _ProductDetails extends State<ProductDetails>
                         (image) {
                       return (image != null) ? Image.network(
                         image,
-                      ) : Container(alignment: Alignment.center,child: Text("No Image Available !! \nPlease Update Farm Photos"));
+                      ) : Container(alignment: Alignment.center,child: Text(toBeginningOfSentenceCase(getTranslated(context, "no_image_key")) +" !! \n" + toBeginningOfSentenceCase(getTranslated(context, "update_farm_photos_key"))));
                     },
                   ).toList(),
                 ),
@@ -159,7 +161,7 @@ class _ProductDetails extends State<ProductDetails>
       child: Center(
         child: Text(
           //name,
-          product.category + " - " + product.size.toString() + " Bheega - " + product.location,
+          getTranslated(context, (product.category.toLowerCase() + "_category_key")).toUpperCase() + " - " + product.size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " + product.location,
           style: TextStyle(fontSize: 16.0, color: Colors.black),
         ),
       ),
@@ -216,7 +218,7 @@ class _ProductDetails extends State<ProductDetails>
             width: 12.0,
           ),
           Text(
-            "Tap to get further info",
+            toBeginningOfSentenceCase(getTranslated(context, "tap_further_info_key")),
             style: TextStyle(
               color: Colors.grey[500],
             ),
@@ -243,7 +245,7 @@ class _ProductDetails extends State<ProductDetails>
                 width: 12.0,
               ),
               Text(
-                "Size",
+                toBeginningOfSentenceCase(getTranslated(context, "size_key")),
                 style: TextStyle(
                   color: Colors.grey[600],
                 ),
@@ -251,7 +253,7 @@ class _ProductDetails extends State<ProductDetails>
             ],
           ),
           Text(
-            "SIZE CHART",
+            getTranslated(context, "size_chart_key").toUpperCase(),
             style: TextStyle(
               color: Colors.blue[400],
               fontSize: 12.0,
@@ -274,7 +276,7 @@ class _ProductDetails extends State<ProductDetails>
             tabs: <Widget>[
               Tab(
                 child: Text(
-                  "DESCRIPTION",
+                  getTranslated(context, "description_key").toUpperCase(),
                   style: TextStyle(
                     color: Colors.black,
                   ),
@@ -282,7 +284,7 @@ class _ProductDetails extends State<ProductDetails>
               ),
               Tab(
                 child: Text(
-                  "OWNER",
+                  getTranslated(context, "owner_key").toUpperCase(),
                   style: TextStyle(
                     color: Colors.black,
                   ),
@@ -298,7 +300,7 @@ class _ProductDetails extends State<ProductDetails>
               children: <Widget>[
                 Text(
                   product.description == null
-                      ? "Details unavailable"
+                      ? toBeginningOfSentenceCase(getTranslated(context, "details_unavailable_key"))
                       : product.description,
                   style: TextStyle(
                     color: Colors.black,
@@ -324,7 +326,7 @@ class _ProductDetails extends State<ProductDetails>
         left: 12.0,
       ),
       child: Text(
-        "LOCATION",
+        getTranslated(context, "location_key").toUpperCase(),
         style: TextStyle(
           color: Colors.grey[800],
         ),
@@ -352,7 +354,7 @@ class _ProductDetails extends State<ProductDetails>
         left: 12.0,
       ),
       child: Text(
-        "MORE INFO",
+        getTranslated(context, "more_info_key").toUpperCase(),
         style: TextStyle(
           color: Colors.grey[800],
         ),
@@ -366,8 +368,8 @@ class _ProductDetails extends State<ProductDetails>
         left: 12.0,
       ),
       child: Text(
-        "Product Code: ${product
-            .id}\nSize: ${product.size} Bheega",
+        toBeginningOfSentenceCase(getTranslated(context, "product_code_key")) + ": ${product
+            .id}\n" + toBeginningOfSentenceCase(getTranslated(context, "size_key")) + ": ${product.size} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
         style: TextStyle(
           color: Colors.grey[600],
         ),
@@ -407,7 +409,7 @@ class _ProductDetails extends State<ProductDetails>
                       width: 4.0,
                     ),
                     Text(
-                      "PLACE A BID",
+                      getTranslated(context, "place_bid_key").toUpperCase(),
                       style: TextStyle(color: Colors.white),
                     ),
                   ],
@@ -458,7 +460,7 @@ class _ProductDetails extends State<ProductDetails>
         );
       }).toList(),
       hint: Text(
-        "Choose Amount",
+        toBeginningOfSentenceCase(getTranslated(context, "choose_amount_key")),
         style: TextStyle(
             color: Colors.black,
             fontSize: 16,
@@ -480,11 +482,11 @@ class _ProductDetails extends State<ProductDetails>
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-                title: Text('Alert'),
-                content: Text("Are you sure you want to place a bid of $selectedPrice for this product?"),
+                title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
+                content: Text(getTranslated(context, "price_bid_confirm_key_1") + " $selectedPrice " + getTranslated(context, "price_bid_confirm_key_2")),
                 actions: <Widget>[
                   FlatButton(
-                    child: Text("Yes"),
+                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "yes_key"))),
                     onPressed: () {
                       Navigator.of(context).pop();
                       dbConnection.updateBidder(
@@ -493,9 +495,9 @@ class _ProductDetails extends State<ProductDetails>
                     },
                   ),
                   FlatButton(
-                    child: Text("No"),
+                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "no_key"))),
                     onPressed: () {
-                      Navigator.of(context).pop();;
+                      Navigator.of(context).pop();
                     },
                   ),
                 ]);
@@ -506,11 +508,11 @@ class _ProductDetails extends State<ProductDetails>
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-                title: Text('Alert'),
-                content: Text("Please choose valid amount from list !!"),
+                title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
+                content: Text(getTranslated(context, "choose_amount_alert_key") + " !!"),
                 actions: <Widget>[
                   FlatButton(
-                    child: Text("OK"),
+                    child: Text(getTranslated(context, "ok_key").toUpperCase()),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },

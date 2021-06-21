@@ -1,9 +1,11 @@
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:bidding_market/screens/home/home.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 
 
@@ -26,7 +28,7 @@ class AdminLoginPage extends StatelessWidget {
           ),
         //backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Center(child: Text('Admin Login', textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Signatra'),)),
+        title: Center(child: Text(toBeginningOfSentenceCase(getTranslated(context, "admin_login_key")), textAlign: TextAlign.center, style: TextStyle(fontFamily: 'Signatra'),)),
         ),
       body: AdminLoginScreen(),
     );
@@ -69,31 +71,31 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
 
     final adminIdField = TextFormField(
       autofocus: false,
-      validator: (value) => value.isEmpty ? "Please enter your id" : null,
+      validator: (value) => value.isEmpty ? toBeginningOfSentenceCase(getTranslated(context, "enter_id_key")) : null,
       controller: _adminIdController,
-      decoration: buildInputDecoration("Confirm password", Icons.person),
+      decoration: buildInputDecoration(toBeginningOfSentenceCase(getTranslated(context, "confirm_password_key")), Icons.person),
     );
 
     final passwordField = TextFormField(
       autofocus: false,
       obscureText: true,
-      validator: (value) => value.isEmpty ? "Please enter password" : null,
+      validator: (value) => value.isEmpty ? toBeginningOfSentenceCase(getTranslated(context, "enter_password_key")) : null,
       controller: _passwordController,
-      decoration: buildInputDecoration("Confirm password", Icons.lock_outline),
+      decoration: buildInputDecoration(toBeginningOfSentenceCase(getTranslated(context, "confirm_password_key")), Icons.lock_outline),
     );
 
     var loading = Center(child: Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         CircularProgressIndicator(),
-        Text(" Authenticating ... Please wait")
+        Text(toBeginningOfSentenceCase(getTranslated(context, "auth_wait_key")) + "...")
       ],
     ));
 
     var adminLabel = Center( child: Padding(
       padding: EdgeInsets.all(8.0),
       child: Text(
-          "Admin",
+          toBeginningOfSentenceCase(getTranslated(context, "admin_key")),
           style:  TextStyle(color : Colors.deepOrange, fontSize: 28.0, fontWeight: FontWeight.bold)
       ),
     ));
@@ -112,7 +114,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         },
 
         color : Colors.green,
-        child : Text("Login" , style: TextStyle(color: Colors.white))
+        child : Text(toBeginningOfSentenceCase(getTranslated(context, "login_key")) , style: TextStyle(color: Colors.white))
     ));
 
     var horizontalLine = Container(
@@ -124,7 +126,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
     var nonAdminLoginButton = Center( child: FlatButton.icon(
         onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SignIn())),
         icon: (Icon(Icons.nature_people, color : Colors.green)),
-        label: Text("I'm Not an Admin" , style: TextStyle(color: Colors.green , fontSize: 20.0, fontWeight: FontWeight.bold),)
+        label: Text(toBeginningOfSentenceCase(getTranslated(context, "not_admin_info_key")) , style: TextStyle(color: Colors.green , fontSize: 20.0, fontWeight: FontWeight.bold),)
     ));
 
     return (isLoading == true) ? loading : SingleChildScrollView(
@@ -140,11 +142,11 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
               SizedBox(height: 80.0),
               adminLabel,
               SizedBox(height: 30.0),
-              label("Admin ID"),
+              label(toBeginningOfSentenceCase(getTranslated(context, "admin_id_key"))),
               SizedBox(height: 5.0),
               adminIdField,
               SizedBox(height: 20.0),
-              label("Password"),
+              label(toBeginningOfSentenceCase(getTranslated(context, "password_key"))),
               SizedBox(height: 5.0),
               passwordField,
               SizedBox(height: 20.0),
@@ -179,7 +181,7 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
           {
             isPwdCorrect = true;
             Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text("Welcome Dear Admin, " + result.data()["name"])));
+                content: Text(toBeginningOfSentenceCase(getTranslated(context, "welcome_admin_key")) + ", " + result.data()["name"])));
 
             SharedPrefs().adminId = result.data()['id'];
             Navigator.pushReplacement(context, MaterialPageRoute(
@@ -195,9 +197,9 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
         }
       });
       if( isIdCorrect == false)
-        Scaffold.of(context).showSnackBar(SnackBar(content : Text("Id Incorrect") ));
+        Scaffold.of(context).showSnackBar(SnackBar(content : Text(getTranslated(context, "id_incorrect_key")) ));
       else if( isPwdCorrect == false)
-        Scaffold.of(context).showSnackBar(SnackBar(content : Text("Password Incorrect") ));
+        Scaffold.of(context).showSnackBar(SnackBar(content : Text(getTranslated(context, "password_incorrect_key")) ));
       setState(() {
         isLoading = false;
       });

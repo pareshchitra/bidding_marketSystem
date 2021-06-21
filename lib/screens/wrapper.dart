@@ -8,8 +8,10 @@ import 'package:bidding_market/screens/registeration/registerDetails.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/registeration/registerMobile.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:bidding_market/main.dart';
 
@@ -91,7 +93,7 @@ class Wrapper extends StatelessWidget {
           backgroundColor: Colors.white,
           body: Center(
               child: Text(
-                "Loading...",
+                toBeginningOfSentenceCase(getTranslated(context, "loading_key")) + "...",
                 style: TextStyle(
                   fontFamily: "Montesserat",
                   fontWeight: FontWeight.w700,

@@ -6,6 +6,7 @@ import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/myProducts.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/models/user.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +45,7 @@ class _UploadImagesFieldsState extends State<UploadImagesFields> {
     print(widget.index);
     return RaisedButton(
         color: Colors.green[700],
-        child: Text('Upload Image'),
+        child: Text(toBeginningOfSentenceCase(getTranslated(context, "upload_image_key"))),
         onPressed: () {
           showModalBottomSheet(context: context,
               builder: ((builder) => p.imageSourceSelector(context, widget.index+1)));
@@ -88,7 +89,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
       margin: EdgeInsets.symmetric(horizontal: 20.0,vertical: 20.0),
       child: Column (
         children: <Widget>[
-          Text("Choose Photo Source",
+          Text(toBeginningOfSentenceCase(getTranslated(context, "choose_photo_key")),
               style: TextStyle(fontSize: 20.0
               )),
           SizedBox(
@@ -98,14 +99,14 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               FlatButton.icon(
-                  label: Text("Camera"),
+                  label: Text(toBeginningOfSentenceCase(getTranslated(context, "camera_key"))),
                   onPressed: () {
                     retreiveImage(ImageSource.camera, imageNumber, context);
                   },
                   icon: Icon(Icons.camera_alt)
               ),
               FlatButton.icon(
-                  label: Text("Gallery"),
+                  label: Text(toBeginningOfSentenceCase(getTranslated(context, "gallery_key"))),
                   onPressed: () {
                     retreiveImage(ImageSource.gallery, imageNumber, context);}, icon: Icon(Icons.image)),
             ],
@@ -179,6 +180,41 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
     );
   }
 
+//   var originalValues = ['GUAVA', 'PAPAYA', 'AMLA'];
+//
+//   //TranslatedValues
+//   var _translatedList = [];
+//
+//   void _getTranslatedValues(BuildContext context)
+//   {
+//     if(prod != null)
+//       originalValues.add(prod.category);
+//     else
+//       originalValues.add("Category");
+//
+//     _translatedList.add('GUAVA');
+//     _translatedList.add('PAPAYA');
+//     _translatedList.add('AMLA');
+//     if(prod != null)
+//       _translatedList.add(prod.category);
+//     else
+//       _translatedList.add("Category");
+//     for (var i = 0; i < originalValues.length;i++ ) {
+//       getTranslatedOnline(context, originalValues[i], "0")
+//           .then((value) =>
+//           setState(() {
+//             _translatedList[i] = value;
+//           }));
+//     }
+//   }
+//
+//   @override
+//  // ignore: must_call_super
+//  void didChangeDependencies() {
+//   //super.initState();
+//     _getTranslatedValues(context);
+// }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
@@ -190,7 +226,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
         appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: (prod != null) ? Text('Update Your Farm') : Text('Add Your Farm'),
+        title: (prod != null) ? Text(toBeginningOfSentenceCase(getTranslated(context, "update_farm_key"))) : Text(toBeginningOfSentenceCase(getTranslated(context, "add_farm_key"))),
         ),
 
         body:  SingleChildScrollView(
@@ -227,7 +263,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                 DropdownButtonFormField<String>(
                   decoration: new InputDecoration(
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    labelText: "Category",
+                    labelText: toBeginningOfSentenceCase(getTranslated(context, "category_key")),
                     fillColor: Colors.white,
                     border: new OutlineInputBorder(
                       borderRadius: new BorderRadius.circular(25.0),
@@ -236,13 +272,13 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     //fillColor: Colors.green
                   ),
                   value: _category,
-                  items: ['GUAVA' , 'PAPAYA' , 'AMLA']
+                  items: product.categoryList
                       .map((label) => DropdownMenuItem(
-                    child: Text(label.toString()),
+                    child: Text(getTranslated(context, (label.toLowerCase() + "_category_key")).toUpperCase()),
                     value: label,
                   ))
                       .toList(),
-                  hint: Text( (prod != null) ? prod.category : 'Category'),
+                  hint: Text( (prod != null) ? getTranslated(context, (prod.category.toLowerCase() + "_category_key")).toUpperCase() : toBeginningOfSentenceCase(getTranslated(context, "category_key"))),
                   onChanged: (value) {
                     setState(() {
                       _category = value;
@@ -368,14 +404,14 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                    });
                  },
                  decoration: new InputDecoration(
-                   labelText:  "Age/Years Old",
+                   labelText:  toBeginningOfSentenceCase(getTranslated(context, "age_old_key")),
                    fillColor: Colors.white,
                    border: new OutlineInputBorder(
                      borderRadius: new BorderRadius.circular(25.0),
                      borderSide: new BorderSide(),
                    ),
                  ),
-                 label: (prod!=null ) ? prod.age.year.toString() : "Age/Years Old",
+                 label: (prod!=null ) ? prod.age.year.toString() : toBeginningOfSentenceCase(getTranslated(context, "age_old_key")),
                  dateFormat: DateFormat.yMd(),
                  firstDate: DateTime(1980, 1, 1),
                  lastDate: DateTime.now(),
@@ -387,7 +423,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   initialValue: prod !=null ? prod.size.toString() : "",
                   maxLength: 6,
                   decoration: new InputDecoration(
-                    labelText: "Bheega",
+                    labelText: toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
                     fillColor: Colors.white,
                     border: new OutlineInputBorder(
                       borderRadius: new BorderRadius.circular(25.0),
@@ -397,7 +433,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   ),
                   validator: (val) {
                     if (val.length < 1) {
-                      return "Bheega cannot be less than 1 digit";
+                      return toBeginningOfSentenceCase(getTranslated(context, "bigha_non_empty_key"));
                     } else {
                       return null;
                     }
@@ -414,7 +450,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   initialValue: prod !=null ? prod.noOfPlants.toString() : "",
                   maxLength: 6,
                   decoration: new InputDecoration(
-                    labelText: "Number of Plants",
+                    labelText: toBeginningOfSentenceCase(getTranslated(context, "number_plants_key")),
                     fillColor: Colors.white,
                     border: new OutlineInputBorder(
                       borderRadius: new BorderRadius.circular(25.0),
@@ -424,7 +460,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   ),
                   validator: (val) {
                     if (val.length < 0) {
-                      return "Number of Plants cannot be less than 0";
+                      return toBeginningOfSentenceCase(getTranslated(context, "number_plants_non_empty_key"));
                     } else {
                       return null;
                     }
@@ -441,7 +477,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   initialValue: prod !=null ? prod.reservePrice.toString() : "",
                   maxLength: 8,
                   decoration: new InputDecoration(
-                    labelText: "Reserve Price",
+                    labelText: toBeginningOfSentenceCase(getTranslated(context, "reserve_price_key")),
                     fillColor: Colors.white,
                     border: new OutlineInputBorder(
                       borderRadius: new BorderRadius.circular(25.0),
@@ -451,7 +487,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   ),
                   validator: (val) {
                     if (val.length < 0) {
-                      return "Reserve price cannot be less than 0";
+                      return toBeginningOfSentenceCase(getTranslated(context, "reserve_price_non_empty_key"));
                     } else {
                       return null;
                     }
@@ -466,7 +502,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
 
 
-                Text('Add Images',
+                Text(toBeginningOfSentenceCase(getTranslated(context, "add_images_key")),
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,
@@ -477,7 +513,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 RaisedButton(
                     color: Colors.green[700],
-                    child: Text('Upload Farm Profile Image1'),
+                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "upload_farm_image_key")) + " 1"),
                     onPressed: () {
                       showModalBottomSheet(context: context,
                           builder: ((builder) => imageSourceSelector(context, 1)));
@@ -487,7 +523,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 RaisedButton(
                     color: Colors.green[700],
-                    child: Text('Upload Farm Profile Image2'),
+                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "upload_farm_image_key")) + " 2"),
                     onPressed: () {
                       showModalBottomSheet(context: context,
                           builder: ((builder) => imageSourceSelector(context, 2)));
@@ -497,7 +533,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
 
                 RaisedButton(
                     color: Colors.green[700],
-                    child: Text('Upload Farm Profile Image3'),
+                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "upload_farm_image_key")) + " 3"),
                     onPressed: () {
                       showModalBottomSheet(context: context,
                           builder: ((builder) => imageSourceSelector(context, 3)));
@@ -607,7 +643,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     }
                   },
                   color: Colors.green[700],
-                  child: (prod != null) ? Text('UPDATE') : Text('ADD'),
+                  child: (prod != null) ? Text(getTranslated(context, "update_key").toUpperCase()) : Text(getTranslated(context, "add_key").toUpperCase()),
                 ),
               ],
             ),

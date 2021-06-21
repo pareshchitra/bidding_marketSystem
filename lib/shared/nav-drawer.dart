@@ -1,16 +1,47 @@
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/screens/admin/liveBidding.dart';
+import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/myBids.dart';
 import 'package:bidding_market/screens/myProducts.dart';
 import 'package:bidding_market/screens/registeration/BuyerForm.dart';
 import 'package:bidding_market/screens/registeration/SellerForm.dart';
 import 'package:bidding_market/screens/viewProfile.dart';
+import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
+import 'package:intl/intl.dart';
 
-class NavDrawer extends StatelessWidget {
+class NavDrawer extends StatefulWidget {
+  @override
+  _NavDrawerState createState() => _NavDrawerState();
+}
+
+class _NavDrawerState extends State<NavDrawer> {
+
+  // //Translated values
+  // User _translatedUser = new User();
+  //
+  // void _getTranslatedValues(BuildContext context)
+  // {
+  //   _translatedUser.Name = loggedUser.Name;
+  //
+  //   getTranslatedOnline(context, _translatedUser.Name, "0").then((
+  //       value) =>
+  //       setState(() {
+  //         _translatedUser.Name = value;
+  //       }));
+  // }
+  //
+  // @override
+  // // ignore: must_call_super
+  // void didChangeDependencies() {
+  //   //super.initState();
+  //   _getTranslatedValues(context);
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -30,12 +61,12 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.verified_user_outlined),
-            title: (loggedUser.Name == null )? Text('Welcome  '+  ' !!!'): Text('Welcome  '+  loggedUser.Name  + ' !!!'),
+            title: (loggedUser.Name == null )? Text(toBeginningOfSentenceCase(getTranslated(context, "welcome_key")) + ' !!!'): Text(toBeginningOfSentenceCase(getTranslated(context, "welcome_key")) + '  '+  loggedUser.Name  + ' !!!'),
             onTap: () => {},
           ),
           ListTile(
             leading: Icon(Icons.home_outlined),
-            title: Text('Home'),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "home_key"))),
             onTap: () => {
                           Navigator.push(context, MaterialPageRoute(
                           builder: (context) => Home()
@@ -43,7 +74,7 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
               leading: Icon(CupertinoIcons.hammer_fill),
-              title: Text('Live Bids'),
+              title: Text(toBeginningOfSentenceCase(getTranslated(context, "live_bids_key"))),
               onTap:() {
                 //Navigator.of(context).pop();
                 Navigator.push(context, MaterialPageRoute(
@@ -52,10 +83,20 @@ class NavDrawer extends StatelessWidget {
               }
 
           ),
+          (loggedUser.type == 1) ?
+          ListTile(
+            leading: Icon(Icons.border_color),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "my_bids_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MyBids()
+              ))
+            },
+          ) : SizedBox(),
           (loggedUser.type == 2) ?
           ListTile(
             leading: Icon(Icons.input),
-            title: Text('Add Product'),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "add_product_key"))),
             onTap:() {
                       //Navigator.of(context).pop();
                       Navigator.push(context, MaterialPageRoute(
@@ -64,10 +105,19 @@ class NavDrawer extends StatelessWidget {
                       }
 
           ) : SizedBox(),
-
+          (loggedUser.type == 2) ?
+          ListTile(
+            leading: Icon(Icons.border_color),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "my_products_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MyProducts()
+              ))
+            },
+          ) : SizedBox(),
           ListTile(
             leading: Icon(Icons.details),
-            title: Text('Profile'),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "my_profile_key"))),
             onTap: ()  {
 
               Navigator.push(context, MaterialPageRoute(
@@ -79,32 +129,15 @@ class NavDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
-          ),
-          (loggedUser.type == 2) ?
-          ListTile(
-            leading: Icon(Icons.border_color),
-            title: Text('My Products'),
-            onTap: () => {
-                          Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => MyProducts()
-            ))
-                          },
-          ) : SizedBox(),
-          (loggedUser.type == 1) ?
-          ListTile(
-            leading: Icon(Icons.border_color),
-            title: Text('My Bids'),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "settings_key"))),
             onTap: () => {
               Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => MyBids()
-              ))
+                  builder: (context) => Settings()))
             },
-          ) : SizedBox(),
+          ),
           ListTile(
             leading: Icon(Icons.exit_to_app),
-            title: Text('Logout'),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "logout_key"))),
             onTap: () => {Navigator.of(context).pop()},
           ),
         ],

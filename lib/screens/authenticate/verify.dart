@@ -3,6 +3,7 @@ import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/wrapper.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class PhoneAuthVerify extends StatefulWidget {
    */
   final Color cardBackgroundColor = Color(0xFFFCA967);
   //final String logo = Assets.firebase;
-  final String appName = "OTP Login";
+  final String appName = "otp_login_key";
 
   @override
   _PhoneAuthVerifyState createState() => _PhoneAuthVerifyState();
@@ -106,7 +107,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
       ),
 
       // AppName:
-      Text(widget.appName,
+      Text(getTranslated(context, widget.appName),
           textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.white,
@@ -124,18 +125,18 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                      text: 'Please enter the ',
+                      text: getTranslated(context, 'OTP_receive_key_1') + " ",
                       style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w400)),
                   TextSpan(
-                      text: 'One Time Password',
+                      text: getTranslated(context, 'OTP_receive_key_2'),
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.0,
                           fontWeight: FontWeight.w700)),
                   TextSpan(
-                    text: ' sent to your mobile',
+                    text: " " + getTranslated(context, 'OTP_receive_key_3'),
                     style: TextStyle(
                         color: Colors.white, fontWeight: FontWeight.w400),
                   ),
@@ -174,8 +175,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
         onPressed: signIn,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-            'VERIFY',
+          child: Text(getTranslated(context, 'verify_key').toUpperCase(),
             style: TextStyle(
                 color: widget.cardBackgroundColor, fontSize: 18.0),
           ),
@@ -198,10 +198,10 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
   signIn() {
     if (code.length != 6) {
-      _showSnackBar("Invalid OTP");
+      _showSnackBar(getTranslated(context, "OTP_invalid_key"));
     }
     Provider.of<PhoneAuthDataProvider>(context, listen: false)
-        .verifyOTPAndLogin(smsCode: code);
+        .verifyOTPAndLogin(smsCode: code, context: context);
   }
 
   // This will return pin field - it accepts only single char
@@ -259,17 +259,17 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
   );
 
   onStarted() {
-    _showSnackBar("PhoneAuth started");
+    _showSnackBar(getTranslated(context, "phoneauth_start_key"));
 //    _showSnackBar(phoneAuthDataProvider.message);
   }
 
   onCodeSent() {
-    _showSnackBar("OTP sent");
+    _showSnackBar(getTranslated(context, "OTP_sent_key"));
 //    _showSnackBar(phoneAuthDataProvider.message);
   }
 
   onCodeResent() {
-    _showSnackBar("OTP resent");
+    _showSnackBar(getTranslated(context, "OTP_resent_key"));
 //    _showSnackBar(phoneAuthDataProvider.message);
   }
 
@@ -287,19 +287,19 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
 
   onFailed() {
 //    _showSnackBar(phoneAuthDataProvider.message);
-    _showSnackBar("PhoneAuth failed");
+    _showSnackBar(getTranslated(context, "phoneauth_failed_key"));
   }
 
   onError() {
 //    _showSnackBar(phoneAuthDataProvider.message);
-    _showSnackBar(
-        "PhoneAuth error ${Provider
+    _showSnackBar(getTranslated(context, "phoneauth_error_key") +
+        " ${Provider
             .of<PhoneAuthDataProvider>(context, listen: false)
             .message}");
   }
 
   onAutoRetrievalTimeOut() {
-    _showSnackBar("PhoneAuth autoretrieval timeout");
+    _showSnackBar(getTranslated(context, "phoneauth_timeout_key"));
 //    _showSnackBar(phoneAuthDataProvider.message);
   }
 }

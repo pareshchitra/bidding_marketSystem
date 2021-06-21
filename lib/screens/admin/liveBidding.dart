@@ -7,11 +7,13 @@ import 'package:bidding_market/screens/home/brew_list.dart';
 import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:filter_list/filter_list.dart';
 
@@ -106,7 +108,7 @@ class _LiveBidsState extends State<LiveBids> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( productsList[index].category + " - " + productsList[index].size.toString() + " Bheega - "
+                  title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + productsList[index].size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - "
                                + productsList[index].location, style: TextStyle( color : Colors.green[600], fontSize: 25)),
                 ),
                 //Row(
@@ -124,7 +126,7 @@ class _LiveBidsState extends State<LiveBids> {
                           child: (productsList[index].image1 != "File not uploaded" ) ? Image.network(
                             "${productsList[index].image1}" ,
                             fit: BoxFit.cover,
-                          ) : Text("No Image Available"),
+                          ) : Text(getTranslated(context, "no_image_key")),
                         ),
                       ),
                     //),
@@ -134,11 +136,11 @@ class _LiveBidsState extends State<LiveBids> {
                       Row(
                         children: [
                           SizedBox(width: 10.0,),
-                          Text("Days Left : ",style: TextStyle(fontSize: 20, color: Colors.red)),
+                          Text(getTranslated(context, "days_left_key") + " : ",style: TextStyle(fontSize: 20, color: Colors.red)),
                           Text("${(bidList[index].endTime.difference(DateTime.now())).inDays}",style: TextStyle(fontSize: 20)),
                           SizedBox(width: 20.0,),
                           ( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" , style: TextStyle(fontSize: 23, color: Colors.black))
-                                                                : Text("- No Bids ",style: TextStyle(fontSize: 20)),
+                                                                : Text("- " + getTranslated(context, "no_bids_key"),style: TextStyle(fontSize: 20)),
                           Expanded(
                             child: Align(
                               alignment: Alignment.bottomRight,
@@ -154,17 +156,17 @@ class _LiveBidsState extends State<LiveBids> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(width: 10.0,),
-                          tilesInfo("Owner", Icons.account_circle, productsList[index].owner),
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "owner_key")), Icons.account_circle, productsList[index].owner),
                           SizedBox(width: 10.0,),
-                          tilesInfo("Location", Icons.place, productsList[index].location),
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "location_key")), Icons.place, productsList[index].location),
                           SizedBox(width: 10.0,),
-                          tilesInfo("Age", Icons.nature_people, differenceInYears),
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
                           SizedBox(width: 10.0,),
-                          tilesInfo("Size", Icons.fence, (productsList[index].size).toString()),
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, (productsList[index].size).toString()),
                           SizedBox(width: 10.0,),
-                          tilesInfo("Plants", Icons.nature, (productsList[index].noOfPlants).toString()),
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
                           SizedBox(width: 10.0,),
-                          tilesInfo("Base Price", Icons.monetization_on, (productsList[index].reservePrice).toString()),
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (productsList[index].reservePrice).toString()),
                         ],
                       ),
                 SizedBox(height: 10.0,),
@@ -189,7 +191,7 @@ class _LiveBidsState extends State<LiveBids> {
           if (!snapshot.hasData) {
             return Center(
                 child: Text(
-                  "Loading...",
+                  toBeginningOfSentenceCase(getTranslated(context, "loading_key")) + "...",
                   style: TextStyle(
                     fontFamily: "Montesserat",
                     fontWeight: FontWeight.w700,
@@ -218,7 +220,7 @@ class _LiveBidsState extends State<LiveBids> {
 
           return (productsList.length == 0)
               ? Center(
-                  child: Text("0 Active Bids !!!",
+                  child: Text(getTranslated(context, "zero_active_bids_key") + " !!!",
                       style: TextStyle(color: Colors.black, fontSize: 30)))
               : Column(children: [
                   // Text(
@@ -247,7 +249,7 @@ class _LiveBidsState extends State<LiveBids> {
                           ),
                           icon: Icon(Icons.filter_alt_outlined),
                           onPressed: _openFilterList,
-                          label : Text('Filter'),
+                          label : Text(toBeginningOfSentenceCase(getTranslated(context, "filter_key"))),
                           color: Colors.red[100],
 
                         ),
@@ -262,7 +264,7 @@ class _LiveBidsState extends State<LiveBids> {
                           : Container(
                                 color: Colors.greenAccent,
                                 child: FlatButton(
-                                    child: Text("Load More"),
+                                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "load_more_key"))),
                                     onPressed: () async {
                                     //List<Product> newProducts = await dbConnection.getProducts();
                                     setState(() {
@@ -290,13 +292,13 @@ class _LiveBidsState extends State<LiveBids> {
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('LIVE BIDDING'),
+          title: Text(getTranslated(context, "live_bidding_key").toUpperCase()),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
             FlatButton.icon(
               icon: Icon(Icons.person),
-              label: Text('logout'),
+              label: Text(getTranslated(context, "logout_key")),
               onPressed: () async {
                 //Navigator.of(context).pop();
                 await _auth.signOut();
@@ -375,8 +377,8 @@ class _LiveBidsState extends State<LiveBids> {
         listData: villageList,
         selectedListData: selectedVillageList,
         height: 480,
-        headlineText: "Select Village",
-        searchFieldHintText: "Search Here",
+        headlineText: toBeginningOfSentenceCase(getTranslated(context, "select_village_key")),
+        searchFieldHintText: toBeginningOfSentenceCase(getTranslated(context, "search_here_key")),
         label: (item) {
           return item;
         },
@@ -430,7 +432,7 @@ class _LiveBidsState extends State<LiveBids> {
 
           RaisedButton.icon(
               icon: Icon(Icons.stop),
-              label: Text('STOP BIDDING'),
+              label: Text(getTranslated(context, "stop_bidding_key").toUpperCase()),
               color: Colors.redAccent,
               onPressed: () {}),
 
@@ -456,7 +458,7 @@ class _LiveBidsState extends State<LiveBids> {
         );
       }).toList(),
       hint: Text(
-        "Choose Duration",
+        toBeginningOfSentenceCase(getTranslated(context, "choose_duration_key")),
         style: TextStyle(
             color: Colors.black,
             fontSize: 16,
