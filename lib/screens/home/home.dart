@@ -10,7 +10,7 @@ import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
-import 'package:bidding_market/shared/TranslatedText.dart';
+//import 'package:bidding_market/shared/TranslatedText.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -616,7 +616,23 @@ class _HomeState extends State<Home> {
       bid.basePrice = productsList[index].reservePrice;
       bid.type = "Best Price";
 
-      dbConnection.addNewBid(bid);
+      dbConnection.addNewBid(bid).then((value) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                  title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
+                  content: Text("Bid started successfully with duration $selectedDuration !!!"),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(getTranslated(context, "ok_key").toUpperCase()),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ]);
+            });
+      }).catchError((errorMsg) => print("Add New bid database operation failed with msg : $errorMsg"));
     }
   }
 }

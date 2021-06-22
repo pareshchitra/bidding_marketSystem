@@ -474,6 +474,33 @@ class _ProductDetails extends State<ProductDetails>
     );
   }
 
+  callDbPlaceBid()
+  {
+    dbConnection
+        .updateBidder(bid.id, loggedUser.uid, loggedUser.Name,
+            double.parse(selectedPrice), product.id)
+        .then((value) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(toBeginningOfSentenceCase(
+                    getTranslated(context, "alert_dialog_key"))),
+                content: Text(
+                    "Bid placed successfully with amount $selectedPrice !!!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(getTranslated(context, "ok_key").toUpperCase()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }).catchError((errorMsg) =>
+            print("Place bid database operation failed with msg : $errorMsg"));
+  }
+
   placeBid()
   {
     List<String> validPrices = priceList(bid.basePrice);
@@ -486,16 +513,15 @@ class _ProductDetails extends State<ProductDetails>
                 content: Text(getTranslated(context, "price_bid_confirm_key_1") + " $selectedPrice " + getTranslated(context, "price_bid_confirm_key_2")),
                 actions: <Widget>[
                   FlatButton(
-                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "yes_key"))),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      dbConnection.updateBidder(
-                          bid.id, loggedUser.uid, loggedUser.Name, double.parse(selectedPrice),
-                          product.id);
-                    },
-                  ),
+                      child: Text(toBeginningOfSentenceCase(
+                          getTranslated(context, "yes_key"))),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        callDbPlaceBid();
+                      }),
                   FlatButton(
-                    child: Text(toBeginningOfSentenceCase(getTranslated(context, "no_key"))),
+                    child: Text(toBeginningOfSentenceCase(
+                        getTranslated(context, "no_key"))),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
