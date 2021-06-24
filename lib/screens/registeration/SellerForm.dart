@@ -88,6 +88,8 @@ class _sellerFormState extends State<sellerForm> {
   @override
   Widget build(BuildContext context) {
     final userStream = Provider.of<User>(context);
+    String _state, _district;
+    print("Keys are ${states.keys}");
     return loading ? Container( height: 700, child:Loading()) :Container(
       child: Form(
         key: _formKey,
@@ -154,64 +156,9 @@ class _sellerFormState extends State<sellerForm> {
                 },
               ),
               SizedBox(height: 10.0),
-              // DropdownButtonFormField<String>(
-              //   decoration: new InputDecoration(
-              //     floatingLabelBehavior: FloatingLabelBehavior.always,
-              //     labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
-              //     fillColor: Colors.white,
-              //     border: new OutlineInputBorder(
-              //       borderRadius: new BorderRadius.circular(25.0),
-              //       borderSide: new BorderSide(),
-              //     ),
-              //     //fillColor: Colors.green
-              //   ),
-              //   value: _state,
-              //   items: states.keys
-              //       .map((label) => DropdownMenuItem(
-              //     child: Text(getTranslated(context, (label.toLowerCase() + "_category_key")).toUpperCase()),
-              //     value: label,
-              //   ))
-              //       .toList(),
-              //   hint: Text( (prod != null) ? getTranslated(context, (prod.category.toLowerCase() + "_category_key")).toUpperCase() : toBeginningOfSentenceCase(getTranslated(context, "category_key"))),
-              //   onChanged: (value) {
-              //     setState(() {
-              //       _category = value;
-              //     });
-              //   },
-              //   onSaved: (String value){
-              //     product.category = value;
-              //   },
-              // ),
-              TextFormField(
-                initialValue: (user != null) ? user.District : '',
-                maxLength: 20,
+              DropdownButtonFormField<String>(
                 decoration: new InputDecoration(
-                  labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  seller.District = value;
-                },
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-                initialValue: (user != null) ? user.State : '',
-                maxLength: 30,
-                decoration: new InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
@@ -220,19 +167,103 @@ class _sellerFormState extends State<sellerForm> {
                   ),
                   //fillColor: Colors.green
                 ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
-                  } else {
-                    return null;
-                  }
+                value: _state,
+                items: states.keys
+                    .map((label) => DropdownMenuItem(
+                  child: Text(label),
+                  value: label,
+                ))
+                    .toList(),
+                hint: Text( (user != null) ? user.State : ''),
+                onChanged: (value) {
+                  setState(() {
+                    _state = value;
+                  });
                 },
-                keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onSaved: (String value) {
+                onSaved: (String value){
                   seller.State = value;
                 },
               ),
+              SizedBox(height: 10.0),
+              DropdownButtonFormField<String>(
+                decoration: new InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
+                  fillColor: Colors.white,
+                  border: new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(25.0),
+                    borderSide: new BorderSide(),
+                  ),
+                  //fillColor: Colors.green
+                ),
+                value: _district,
+                items: states[_state]
+                    .map((label) => DropdownMenuItem(
+                  child: Text(label),
+                  value: label,
+                ))
+                    .toList(),
+                hint: Text( (user != null) ? user.District : ''),
+                onChanged: (value) {
+                  setState(() {
+                    _district = value;
+                  });
+                },
+                onSaved: (String value){
+                  seller.District = value;
+                },
+              ),
+              // TextFormField(
+              //   initialValue: (user != null) ? user.District : '',
+              //   maxLength: 20,
+              //   decoration: new InputDecoration(
+              //     labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
+              //     fillColor: Colors.white,
+              //     border: new OutlineInputBorder(
+              //       borderRadius: new BorderRadius.circular(25.0),
+              //       borderSide: new BorderSide(),
+              //     ),
+              //     //fillColor: Colors.green
+              //   ),
+              //   validator: (val) {
+              //     if (val.length == 0) {
+              //       return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
+              //     } else {
+              //       return null;
+              //     }
+              //   },
+              //   keyboardType: TextInputType.text,
+              //   onChanged: (val) {},
+              //   onSaved: (String value) {
+              //     seller.District = value;
+              //   },
+              // ),
+              SizedBox(height: 10.0),
+              // TextFormField(
+              //   initialValue: (user != null) ? user.State : '',
+              //   maxLength: 30,
+              //   decoration: new InputDecoration(
+              //     labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
+              //     fillColor: Colors.white,
+              //     border: new OutlineInputBorder(
+              //       borderRadius: new BorderRadius.circular(25.0),
+              //       borderSide: new BorderSide(),
+              //     ),
+              //     //fillColor: Colors.green
+              //   ),
+              //   validator: (val) {
+              //     if (val.length == 0) {
+              //       return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
+              //     } else {
+              //       return null;
+              //     }
+              //   },
+              //   keyboardType: TextInputType.text,
+              //   onChanged: (val) {},
+              //   onSaved: (String value) {
+              //     seller.State = value;
+              //   },
+              // ),
               SizedBox(height: 10.0),
               TextFormField(
                 initialValue: (user != null) ? user.Pincode : '',
