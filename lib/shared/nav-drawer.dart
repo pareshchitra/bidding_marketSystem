@@ -53,11 +53,15 @@ class _NavDrawerState extends State<NavDrawer> {
             //   'WELCOME     ' + loggedUser.Name +' !!!!',
             //   style: TextStyle(color: Colors.black, fontSize: 20),
             // ),
-            decoration: BoxDecoration(
-                color: Colors.lightGreen[100],
-                image: DecorationImage(
-                    fit: BoxFit.contain,
-                    image: AssetImage('assets/images/appLogo.jpg'))),
+
+            child: Image.asset('assets/images/appLogo_v2.jpg', scale: 3, /*fit: BoxFit.contain,*/),
+            // decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     image: DecorationImage(
+            //         fit: BoxFit.fill,
+            //         image: AssetImage('assets/images/appLogo.png')),
+            //
+            // ),
           ),
           ListTile(
             leading: Icon(Icons.verified_user_outlined),

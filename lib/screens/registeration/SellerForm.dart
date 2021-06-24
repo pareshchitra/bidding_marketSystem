@@ -4,6 +4,7 @@ import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/services/database.dart';
@@ -153,6 +154,34 @@ class _sellerFormState extends State<sellerForm> {
                 },
               ),
               SizedBox(height: 10.0),
+              // DropdownButtonFormField<String>(
+              //   decoration: new InputDecoration(
+              //     floatingLabelBehavior: FloatingLabelBehavior.always,
+              //     labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
+              //     fillColor: Colors.white,
+              //     border: new OutlineInputBorder(
+              //       borderRadius: new BorderRadius.circular(25.0),
+              //       borderSide: new BorderSide(),
+              //     ),
+              //     //fillColor: Colors.green
+              //   ),
+              //   value: _state,
+              //   items: states.keys
+              //       .map((label) => DropdownMenuItem(
+              //     child: Text(getTranslated(context, (label.toLowerCase() + "_category_key")).toUpperCase()),
+              //     value: label,
+              //   ))
+              //       .toList(),
+              //   hint: Text( (prod != null) ? getTranslated(context, (prod.category.toLowerCase() + "_category_key")).toUpperCase() : toBeginningOfSentenceCase(getTranslated(context, "category_key"))),
+              //   onChanged: (value) {
+              //     setState(() {
+              //       _category = value;
+              //     });
+              //   },
+              //   onSaved: (String value){
+              //     product.category = value;
+              //   },
+              // ),
               TextFormField(
                 initialValue: (user != null) ? user.District : '',
                 maxLength: 20,

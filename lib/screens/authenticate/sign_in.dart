@@ -81,13 +81,13 @@ class _SignInState extends State<SignIn> {
                   width: 600.0,
                     alignment: Alignment.center,
                     child:Image.asset(
-                        'assets/images/appLogo.jpg',
-                         scale: 0.6
+                        'assets/images/appLogo_v2.jpg',
+                         scale: 3
                          ),
                   ),
                   Text(getTranslated(context, 'login_key'), style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
 
-                  SizedBox(height: 16,),
+                 SizedBox(height: 16,),
 
                   TextFormField(
                     decoration: InputDecoration(
