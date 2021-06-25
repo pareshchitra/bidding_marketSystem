@@ -37,7 +37,7 @@
   "house_key" : "घर का नंबर",
   "house_non_empty_key" : "घर का नंबर खाली नहीं हो सकता",
   "village_key" : "गांव/शहर",
-  "village_non_empty-key" : "गांव/शहर खाली नहीं हो सकता",
+  "village_non_empty_key" : "गांव/शहर खाली नहीं हो सकता",
   "district_key" : "जिला",
   "district_non_empty_key" : "जिला खाली नहीं हो सकता",
   "state_key" : "राज्य",

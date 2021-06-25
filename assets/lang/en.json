@@ -37,7 +37,7 @@
   "house_key" : "house number",
   "house_non_empty_key" : "house number cannot be empty",
   "village_key" : "Village/City",
-  "village_non_empty-key" : "village or city cannot be empty",
+  "village_non_empty_key" : "village or city cannot be empty",
   "district_key" : "district",
   "district_non_empty_key" : "district cannot be empty",
   "state_key" : "state",

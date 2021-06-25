@@ -6,6 +6,7 @@ import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:image_picker/image_picker.dart';
@@ -84,12 +85,13 @@ class _sellerFormState extends State<sellerForm> {
       }
     });
   }
-
+  String _state, _district;
   @override
   Widget build(BuildContext context) {
     final userStream = Provider.of<User>(context);
-    String _state, _district;
+
     print("Keys are ${states.keys}");
+    if(_state!=null) print("Districts are ${states[_state]}");
     return loading ? Container( height: 700, child:Loading()) :Container(
       child: Form(
         key: _formKey,
@@ -118,7 +120,7 @@ class _sellerFormState extends State<sellerForm> {
                 keyboardType: TextInputType.name,
                 onChanged: (String value) {},
                 onSaved: (String value) {
-                  seller.Name = value;
+                  seller.Name = camelCasingFields(value);
                 },
               ),
               SizedBox(height: 10.0),
@@ -152,7 +154,7 @@ class _sellerFormState extends State<sellerForm> {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  seller.Village = value;
+                  seller.Village = camelCasingFields(value);
                 },
               ),
               SizedBox(height: 10.0),
@@ -180,6 +182,13 @@ class _sellerFormState extends State<sellerForm> {
                     _state = value;
                   });
                 },
+                validator: (val) {
+                  if ( val == null) {
+                    return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
+                  } else {
+                    return null;
+                  }
+                },
                 onSaved: (String value){
                   seller.State = value;
                 },
@@ -197,17 +206,24 @@ class _sellerFormState extends State<sellerForm> {
                   //fillColor: Colors.green
                 ),
                 value: _district,
-                items: states[_state]
+                items: (_state != null ) ? states[_state]
                     .map((label) => DropdownMenuItem(
                   child: Text(label),
                   value: label,
                 ))
-                    .toList(),
+                    .toList() : [],
                 hint: Text( (user != null) ? user.District : ''),
                 onChanged: (value) {
                   setState(() {
                     _district = value;
                   });
+                },
+                validator: (val) {
+                  if ( val == null ) {
+                    return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
+                  } else {
+                    return null;
+                  }
                 },
                 onSaved: (String value){
                   seller.District = value;
@@ -358,4 +374,5 @@ class _sellerFormState extends State<sellerForm> {
           )),
     );
   }
+
 }

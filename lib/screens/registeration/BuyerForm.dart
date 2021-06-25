@@ -6,7 +6,9 @@ import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -90,6 +92,7 @@ class _buyerFormState extends State<buyerForm> {
       });
 }
 
+  String _state, _district;
   @override
   Widget build(BuildContext context) {
     final userStream = Provider.of<User>(context);
@@ -120,7 +123,7 @@ class _buyerFormState extends State<buyerForm> {
                 },
                 keyboardType: TextInputType.name,
                 onSaved: (String value) {
-                  buyer.Name = value;
+                  buyer.Name = camelCasingFields(value);
                 },
               ),
               SizedBox(height: 10.0),
@@ -180,40 +183,13 @@ class _buyerFormState extends State<buyerForm> {
                 keyboardType: TextInputType.text,
                 onChanged: (val) {},
                 onSaved: (String value) {
-                  buyer.Village = value;
+                  buyer.Village = camelCasingFields(value);
                 },
               ),
               SizedBox(height: 10.0),
-              TextFormField(
-                initialValue: (user != null) ? user.District : '',
-                maxLength: 20,
+              DropdownButtonFormField<String>(
                 decoration: new InputDecoration(
-                  labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                validator: (val) {
-                  if (val.length == 0) {
-                    return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
-                  } else {
-                    return null;
-                  }
-                },
-                keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onSaved: (String value) {
-                  buyer.District = value;
-                },
-              ),
-              SizedBox(height: 10.0),
-              TextFormField(
-                initialValue: (user != null) ? user.State : '',
-                maxLength: 30,
-                decoration: new InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
@@ -222,19 +198,91 @@ class _buyerFormState extends State<buyerForm> {
                   ),
                   //fillColor: Colors.green
                 ),
+                value: _state,
+                items: states.keys
+                    .map((label) => DropdownMenuItem(
+                  child: Text(label),
+                  value: label,
+                ))
+                    .toList(),
+                hint: Text( (user != null) ? user.State : ''),
+                onChanged: (value) {
+                  setState(() {
+                    _state = value;
+                  });
+                },
                 validator: (val) {
-                  if (val.length == 0) {
+                  if ( val == null) {
                     return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
                   } else {
                     return null;
                   }
                 },
-                keyboardType: TextInputType.text,
-                onChanged: (val) {},
-                onSaved: (String value) {
+                onSaved: (String value){
                   buyer.State = value;
                 },
               ),
+              SizedBox(height: 10.0),
+              DropdownButtonFormField<String>(
+                decoration: new InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
+                  fillColor: Colors.white,
+                  border: new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(25.0),
+                    borderSide: new BorderSide(),
+                  ),
+                  //fillColor: Colors.green
+                ),
+                value: _district,
+                items: (_state != null ) ? states[_state]
+                    .map((label) => DropdownMenuItem(
+                  child: Text(label),
+                  value: label,
+                ))
+                    .toList() : [],
+                hint: Text( (user != null) ? user.District : ''),
+                onChanged: (value) {
+                  setState(() {
+                    _district = value;
+                  });
+                },
+                validator: (val) {
+                  if ( val == null ) {
+                    return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
+                  } else {
+                    return null;
+                  }
+                },
+                onSaved: (String value){
+                  buyer.District = value;
+                },
+              ),
+              // TextFormField(
+              //   initialValue: (user != null) ? user.State : '',
+              //   maxLength: 30,
+              //   decoration: new InputDecoration(
+              //     labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
+              //     fillColor: Colors.white,
+              //     border: new OutlineInputBorder(
+              //       borderRadius: new BorderRadius.circular(25.0),
+              //       borderSide: new BorderSide(),
+              //     ),
+              //     //fillColor: Colors.green
+              //   ),
+              //   validator: (val) {
+              //     if (val.length == 0) {
+              //       return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
+              //     } else {
+              //       return null;
+              //     }
+              //   },
+              //   keyboardType: TextInputType.text,
+              //   onChanged: (val) {},
+              //   onSaved: (String value) {
+              //     buyer.State = value;
+              //   },
+              // ),
               SizedBox(height: 10.0),
               TextFormField(
                 initialValue: (user != null) ? user.Pincode : '',
