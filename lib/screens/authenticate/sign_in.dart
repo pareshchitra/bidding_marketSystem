@@ -81,8 +81,8 @@ class _SignInState extends State<SignIn> {
                   width: 600.0,
                     alignment: Alignment.center,
                     child:Image.asset(
-                        'assets/images/appLogo_v2.jpg',
-                         scale: 3
+                        'assets/images/appLogo_v2.png',
+                         scale: 5
                          ),
                   ),
                   Text(getTranslated(context, 'login_key'), style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),

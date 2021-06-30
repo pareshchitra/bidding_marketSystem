@@ -54,7 +54,7 @@ class _NavDrawerState extends State<NavDrawer> {
             //   style: TextStyle(color: Colors.black, fontSize: 20),
             // ),
 
-            child: Image.asset('assets/images/appLogo_v2.jpg', scale: 3, /*fit: BoxFit.contain,*/),
+            child: Image.asset('assets/images/appLogo_v2.png', scale: 4, /*fit: BoxFit.contain,*/),
             // decoration: BoxDecoration(
             //     color: Colors.white,
             //     image: DecorationImage(
