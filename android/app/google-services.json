@@ -7,42 +7,42 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:479100538804:android:04454cdb8eff0b08bd6ce1",
+        "mobilesdk_app_id": "1:479100538804:android:77e128b166e7165abd6ce1",
         "android_client_info": {
-          "package_name": "com.example.bidding_market"
+          "package_name": "com.farmway.bidding_market"
         }
       },
       "oauth_client": [
         {
-          "client_id": "479100538804-bdpcqv8lp0idgg6eobpv7c09k1rghmiq.apps.googleusercontent.com",
+          "client_id": "479100538804-c7mf36823l4e0mstcrdu885p4mufkqea.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.bidding_market",
-            "certificate_hash": "6178eb0597f0b50f788121641b4409dba5000f3f"
+            "package_name": "com.farmway.bidding_market",
+            "certificate_hash": "ced8c55a87bdc57808ef48cc40d7dd467b107e3d"
           }
         },
         {
-          "client_id": "479100538804-fl5vblnrklni6phaki1tk2mgg1j2lpjs.apps.googleusercontent.com",
+          "client_id": "479100538804-dnkcf6o8545p5oob2mf9vqg2cm9gdsfm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.bidding_market",
-            "certificate_hash": "7075c80f586efc451c990fbbe3ae1a9a7160777c"
-          }
-        },
-        {
-          "client_id": "479100538804-g99c3jaskk8jvas105mfbon0jjqaq8ir.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.bidding_market",
+            "package_name": "com.farmway.bidding_market",
             "certificate_hash": "b29d5c9385f01f51908e8f5c053c771d890a0bf4"
           }
         },
         {
-          "client_id": "479100538804-gtnsbuv1p4j1s9kj7j7s928mioklokj9.apps.googleusercontent.com",
+          "client_id": "479100538804-kpjact93bkgmol3d8g2e6v9u90ihspk9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.bidding_market",
-            "certificate_hash": "ced8c55a87bdc57808ef48cc40d7dd467b107e3d"
+            "package_name": "com.farmway.bidding_market",
+            "certificate_hash": "7075c80f586efc451c990fbbe3ae1a9a7160777c"
+          }
+        },
+        {
+          "client_id": "479100538804-pa54b668t0p5f6bcdnn0f5epirq4icra.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.farmway.bidding_market",
+            "certificate_hash": "6178eb0597f0b50f788121641b4409dba5000f3f"
           }
         },
         {
