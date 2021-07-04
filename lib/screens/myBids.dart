@@ -72,12 +72,14 @@ class _MyBidsState extends State<MyBids> {
       differenceInYears = (dur.inDays / 365).floor().toString();
     }
 
+    int daysLeft = (bidsMapList[index]['Bid'].endTime.difference(DateTime.now())).inDays;
+
     return InkWell(
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return ProductDetails(product: bidsMapList[index]['Product']);
+              return ProductDetails(product: bidsMapList[index]['Product'], bid: (daysLeft > 0 )? bidsMapList[index]['Bid'] : null);
             },
           ),
         );
@@ -120,7 +122,9 @@ class _MyBidsState extends State<MyBids> {
                   children: [
                     SizedBox(width: 10.0,),
                     Text("Status : ",style: TextStyle(fontSize: 20)),
-                    Text("${bidsMapList[index]['Bid'].status}",style: TextStyle(fontSize: 20, color: Colors.red)),
+                    // TODO: Mark status when DB field is correct
+                    //  Text("${bidsMapList[index]['Bid'].status}",style: TextStyle(fontSize: 20, color: Colors.red)),
+                    Text( (daysLeft > 0)? "Active" : "Closed",style: TextStyle(fontSize: 20, color: Colors.red)),
                     SizedBox(width: 20.0,),
 
                     Expanded(
@@ -137,8 +141,8 @@ class _MyBidsState extends State<MyBids> {
                 Row(
                   children: [
                     SizedBox(width: 10.0,),
-                    Text("Days Left :",style: TextStyle(fontSize: 20, color: Colors.red)),
-                    Text("${(bidsMapList[index]['Bid'].endTime.difference(DateTime.now())).inDays}",style: TextStyle(fontSize: 20)),
+                    (daysLeft > 0)? Text("Days Left :",style: TextStyle(fontSize: 20, color: Colors.red)) : SizedBox(width:0),
+                    (daysLeft > 0)? Text("$daysLeft",style: TextStyle(fontSize: 20)) : SizedBox(width:0),
                     SizedBox(width: 20.0,),
                     // ( bidsMapList[index]['Bid'].bidders.length > 0 ) ? Text("${bidsMapList[index]['Bid'].bidders[0]}" , style: TextStyle(fontSize: 23, color: Colors.black))
                     //     : Text("- No Bids ",style: TextStyle(fontSize: 20)),

@@ -77,6 +77,10 @@ class _LiveBidsState extends State<LiveBids> {
 
   Widget showProductTiles(BuildContext context, List<Product> productsList,int index) {
 
+    if( (bidList[index].endTime.difference(DateTime.now())).inDays < 0 ){
+      return SizedBox(height: 0,);
+    }
+
     final border = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.0),
     );
