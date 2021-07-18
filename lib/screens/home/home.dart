@@ -153,7 +153,7 @@ class _HomeState extends State<Home> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
 
-                          child: (productsList[index].image1 != "File not uploaded" ) ? Image.network(
+                          child: (productsList[index].image1 != null && productsList[index].image1 != "" ) ? Image.network(
                             "${productsList[index].image1}" ,
                             fit: BoxFit.cover,
                           ) : Text(getTranslated(context, "no_image_key")),

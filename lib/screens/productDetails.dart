@@ -133,7 +133,7 @@ class _ProductDetails extends State<ProductDetails>
                   controller: imagesController,
                   children: productImages.map(
                         (image) {
-                      return (image != null) ? Image.network(
+                      return (image != null && image != "") ? Image.network(
                         image,
                       ) : Container(alignment: Alignment.center,child: Text(toBeginningOfSentenceCase(getTranslated(context, "no_image_key")) +" !! \n" + toBeginningOfSentenceCase(getTranslated(context, "update_farm_photos_key"))));
                     },

@@ -108,7 +108,7 @@ class _MyBidsState extends State<MyBids> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
 
-                    child: (bidsMapList[index]['Product'].image1 != "File not uploaded" ) ? Image.network(
+                    child: (bidsMapList[index]['Product'].image1 != null && bidsMapList[index]['Product'].image1 != "" ) ? Image.network(
                       "${bidsMapList[index]['Product'].image1}" ,
                       fit: BoxFit.cover,
                     ) : Text("No Image Available"),

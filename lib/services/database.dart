@@ -115,7 +115,7 @@ class DatabaseService {
 
   Future<String> uploadImage(File Image, String imageName) async{
     print("Entering uploadImage");
-    String value = "File not uploaded";
+    String value = "";
     //AlertDialog progressDialog = new AlertDialog();
     UploadTask uploadTask;
 
@@ -1050,8 +1050,55 @@ class DatabaseService {
     return bidListPagination;
 
   }
-  
 
+  // DELETE PRODUCT should be preceded with delete from bid data & if any buyer has placed bid on that product
+  dbDeleteProduct(Product p) async{
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async{
+    String bidId = p.id; // BidId is same as ProductId
+    DocumentReference bidRef = dbBidCollection.doc(bidId);
+
+    DocumentSnapshot ds = await transaction.get(bidRef);
+    if (ds.exists == true) // This Product is in the bids collection
+    {
+      List bidders = [];
+      List bidData = ds.data()['Bids'];
+
+      for (var bid in bidData) {
+        if (bid['id'] != null) bidders.add(bid['id']);
+      }
+      if (bidders.length != 0)
+      {
+        for(var buyerId in bidders) {
+          DocumentReference buyerRef = dbBuyerCollection.doc(buyerId);
+          DocumentSnapshot buyerDoc = await transaction.get(buyerRef);
+          List buyerBidList = buyerDoc.data()['ProductBids'];
+          List updatedBuyerBidList = [];
+
+          for(var buyerBid in buyerBidList)
+          {
+            String productId = buyerBid['ProductId'];
+            if( productId != p.id ){
+              updatedBuyerBidList.add(buyerBid);
+            }
+          }
+          
+          // TRANSACTION STARTS
+          await transaction.update(buyerRef,{
+            'ProductBids': updatedBuyerBidList,
+          });
+          await transaction.delete(bidRef);
+          DocumentReference productRef = dbProductCollection.doc(p.id);
+          await transaction.delete(productRef);
+          // TRANSACTION ENDS
+        }
+      }
+    } else // Not in Bids Collection , can be deleted safely
+      {
+      await deleteProduct(p);
+    }
+  }, timeout: Duration(seconds: 10));
+        }
 
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
