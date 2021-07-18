@@ -23,7 +23,8 @@ class Product {
   List<String> categoryList = [
     "GUAVA",
     "PAPAYA",
-    "AMLA"
+    "AMLA",
+    "ANAAR"
   ];
 
 }
