@@ -9,6 +9,7 @@ import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:filter_list/filter_list.dart';
@@ -50,7 +51,7 @@ class _MyBidsState extends State<MyBids> {
                     TextSpan(
                       text: propertyValue,
                       style: TextStyle(color: Colors.black,
-                          fontSize: 20),
+                          fontSize: 18),
                     ),
                   ]
               )),
@@ -130,7 +131,7 @@ class _MyBidsState extends State<MyBids> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.bottomRight,
-                        child: Text('Current : \u{20B9}' + "${bidsMapList[index]['Bid'].bidVal[0]}",
+                        child: Text('Current : ' + "${currencyFormat.format(bidsMapList[index]['Bid'].bidVal[0])}",
                           style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),) ,
 
                       ),
@@ -149,7 +150,7 @@ class _MyBidsState extends State<MyBids> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.bottomRight,
-                        child: Text('Your Quote : \u{20B9}' + "${bidsMapList[index]['QuotePrice']}",
+                        child: Text('Your Quote : ' + "${currencyFormat.format(double.parse(bidsMapList[index]['QuotePrice']))}",
                           style: TextStyle(fontSize: 20, color: Colors.black),) ,
 
                       ),
@@ -171,7 +172,9 @@ class _MyBidsState extends State<MyBids> {
                     SizedBox(width: 10.0,),
                     tilesInfo("Plants", Icons.nature, (bidsMapList[index]['Product'].noOfPlants).toString()),
                     SizedBox(width: 10.0,),
-                    tilesInfo("Base Price", Icons.monetization_on, (bidsMapList[index]['Product'].reservePrice).toString()),
+                    Expanded(child:
+                    tilesInfo("Base Price", Icons.monetization_on, (currencyFormat.format(bidsMapList[index]['Product'].reservePrice)).toString()),
+                    ),
                   ],
                 ),
                 SizedBox(height: 10.0,),

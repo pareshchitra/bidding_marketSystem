@@ -9,6 +9,7 @@ import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -243,7 +244,8 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "₹ " + "${productsList[i].reservePrice}",
+                                                    //text: "₹ " + "${productsList[i].reservePrice}",
+                                                    text: "${currencyFormat.format(productsList[i].reservePrice)}",
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
