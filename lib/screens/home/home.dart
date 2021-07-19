@@ -247,7 +247,7 @@ class _HomeState extends State<Home> {
                               text: TextSpan(
                                   children: [
                                     WidgetSpan(
-
+                                        child: Icon(Icons.money,size: 25,color: Colors.green[700])
                                         // child: Padding(
                                         //   padding: const EdgeInsets.only(
                                         //       left: 10.0),
@@ -255,7 +255,7 @@ class _HomeState extends State<Home> {
                                         //     style: TextStyle(fontSize: 23,
                                         //         color: Colors.green[700]),),
                                         // ) //Rupee Symbol
-                              ),
+                                    ),
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
