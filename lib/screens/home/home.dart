@@ -12,6 +12,7 @@ import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
 //import 'package:bidding_market/shared/TranslatedText.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -624,7 +625,7 @@ class _HomeState extends State<Home> {
             builder: (BuildContext context) {
               return AlertDialog(
                   title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
-                  content: Text("Bid started successfully with duration $selectedDuration !!!"),
+                  content: Text(camelCasingFields(getTranslated(context, "bid_started_key")) + " $selectedDuration !!!"),
                   actions: <Widget>[
                     FlatButton(
                       child: Text(getTranslated(context, "ok_key").toUpperCase()),

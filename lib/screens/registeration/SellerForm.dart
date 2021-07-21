@@ -191,7 +191,7 @@ class _sellerFormState extends State<sellerForm> {
                 },
                 keyboardType: TextInputType.number,
                 onChanged: (val) async {
-                  if(int.parse(val) >= 100000)
+                  if(int.parse(val) >= 110000)
                   {
                     FocusScope.of(context).unfocus();
                     seller.Pincode = val;
@@ -260,7 +260,7 @@ class _sellerFormState extends State<sellerForm> {
                   value: label,
                 ))
                     .toList(),
-                hint: Text( (user != null) ? user.District : ''),
+                hint: Text( (user != null) ? user.District : (_districtList.isEmpty) ? camelCasingFields(getTranslated(context, "no_district_key")) : camelCasingFields(getTranslated(context, "select_district_key"))),
                 onChanged: (value) {
                   setState(() {
                     _district = value;

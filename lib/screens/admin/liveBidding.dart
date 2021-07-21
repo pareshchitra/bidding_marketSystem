@@ -10,6 +10,7 @@ import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -142,7 +143,7 @@ class _LiveBidsState extends State<LiveBids> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" ,
                             style: TextStyle(fontSize: 23, color: Colors.black))
-                            : Text("- No Bids ",style: TextStyle(fontSize: 20)),
+                            : Text("- " + camelCasingFields(getTranslated(context, "no_bids_key")) +" ",style: TextStyle(fontSize: 20)),
                       ]),
                       Row(
                         children: [
