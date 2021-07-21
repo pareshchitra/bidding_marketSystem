@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 const textInputDecoration = InputDecoration(
   fillColor: Colors.white,
@@ -14,6 +15,7 @@ const textInputDecoration = InputDecoration(
   ),
 );
 
+var currencyFormat = NumberFormat.currency(locale: 'gu', symbol: '\u{20B9}');
 
  const Map<String, List<String>> states = {
     'Rajasthan': ['Sawai Madhopur', 'Dausa']

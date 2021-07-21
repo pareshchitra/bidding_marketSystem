@@ -153,7 +153,7 @@ class _HomeState extends State<Home> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
 
-                          child: (productsList[index].image1 != "File not uploaded" ) ? Image.network(
+                          child: (productsList[index].image1 != null && productsList[index].image1 != "" ) ? Image.network(
                             "${productsList[index].image1}" ,
                             fit: BoxFit.cover,
                           ) : Text(getTranslated(context, "no_image_key")),
@@ -247,17 +247,19 @@ class _HomeState extends State<Home> {
                               text: TextSpan(
                                   children: [
                                     WidgetSpan(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0),
-                                          child: Text('\u{20B9}',
-                                            style: TextStyle(fontSize: 23,
-                                                color: Colors.green[700]),),
-                                        )), //Rupee Symbol
+                                        child: Icon(Icons.money,size: 25,color: Colors.green[700])
+                                        // child: Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //       left: 10.0),
+                                        //   child: Text('\u{20B9}',
+                                        //     style: TextStyle(fontSize: 23,
+                                        //         color: Colors.green[700]),),
+                                        // ) //Rupee Symbol
+                                    ),
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].reservePrice}",
+                                      text: "${NumberFormat.currency(locale: 'gu', symbol: '\u{20B9} ').format(productsList[index].reservePrice)}",
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),

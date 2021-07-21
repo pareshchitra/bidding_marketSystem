@@ -9,6 +9,7 @@ import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -142,7 +143,7 @@ class _MyProductsState extends State<MyProducts> {
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
 
-                                        child: (productsList[i].image1 != toBeginningOfSentenceCase(getTranslated(context, "file_not_uploaded_key")) ) ? Image.network(
+                                        child: (productsList[i].image1 != null && productsList[i].image1 != "" ) ? Image.network(
                                           "${productsList[i].image1}" ,
                                           fit: BoxFit.cover,
                                         ) : Text(toBeginningOfSentenceCase(getTranslated(context, "no_image_key")))
@@ -243,7 +244,8 @@ class _MyProductsState extends State<MyProducts> {
                                                   WidgetSpan(
                                                       child: SizedBox(width: 8.0)),
                                                   TextSpan(
-                                                    text: "₹ " + "${productsList[i].reservePrice}",
+                                                    //text: "₹ " + "${productsList[i].reservePrice}",
+                                                    text: "${currencyFormat.format(productsList[i].reservePrice)}",
                                                     style: TextStyle(color: Colors.black,
                                                         fontSize: 20),
                                                   ),
@@ -347,7 +349,8 @@ class _MyProductsState extends State<MyProducts> {
               child: Text(getTranslated(context, "yes_key").toUpperCase()),
               onPressed: () async{
                 Navigator.of(context).pop();
-                await dbConnection.deleteProduct(p);
+                //await dbConnection.deleteProduct(p);
+                await dbConnection.dbDeleteProduct(p);
                 setState(() {  showList();  });
               },
             ),
@@ -365,4 +368,5 @@ class _MyProductsState extends State<MyProducts> {
       },
     );
   }
+
 }

@@ -5,6 +5,7 @@ import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -133,7 +134,7 @@ class _ProductDetails extends State<ProductDetails>
                   controller: imagesController,
                   children: productImages.map(
                         (image) {
-                      return (image != null) ? Image.network(
+                      return (image != null && image != "") ? Image.network(
                         image,
                       ) : Container(alignment: Alignment.center,child: Text(toBeginningOfSentenceCase(getTranslated(context, "no_image_key")) +" !! \n" + toBeginningOfSentenceCase(getTranslated(context, "update_farm_photos_key"))));
                     },
@@ -176,14 +177,14 @@ class _ProductDetails extends State<ProductDetails>
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           Text(
-            "\u{20B9}${product.reservePrice}",
+            "${currencyFormat.format(product.reservePrice)}",
             style: TextStyle(fontSize: 16.0, color: Colors.black),
           ),
           SizedBox(
             width: 8.0,
           ),
           Text(
-            "\u{20B9}${product.reservePrice}",
+            "${currencyFormat.format(product.reservePrice)}",
             style: TextStyle(
               fontSize: 12.0,
               color: Colors.grey,
@@ -456,7 +457,7 @@ class _ProductDetails extends State<ProductDetails>
       items: priceList(bid.basePrice).map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
-          child: Text(value),
+          child: Text(currencyFormat.format(double.parse(value))),
         );
       }).toList(),
       hint: Text(
