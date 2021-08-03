@@ -100,6 +100,7 @@
   "guava_category_key" : "guava",
   "papaya_category_key" : "papaya",
   "amla_category_key" : "amla",
+  "anaar_category_key" : "anaar",
   "start_bidding_key" : "start bidding",
   "choose_duration_key" : "choose duration",
   "choose_amount_key" : "choose amount",
@@ -130,5 +131,14 @@
   "choose_amount_alert_key" : "Please choose valid amount from list",
   "price_bid_confirm_key_1" : "Are you sure you want to place a bid of",
   "price_bid_confirm_key_2" : "for this product?",
-  "my_bids_key" : "My Bids"
+  "my_bids_key" : "My Bids",
+  "status_key" : "status",
+  "active_key" : "active",
+  "closed_key" : "closed",
+  "current_bid_key" : "current bid",
+  "your_qoute_key" : "your qoute",
+  "bids_not_found_key" : "you have not placed any bids",
+  "no_district_key" : "no district found",
+  "select_district_key" : "select district",
+  "bid_started_key" : "bid successfully started with duration"
 }

@@ -12,6 +12,7 @@ import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
 //import 'package:bidding_market/shared/TranslatedText.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -247,17 +248,19 @@ class _HomeState extends State<Home> {
                               text: TextSpan(
                                   children: [
                                     WidgetSpan(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0),
-                                          child: Text('\u{20B9}',
-                                            style: TextStyle(fontSize: 23,
-                                                color: Colors.green[700]),),
-                                        )), //Rupee Symbol
+                                        child: Icon(Icons.money,size: 25,color: Colors.green[700])
+                                        // child: Padding(
+                                        //   padding: const EdgeInsets.only(
+                                        //       left: 10.0),
+                                        //   child: Text('\u{20B9}',
+                                        //     style: TextStyle(fontSize: 23,
+                                        //         color: Colors.green[700]),),
+                                        // ) //Rupee Symbol
+                                    ),
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].reservePrice}",
+                                      text: "${NumberFormat.currency(locale: 'gu', symbol: '\u{20B9} ').format(productsList[index].reservePrice)}",
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),
@@ -622,7 +625,7 @@ class _HomeState extends State<Home> {
             builder: (BuildContext context) {
               return AlertDialog(
                   title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
-                  content: Text("Bid started successfully with duration $selectedDuration !!!"),
+                  content: Text(camelCasingFields(getTranslated(context, "bid_started_key")) + " $selectedDuration !!!"),
                   actions: <Widget>[
                     FlatButton(
                       child: Text(getTranslated(context, "ok_key").toUpperCase()),

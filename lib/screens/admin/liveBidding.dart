@@ -8,7 +8,9 @@ import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -66,8 +68,8 @@ class _LiveBidsState extends State<LiveBids> {
                         child: SizedBox(width: 1.0)),
                     TextSpan(
                       text: propertyValue,
-                      style: TextStyle(color: Colors.black54,
-                          fontSize: 20),
+                      style: TextStyle(color: Colors.black,
+                          fontSize: 18),
                     ),
                   ]
               )),
@@ -141,7 +143,7 @@ class _LiveBidsState extends State<LiveBids> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" ,
                             style: TextStyle(fontSize: 23, color: Colors.black))
-                            : Text("- No Bids ",style: TextStyle(fontSize: 20)),
+                            : Text("- " + camelCasingFields(getTranslated(context, "no_bids_key")) +" ",style: TextStyle(fontSize: 20)),
                       ]),
                       Row(
                         children: [
@@ -155,7 +157,7 @@ class _LiveBidsState extends State<LiveBids> {
                           Expanded(
                             child: Align(
                               alignment: Alignment.bottomRight,
-                              child:( bidList[index].bidders.length > 0 ) ? Text('\u{20B9}' + "${bidList[index].bidVal[0]}",
+                              child:( bidList[index].bidders.length > 0 ) ? Text("${currencyFormat.format(bidList[index].bidVal[0])}",
                                           style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),)
                                   : Text('\u{20B9} ' + "-", style: TextStyle(fontSize: 23)),
 
@@ -178,7 +180,9 @@ class _LiveBidsState extends State<LiveBids> {
                           SizedBox(width: 10.0,),
                           tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
                           SizedBox(width: 10.0,),
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (productsList[index].reservePrice).toString()),
+                          Expanded(child:
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(productsList[index].reservePrice)).toString())
+                          ),
                         ],
                       ),
                 SizedBox(height: 10.0,),

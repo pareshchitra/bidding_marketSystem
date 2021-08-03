@@ -6,6 +6,7 @@ import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/services/pincode_fetch.dart';
 import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:bidding_market/shared/regFunctions.dart';
@@ -33,6 +34,7 @@ class _buyerFormState extends State<buyerForm> {
   User buyer = User();
 
   DatabaseService dbConnection = DatabaseService();
+  PincodeFetch pincodeFetchObj = PincodeFetch();
   bool loading = false;
 
   File _AadharFront;
@@ -93,6 +95,9 @@ class _buyerFormState extends State<buyerForm> {
 }
 
   String _state, _district;
+  String _stateData = '';
+  List<String> _districtList = [];
+  TextEditingController _stateController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     final userStream = Provider.of<User>(context);
@@ -103,7 +108,7 @@ class _buyerFormState extends State<buyerForm> {
             children: <Widget>[
               SizedBox(height: 10.0),
               TextFormField(
-                initialValue: (user != null) ? user.Name : '',
+                initialValue: (user != null) ? user.Name : buyer.Name,
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "name_key")),
@@ -121,6 +126,9 @@ class _buyerFormState extends State<buyerForm> {
                     return null;
                   }
                 },
+                onChanged: (String value) {
+                  buyer.Name = camelCasingFields(value);
+                },
                 keyboardType: TextInputType.name,
                 onSaved: (String value) {
                   buyer.Name = camelCasingFields(value);
@@ -136,7 +144,7 @@ class _buyerFormState extends State<buyerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
-                initialValue: (user != null) ? buyer.HouseNo : '',
+                initialValue: (user != null) ? buyer.HouseNo : buyer.HouseNo,
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "house_key")),
@@ -155,14 +163,16 @@ class _buyerFormState extends State<buyerForm> {
                   }
                 },
                 keyboardType: TextInputType.text,
-                onChanged: (val) {},
+                onChanged: (val) {
+                  buyer.HouseNo = val;
+                },
                 onSaved: (String value) {
                   buyer.HouseNo = value;
                 },
               ),
               SizedBox(height: 10.0),
               TextFormField(
-                initialValue: (user != null) ? user.Village : '',
+                initialValue: (user != null) ? user.Village : buyer.Village,
                 maxLength: 20,
                 decoration: new InputDecoration(
                   labelText: getTranslated(context, "village_key"),
@@ -181,111 +191,16 @@ class _buyerFormState extends State<buyerForm> {
                   }
                 },
                 keyboardType: TextInputType.text,
-                onChanged: (val) {},
+                onChanged: (val) {
+                  buyer.Village = camelCasingFields(val);
+                },
                 onSaved: (String value) {
                   buyer.Village = camelCasingFields(value);
                 },
               ),
               SizedBox(height: 10.0),
-              DropdownButtonFormField<String>(
-                decoration: new InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                value: _state,
-                items: states.keys
-                    .map((label) => DropdownMenuItem(
-                  child: Text(label),
-                  value: label,
-                ))
-                    .toList(),
-                hint: Text( (user != null) ? user.State : ''),
-                onChanged: (value) {
-                  setState(() {
-                    _state = value;
-                  });
-                },
-                validator: (val) {
-                  if ( val == null) {
-                    return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
-                  } else {
-                    return null;
-                  }
-                },
-                onSaved: (String value){
-                  buyer.State = value;
-                },
-              ),
-              SizedBox(height: 10.0),
-              DropdownButtonFormField<String>(
-                decoration: new InputDecoration(
-                  floatingLabelBehavior: FloatingLabelBehavior.always,
-                  labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
-                  fillColor: Colors.white,
-                  border: new OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(25.0),
-                    borderSide: new BorderSide(),
-                  ),
-                  //fillColor: Colors.green
-                ),
-                value: _district,
-                items: (_state != null ) ? states[_state]
-                    .map((label) => DropdownMenuItem(
-                  child: Text(label),
-                  value: label,
-                ))
-                    .toList() : [],
-                hint: Text( (user != null) ? user.District : ''),
-                onChanged: (value) {
-                  setState(() {
-                    _district = value;
-                  });
-                },
-                validator: (val) {
-                  if ( val == null ) {
-                    return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
-                  } else {
-                    return null;
-                  }
-                },
-                onSaved: (String value){
-                  buyer.District = value;
-                },
-              ),
-              // TextFormField(
-              //   initialValue: (user != null) ? user.State : '',
-              //   maxLength: 30,
-              //   decoration: new InputDecoration(
-              //     labelText: toBeginningOfSentenceCase(getTranslated(context, "state_key")),
-              //     fillColor: Colors.white,
-              //     border: new OutlineInputBorder(
-              //       borderRadius: new BorderRadius.circular(25.0),
-              //       borderSide: new BorderSide(),
-              //     ),
-              //     //fillColor: Colors.green
-              //   ),
-              //   validator: (val) {
-              //     if (val.length == 0) {
-              //       return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
-              //     } else {
-              //       return null;
-              //     }
-              //   },
-              //   keyboardType: TextInputType.text,
-              //   onChanged: (val) {},
-              //   onSaved: (String value) {
-              //     buyer.State = value;
-              //   },
-              // ),
-              SizedBox(height: 10.0),
               TextFormField(
-                initialValue: (user != null) ? user.Pincode : '',
+                initialValue: (user != null) ? user.Pincode : buyer.Pincode,
                 maxLength: 6,
                 decoration: new InputDecoration(
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "pincode_key")),
@@ -304,14 +219,129 @@ class _buyerFormState extends State<buyerForm> {
                   }
                 },
                 keyboardType: TextInputType.number,
-                onChanged: (val) {},
+                onChanged: (val) async {
+                  if(int.parse(val) >= 110000)
+                  {
+                    FocusScope.of(context).unfocus();
+                    buyer.Pincode = val;
+                    loading = true;
+                    //toDo Call StateGet Function here
+                    await pincodeFetchObj.getPincodeDetails(val).then((value) {
+                      loading = false;
+                      if(value[0] == 'Error')
+                      {
+                        setState(() {
+                          _stateController.text = "";
+                          if(_districtList.isNotEmpty) {
+                            _districtList.clear();
+                          }
+                          _district = null;
+                          _districtList = null;
+                          _districtList = [];
+                        });
+                        return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
+                      }
+                      else {
+                        setState(() {
+                          _stateController.text = "";
+                          _stateController.text = value[0];
+                          value.removeAt(0);
+                          if(_districtList.isNotEmpty) {
+                            _districtList.clear();
+                          }
+                          _district = null;
+                          _districtList = null;
+                          _districtList = [];
+                          _districtList.addAll(value);
+                          buyer.State = camelCasingFields(_stateController.text);
+                          print('Inside set state ${_stateController.text}');
+                          print('Inside set state $_districtList');
+                        });
+                      }
+                    });
+                  }
+                  else {
+                    _district = null;
+                    _stateController.text = "";
+                    _districtList.clear();
+                    return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
+                  }
+                },
                 onSaved: (String value) {
                   buyer.Pincode = value;
                 },
               ),
               SizedBox(height: 10.0),
+              DropdownButtonFormField<String>(
+                decoration: new InputDecoration(
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  labelText: toBeginningOfSentenceCase(getTranslated(context, "district_key")),
+                  fillColor: Colors.white,
+                  border: new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(25.0),
+                    borderSide: new BorderSide(),
+                  ),
+                  //fillColor: Colors.green
+                ),
+                value: _district,
+                items: _districtList.map((label) => DropdownMenuItem(
+                  child: new Text(label),
+                  value: label,
+                ))
+                    .toList(),
+                hint: Text( (user != null) ? user.District : (_districtList.isEmpty) ? camelCasingFields(getTranslated(context, "no_district_key")) : camelCasingFields(getTranslated(context, "select_district_key"))),
+                onChanged: (value) {
+                  setState(() {
+                    _district = value;
+                    buyer.District = value;
+                  });
+                },
+                validator: (val) {
+                  if ( val == null ) {
+                    return toBeginningOfSentenceCase(getTranslated(context, "district_non_empty_key"));
+                  } else {
+                    return null;
+                  }
+                },
+                onSaved: (String value){
+                  buyer.District = value;
+                },
+              ),
+              SizedBox(height: 10.0),
               TextFormField(
-                initialValue: (user != null) ? user.AadharNo : '',
+                //key: Key(_stateData.toString()),
+                enabled: false,
+                //readOnly: true,
+                controller: _stateController,
+                //initialValue: "",
+                maxLength: 20,
+                decoration: new InputDecoration(
+                  //enabled: false,
+                  labelText: camelCasingFields(getTranslated(context, "state_key")),
+                  fillColor: Colors.white,
+                  border: new OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(25.0),
+                    borderSide: new BorderSide(),
+                  ),
+                  //fillColor: Colors.green
+                ),
+                //initialValue: (user != null) ? user.State : '',
+                validator: (val) {
+                  if (val.length == 0) {
+                    return toBeginningOfSentenceCase(getTranslated(context, "state_non_empty_key"));
+                  } else {
+                    return null;
+                  }
+                },
+                //keyboardType: TextInputType.text,
+                //onChanged: (val) {},
+                onSaved: (String value) {
+                  buyer.State = camelCasingFields(_stateData);
+                },
+              ),
+              SizedBox(height: 10.0),
+              TextFormField(
+                initialValue: (user != null) ? user.AadharNo : buyer.AadharNo,
                 maxLength: 12,
                 decoration: new InputDecoration(
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "aadhar_key")),
@@ -330,7 +360,9 @@ class _buyerFormState extends State<buyerForm> {
                   }
                 },
                 keyboardType: TextInputType.number,
-                onChanged: (val) {},
+                onChanged: (val) {
+                  buyer.AadharNo = val;
+                },
                 onSaved: (String value) {
                   buyer.AadharNo = value;
                 },

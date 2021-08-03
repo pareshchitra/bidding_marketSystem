@@ -9,11 +9,15 @@ import 'package:bidding_market/screens/productDetails.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/database.dart';
+import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:filter_list/filter_list.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 
@@ -50,7 +54,7 @@ class _MyBidsState extends State<MyBids> {
                     TextSpan(
                       text: propertyValue,
                       style: TextStyle(color: Colors.black,
-                          fontSize: 20),
+                          fontSize: 18),
                     ),
                   ]
               )),
@@ -93,7 +97,7 @@ class _MyBidsState extends State<MyBids> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( bidsMapList[index]['Product'].category + " - " + bidsMapList[index]['Product'].size.toString() + " Bheega - "
+                  title: Text( getTranslated(context, (bidsMapList[index]['Product'].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + bidsMapList[index]['Product'].size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - "
                       + bidsMapList[index]['Product'].location, style: TextStyle( color : Colors.green[600], fontSize: 25)),
                 ),
                 //Row(
@@ -111,7 +115,7 @@ class _MyBidsState extends State<MyBids> {
                     child: (bidsMapList[index]['Product'].image1 != null && bidsMapList[index]['Product'].image1 != "" ) ? Image.network(
                       "${bidsMapList[index]['Product'].image1}" ,
                       fit: BoxFit.cover,
-                    ) : Text("No Image Available"),
+                    ) : Text(getTranslated(context, "no_image_key")),
                   ),
                 ),
                 //),
@@ -121,16 +125,16 @@ class _MyBidsState extends State<MyBids> {
                 Row(
                   children: [
                     SizedBox(width: 10.0,),
-                    Text("Status : ",style: TextStyle(fontSize: 20)),
+                    Text(camelCasingFields(getTranslated(context, "status_key")) + " : ",style: TextStyle(fontSize: 20)),
                     // TODO: Mark status when DB field is correct
                     //  Text("${bidsMapList[index]['Bid'].status}",style: TextStyle(fontSize: 20, color: Colors.red)),
-                    Text( (daysLeft > 0)? "Active" : "Closed",style: TextStyle(fontSize: 20, color: Colors.red)),
+                    Text( (daysLeft > 0)? camelCasingFields(getTranslated(context, "active_key")) : camelCasingFields(getTranslated(context, "closed_key")),style: TextStyle(fontSize: 20, color: Colors.red)),
                     SizedBox(width: 20.0,),
 
                     Expanded(
                       child: Align(
                         alignment: Alignment.bottomRight,
-                        child: Text('Current : \u{20B9}' + "${bidsMapList[index]['Bid'].bidVal[0]}",
+                        child: Text(camelCasingFields(getTranslated(context, "current_bid_key")) + ' : ' + "${currencyFormat.format(bidsMapList[index]['Bid'].bidVal[0])}",
                           style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),) ,
 
                       ),
@@ -141,7 +145,7 @@ class _MyBidsState extends State<MyBids> {
                 Row(
                   children: [
                     SizedBox(width: 10.0,),
-                    (daysLeft > 0)? Text("Days Left :",style: TextStyle(fontSize: 20, color: Colors.red)) : SizedBox(width:0),
+                    (daysLeft > 0)? Text(camelCasingFields(getTranslated(context, "days_left_key")) + " :",style: TextStyle(fontSize: 20, color: Colors.red)) : SizedBox(width:0),
                     (daysLeft > 0)? Text("$daysLeft",style: TextStyle(fontSize: 20)) : SizedBox(width:0),
                     SizedBox(width: 20.0,),
                     // ( bidsMapList[index]['Bid'].bidders.length > 0 ) ? Text("${bidsMapList[index]['Bid'].bidders[0]}" , style: TextStyle(fontSize: 23, color: Colors.black))
@@ -149,7 +153,7 @@ class _MyBidsState extends State<MyBids> {
                     Expanded(
                       child: Align(
                         alignment: Alignment.bottomRight,
-                        child: Text('Your Quote : \u{20B9}' + "${bidsMapList[index]['QuotePrice']}",
+                        child: Text(camelCasingFields(getTranslated(context, "your_qoute_key")) + ' : ' + "${currencyFormat.format(double.parse(bidsMapList[index]['QuotePrice']))}",
                           style: TextStyle(fontSize: 20, color: Colors.black),) ,
 
                       ),
@@ -161,17 +165,19 @@ class _MyBidsState extends State<MyBids> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(width: 10.0,),
-                    tilesInfo("Owner", Icons.account_circle, bidsMapList[index]['Product'].owner),
+                    tilesInfo(camelCasingFields(getTranslated(context, "owner_key")), Icons.account_circle, bidsMapList[index]['Product'].owner),
                     SizedBox(width: 10.0,),
-                    tilesInfo("Location", Icons.place, bidsMapList[index]['Product'].location),
+                    tilesInfo(camelCasingFields(getTranslated(context, "location_key")), Icons.place, bidsMapList[index]['Product'].location),
                     SizedBox(width: 10.0,),
-                    tilesInfo("Age", Icons.nature_people, differenceInYears),
+                    tilesInfo(camelCasingFields(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
                     SizedBox(width: 10.0,),
-                    tilesInfo("Size", Icons.fence, (bidsMapList[index]['Product'].size).toString()),
+                    tilesInfo(camelCasingFields(getTranslated(context, "size_key")), Icons.fence, (bidsMapList[index]['Product'].size).toString()),
                     SizedBox(width: 10.0,),
-                    tilesInfo("Plants", Icons.nature, (bidsMapList[index]['Product'].noOfPlants).toString()),
+                    tilesInfo(camelCasingFields(getTranslated(context, "plants_key")), Icons.nature, (bidsMapList[index]['Product'].noOfPlants).toString()),
                     SizedBox(width: 10.0,),
-                    tilesInfo("Base Price", Icons.monetization_on, (bidsMapList[index]['Product'].reservePrice).toString()),
+                    Expanded(child:
+                    tilesInfo(camelCasingFields(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(bidsMapList[index]['Product'].reservePrice)).toString()),
+                    ),
                   ],
                 ),
                 SizedBox(height: 10.0,),
@@ -194,7 +200,7 @@ class _MyBidsState extends State<MyBids> {
           if (!snapshot.hasData) {
             return Center(
                 child: Text(
-                  "Loading...",
+                  toBeginningOfSentenceCase(getTranslated(context, "loading_key")) + "...",
                   style: TextStyle(
                     fontFamily: "Montesserat",
                     fontWeight: FontWeight.w700,
@@ -223,7 +229,7 @@ class _MyBidsState extends State<MyBids> {
 
           return (  bidsMapList.length == 0 )
               ? Center(
-              child: Text("You have not placed any bids !!!",
+              child: Text(toBeginningOfSentenceCase(getTranslated(context, "bids_not_found_key")) + " !!!",
                   style: TextStyle(color: Colors.black, fontSize: 30)))
               : Column(children: [
             // Text(
@@ -252,7 +258,7 @@ class _MyBidsState extends State<MyBids> {
                       ),
                       icon: Icon(Icons.filter_alt_outlined),
                       onPressed: _openFilterList,
-                      label : Text('Filter'),
+                      label : Text(camelCasingFields(getTranslated(context, "filter_key"))),
                       color: Colors.red[100],
 
                     ),
@@ -279,13 +285,13 @@ class _MyBidsState extends State<MyBids> {
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text('My Bids'),
+          title: Text(camelCasingFields(getTranslated(context, "my_bids_key"))),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
             FlatButton.icon(
               icon: Icon(Icons.person),
-              label: Text('logout'),
+              label: Text(camelCasingFields(getTranslated(context, "logout_key"))),
               onPressed: () async {
                 //Navigator.of(context).pop();
                 await _auth.signOut();
@@ -311,8 +317,8 @@ class _MyBidsState extends State<MyBids> {
         listData: villageList,
         selectedListData: selectedVillageList,
         height: 480,
-        headlineText: "Select Village",
-        searchFieldHintText: "Search Here",
+        headlineText: camelCasingFields(getTranslated(context, "select_village_key")),
+        searchFieldHintText: camelCasingFields(getTranslated(context, "search_here_key")),
         label: (item) {
           return item;
         },
@@ -364,11 +370,11 @@ class _MyBidsState extends State<MyBids> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Alert Dialog'),
-          content: Text("Are You Sure Want To Delete this product?"),
+          title: Text(camelCasingFields(getTranslated(context, "alert_dialog_key"))),
+          content: Text(camelCasingFields(getTranslated(context, "delete_confirm_key")) + "?"),
           actions: <Widget>[
             FlatButton(
-              child: Text("YES"),
+              child: Text(getTranslated(context, "yes_key").toUpperCase()),
               onPressed: () async{
                 Navigator.of(context).pop();
                 await dbConnection.deleteProduct(p);
@@ -377,7 +383,7 @@ class _MyBidsState extends State<MyBids> {
             ),
 
             FlatButton(
-              child: Text("NO"),
+              child: Text(getTranslated(context, "no_key").toUpperCase()),
               onPressed: () {
 
                 Navigator.of(context).pop();
