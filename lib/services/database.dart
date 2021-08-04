@@ -197,13 +197,13 @@ class DatabaseService {
 
     // loggedUser.PhoneNo = "0000";
     // print(loggedUser.PhoneNo);
-    String PhotoUrl = "";
+    seller.photo = "";
 
     String PhotoFileName = "seller/${seller.uid}/Photo";
     if(photo != null) {
-      PhotoUrl = await uploadImage(photo, PhotoFileName);
+      seller.photo = await uploadImage(photo, PhotoFileName);
     }
-    print("PhotoUrl value is $PhotoUrl");
+    print("PhotoUrl value is $seller.photo");
     if(loggedUser.PhoneNo == "NA")
       {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -221,7 +221,7 @@ class DatabaseService {
       'District': seller.District,
       'State': seller.State,
       'Pincode': seller.Pincode,
-      'Photo': PhotoUrl,
+      'Photo': seller.photo,
     }).then((value) => loggedUser = seller).
     catchError((error){
       print("Database addition failed with error msg $error");
