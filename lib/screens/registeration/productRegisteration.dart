@@ -7,6 +7,7 @@ import 'package:bidding_market/screens/myProducts.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -118,7 +119,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
   }
 
   void retreiveImage(ImageSource source, int imageNumber ,BuildContext context) async {
-    final pickedFile = await _picker.getImage(imageQuality: 25, source: source, maxWidth: 250.0 , maxHeight: 200.0);
+    final pickedFile = await _picker.getImage(imageQuality: imageQuality, source: source, maxWidth: 250.0 , maxHeight: 200.0);
     File _imageFile = File(pickedFile.path);
     Navigator.pop(context);
     setState(() {
@@ -397,6 +398,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                //   },
                // ),
 
+
+
                DateField(
                  onDateSelected: (DateTime value) {
                    setState(() {
@@ -412,7 +415,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                    ),
                  ),
                  label: (prod!=null ) ? prod.age.year.toString() : toBeginningOfSentenceCase(getTranslated(context, "age_old_key")),
-                 dateFormat: DateFormat.yMd(),
+                 dateFormat: DateFormat.y(),
                  firstDate: DateTime(1980, 1, 1),
                  lastDate: DateTime.now(),
                  selectedDate: product.age,

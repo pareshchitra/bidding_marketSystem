@@ -77,7 +77,7 @@ class _sellerFormState extends State<sellerForm> {
   }
 
   void retreiveImage(ImageSource source, int imageNumber) async {
-    final pickedFile = await _picker.getImage(imageQuality: 25,source: source, maxWidth: 250.0 , maxHeight: 200.0);
+    final pickedFile = await _picker.getImage(imageQuality: imageQuality,source: source, maxWidth: 250.0 , maxHeight: 200.0);
     File _imageFile = File(pickedFile.path);
     Navigator.pop(context);
     setState(() {
@@ -88,10 +88,53 @@ class _sellerFormState extends State<sellerForm> {
     });
   }
   String _state, _district;
-  String _stateData = '';
   List<String> _districtList = [];
   TextEditingController _stateController = new TextEditingController();
   //_stateController.text = null;
+
+
+  @override
+  // ignore: must_call_super
+  void didChangeDependencies() async{
+    //super.initState();
+    if( user != null )
+      {
+        loading = true;
+        await pincodeFetchObj.getPincodeDetails(user.Pincode).then((value) {
+          loading = false;
+          if(value[0] == 'Error')
+          {
+            setState(() {
+              _stateController.text = "";
+              if(_districtList.isNotEmpty) {
+                _districtList.clear();
+              }
+              _district = null;
+              _districtList = null;
+              _districtList = [];
+            });
+            return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
+          }
+          else {
+            setState(() {
+              _stateController.text = "";
+              _stateController.text = value[0];
+              value.removeAt(0);
+              if(_districtList.isNotEmpty) {
+                _districtList.clear();
+              }
+              _district = null;
+              _districtList = null;
+              _districtList = [];
+              _districtList.addAll(value);
+              seller.State = _stateController.text;
+              print('Inside set state ${_stateController.text}');
+              print('Inside set state $_districtList');
+            });
+          }
+        });
+      }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +267,7 @@ class _sellerFormState extends State<sellerForm> {
                           _districtList = null;
                           _districtList = [];
                           _districtList.addAll(value);
-                          seller.State = camelCasingFields(_stateController.text);
+                          seller.State = _stateController.text;
                           print('Inside set state ${_stateController.text}');
                           print('Inside set state $_districtList');
                         });
@@ -260,7 +303,7 @@ class _sellerFormState extends State<sellerForm> {
                   value: label,
                 ))
                     .toList(),
-                hint: Text( (user != null) ? user.District : (_districtList.isEmpty) ? camelCasingFields(getTranslated(context, "no_district_key")) : camelCasingFields(getTranslated(context, "select_district_key"))),
+                hint: Text( (user != null) ? user.District : (_districtList.isEmpty) ? getTranslated(context, "no_district_key") : getTranslated(context, "select_district_key")),
                 onChanged: (value) {
                   setState(() {
                     _district = value;
@@ -344,11 +387,11 @@ class _sellerFormState extends State<sellerForm> {
                 enabled: false,
                 //readOnly: true,
                 controller: _stateController,
-                //initialValue: "",
+                //initialValue: (user != null) ? user.State : '',
                 maxLength: 20,
                 decoration: new InputDecoration(
                   //enabled: false,
-                  labelText: camelCasingFields(getTranslated(context, "state_key")),
+                  labelText: getTranslated(context, "state_key"),
                   fillColor: Colors.white,
                   border: new OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(25.0),
@@ -366,7 +409,7 @@ class _sellerFormState extends State<sellerForm> {
                 //keyboardType: TextInputType.text,
                 //onChanged: (val) {},
                 onSaved: (String value) {
-                  seller.State = camelCasingFields(_stateData);
+                  seller.State = _stateController.text;
                 },
               ),
               // DropdownButtonFormField<String>(
