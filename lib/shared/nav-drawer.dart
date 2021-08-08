@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:intl/intl.dart';
 
+import 'contactSupport.dart';
+
 class NavDrawer extends StatefulWidget {
   @override
   _NavDrawerState createState() => _NavDrawerState();
@@ -137,6 +139,14 @@ class _NavDrawerState extends State<NavDrawer> {
             onTap: () => {
               Navigator.push(context, MaterialPageRoute(
                   builder: (context) => Settings()))
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.contact_support_outlined),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "contact_support_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => ContactSupport()))
             },
           ),
           ListTile(
