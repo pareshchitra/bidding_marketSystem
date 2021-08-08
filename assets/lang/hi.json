@@ -140,5 +140,9 @@
   "bids_not_found_key" : "आपने कोई बोली नहीं लगाई है",
   "no_district_key" : "सही पिनकोड डालें",
   "select_district_key" : "जिला चुने",
-  "bid_started_key" : "बोली सफलतापूर्वक शुरू हुई। अवधि"
+  "bid_started_key" : "बोली सफलतापूर्वक शुरू हुई। अवधि",
+  "contact_support_key" : "सहायता",
+  "reach_us_key" : "संपर्क करे :",
+  "office_address_key_1" : "एफ-15, गणपति प्लाजा, रणथंभौर चौराहा,",
+  "office_address_key_2" : "सवाई माधोपुर, राजस्थान"
 }
