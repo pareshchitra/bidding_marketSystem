@@ -77,7 +77,7 @@ class _sellerFormState extends State<sellerForm> {
   }
 
   void retreiveImage(ImageSource source, int imageNumber) async {
-    final pickedFile = await _picker.getImage(imageQuality: imageQuality,source: source, maxWidth: 250.0 , maxHeight: 200.0);
+    final pickedFile = await _picker.getImage(imageQuality: imageQuality,source: source);
     File _imageFile = File(pickedFile.path);
     Navigator.pop(context);
     setState(() {
@@ -87,53 +87,63 @@ class _sellerFormState extends State<sellerForm> {
       }
     });
   }
-  String _state, _district;
+  String _state, _district, _defDistrict;
   List<String> _districtList = [];
   TextEditingController _stateController = new TextEditingController();
+  TextEditingController _pincodeController = new TextEditingController();
   //_stateController.text = null;
 
 
   @override
   // ignore: must_call_super
-  void didChangeDependencies() async{
-    //super.initState();
-    if( user != null )
-      {
-        loading = true;
-        await pincodeFetchObj.getPincodeDetails(user.Pincode).then((value) {
-          loading = false;
-          if(value[0] == 'Error')
-          {
-            setState(() {
-              _stateController.text = "";
-              if(_districtList.isNotEmpty) {
-                _districtList.clear();
-              }
-              _district = null;
-              _districtList = null;
-              _districtList = [];
-            });
-            return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
-          }
-          else {
-            setState(() {
-              _stateController.text = "";
-              _stateController.text = value[0];
-              value.removeAt(0);
-              if(_districtList.isNotEmpty) {
-                _districtList.clear();
-              }
-              _district = null;
-              _districtList = null;
-              _districtList = [];
-              _districtList.addAll(value);
-              seller.State = _stateController.text;
-              print('Inside set state ${_stateController.text}');
-              print('Inside set state $_districtList');
-            });
-          }
-        });
-      }
+  void initState() {
+    super.initState();
+    if( user != null ) {
+      loading = true;
+      stateFromPincode();
+      _stateController.text = user.State;
+      _pincodeController.text = user.Pincode;
+      _district = user.District;
+      _defDistrict = user.District;
+    }
+  }
+
+  void stateFromPincode() async{
+
+      await pincodeFetchObj.getPincodeDetails(user.Pincode).then((value) {
+        loading = false;
+        if(value[0] == 'Error')
+        {
+          setState(() {
+            _stateController.text = "";
+            if(_districtList.isNotEmpty) {
+              _districtList.clear();
+            }
+            _district = null;
+            _districtList = null;
+            _districtList = [];
+          });
+          return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
+        }
+        else {
+          setState(() {
+            _stateController.text = "";
+            _stateController.text = value[0];
+            value.removeAt(0);
+            if(_districtList.isNotEmpty) {
+              _districtList.clear();
+            }
+            _district = null;
+            _districtList = null;
+            _districtList = [];
+            _districtList.addAll(value);
+            seller.State = _stateController.text;
+            print('Inside set state ${_stateController.text}');
+            print('Inside set state $_districtList');
+          });
+        }
+      });
+
   }
 
   @override
@@ -145,7 +155,7 @@ class _sellerFormState extends State<sellerForm> {
 
     return loading ? Container( height: 700, child:Loading()) :Container(
       child: Form(
-        key: _formKey,
+          key: _formKey,
           child: Column(
             children: <Widget>[
               SizedBox(height: 10.0),
@@ -214,7 +224,8 @@ class _sellerFormState extends State<sellerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
-                initialValue: (user != null) ? user.Pincode : seller.Pincode,
+                //initialValue: (user != null) ? user.Pincode : seller.Pincode,
+                controller: _pincodeController,
                 maxLength: 6,
                 decoration: new InputDecoration(
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "pincode_key")),
@@ -252,6 +263,7 @@ class _sellerFormState extends State<sellerForm> {
                           _district = null;
                           _districtList = null;
                           _districtList = [];
+                          _defDistrict = getTranslated(context, "no_district_key");
                         });
                         return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
                       }
@@ -267,6 +279,7 @@ class _sellerFormState extends State<sellerForm> {
                           _districtList = null;
                           _districtList = [];
                           _districtList.addAll(value);
+                          _defDistrict = getTranslated(context, "select_district_key");
                           seller.State = _stateController.text;
                           print('Inside set state ${_stateController.text}');
                           print('Inside set state $_districtList');
@@ -303,7 +316,7 @@ class _sellerFormState extends State<sellerForm> {
                   value: label,
                 ))
                     .toList(),
-                hint: Text( (user != null) ? user.District : (_districtList.isEmpty) ? getTranslated(context, "no_district_key") : getTranslated(context, "select_district_key")),
+                hint: Text( (user != null) ? _defDistrict : (_districtList.isEmpty) ? getTranslated(context, "no_district_key") : getTranslated(context, "select_district_key")),
                 onChanged: (value) {
                   setState(() {
                     _district = value;
@@ -522,7 +535,7 @@ class _sellerFormState extends State<sellerForm> {
 
                     else // UPDATION OF PROFILE
                         {
-                          seller.type = 2;
+                      seller.type = 2;
 
                       await dbConnection.updateUserData(user, seller, _Photo);
                       setState(() {
