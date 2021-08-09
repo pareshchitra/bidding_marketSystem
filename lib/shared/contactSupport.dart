@@ -18,7 +18,7 @@ class ContactSupport extends StatelessWidget {
       drawer: NavDrawer(),
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(toBeginningOfSentenceCase(getTranslated(context, "contact_us_key"))),
+        title: Text(toBeginningOfSentenceCase(getTranslated(context, "contact_support_key"))),
         backgroundColor: Colors.green[700],
         elevation: 0.0,
         actions: <Widget>[
@@ -40,14 +40,18 @@ class ContactSupport extends StatelessWidget {
       alignment: Alignment.center,
       child: Column(
         children: <Widget>[
-          Text(toBeginningOfSentenceCase(getTranslated(context, "reach_us_key"))),
+          SizedBox(height: 100,),
+          Text(toBeginningOfSentenceCase(getTranslated(context, "reach_us_key")),style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),),
+          SizedBox(height: 60,),
+          //Text(toBeginningOfSentenceCase(getTranslated(context, "contact_key")), style: TextStyle(fontSize: 30),),
+          Icon(Icons.import_contacts, size: 40,color: Colors.grey,),
           SizedBox(height: 20,),
-          Text(toBeginningOfSentenceCase(getTranslated(context, "contact_key"))),
-          SizedBox(height: 10,),
-          Row(
+          Row(mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Icon(Icons.phone, color: Colors.grey,size: 25,),
+              SizedBox(width: 20,),
               InkWell(
-              child: Text("9871561883", style: TextStyle(color: Colors.blue[400])),
+              child: Text("9871561883", style: TextStyle(color: Colors.blue[400], fontSize: 25)),
               onTap: () {
                 launch("tel:+91 9871561883");
               },
@@ -55,7 +59,7 @@ class ContactSupport extends StatelessWidget {
               ),
               SizedBox(width: 20,),
               InkWell(
-                child: FaIcon(FontAwesomeIcons.whatsapp),
+                child: FaIcon(FontAwesomeIcons.whatsapp,color: Color(0xFF25D366),size: 25,),
                 onTap: () {
                   launch("https://wa.me/+919871561883");
                 },
@@ -63,10 +67,12 @@ class ContactSupport extends StatelessWidget {
             ],
           ),
           SizedBox(height: 10,),
-          Row(
+          Row(mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
+              Icon(Icons.phone, color: Colors.grey, size: 25,),
+              SizedBox(width: 20,),
               InkWell(
-                child: Text("9672298812", style: TextStyle(color: Colors.blue[400])),
+                child: Text("9672298812", style: TextStyle(color: Colors.blue[400], fontSize: 25)),
                 onTap: () {
                   launch("tel:+91 9672298812");
                 },
@@ -74,19 +80,38 @@ class ContactSupport extends StatelessWidget {
               ),
               SizedBox(width: 20,),
               InkWell(
-                child: FaIcon(FontAwesomeIcons.whatsapp),
+                child: FaIcon(FontAwesomeIcons.whatsapp,color: Color(0xFF25D366),size: 25,),
                 onTap: () {
                   launch("https://wa.me/+919672298812");
                 },
               )
             ],
           ),
-          SizedBox(height: 30,),
-          Text(toBeginningOfSentenceCase(getTranslated(context, "address_key"))),
-          SizedBox(height: 20,),
-          Text(toBeginningOfSentenceCase(getTranslated(context, "office_address_key_1"))),
           SizedBox(height: 10,),
-          Text(toBeginningOfSentenceCase(getTranslated(context, "office_address_key_2")) + "-322001"),
+          Row(mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(Icons.alternate_email, color: Colors.grey,size: 25,),
+              SizedBox(width: 20,),
+              InkWell(
+                child: Text("farmwaybase@gmail.com", style: TextStyle(color: Colors.blue[400],fontSize: 25)),
+                onTap: () {
+                  //print("clicked");
+                  launch("mailto:farmwaybase@gmail.com");
+                },
+
+              ),
+            ],
+          ),
+          SizedBox(height: 60,),
+          //Text(toBeginningOfSentenceCase(getTranslated(context, "office_key")), style: TextStyle(fontSize: 30),),
+          Icon(Icons.location_pin, size: 40,color: Colors.grey,),
+          SizedBox(height: 20,),
+          Flexible(
+            child: Text(toBeginningOfSentenceCase(getTranslated(context, "office_address_key")) + "-322001", style: TextStyle(fontSize: 25), textAlign: TextAlign.center,),
+          ),
+
+          //SizedBox(height: 10,),
+          //Text(toBeginningOfSentenceCase(getTranslated(context, "office_address_key_2")) + "-322001", style: TextStyle(fontSize: 20), textAlign: TextAlign.center),
         ],
       ),
     ));
