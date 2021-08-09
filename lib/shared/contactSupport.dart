@@ -1,4 +1,7 @@
 import 'package:bidding_market/services/language_constants.dart';
+import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/services/auth.dart';
+import 'package:bidding_market/screens/authenticate/authenticate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,10 +10,33 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ContactSupport extends StatelessWidget {
   //const ContactSupport({Key key}) : super(key: key);
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Scaffold(
+      drawer: NavDrawer(),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Text(toBeginningOfSentenceCase(getTranslated(context, "contact_us_key"))),
+        backgroundColor: Colors.green[700],
+        elevation: 0.0,
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.person),
+            label: Text(getTranslated(context, "logout_key")),
+            onPressed: () async {
+              //Navigator.of(context).pop();
+              await _auth.signOut();
+              Navigator.of(context)
+                  .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Authenticate() ), (Route<dynamic> route) => false
+              );
+              //PhoneAuthDataProvider().signOut();
+            },
+          ),
+        ],
+      ),
+      body: Container(
       alignment: Alignment.center,
       child: Column(
         children: <Widget>[
@@ -63,6 +89,6 @@ class ContactSupport extends StatelessWidget {
           Text(toBeginningOfSentenceCase(getTranslated(context, "office_address_key_2")) + "-322001"),
         ],
       ),
-    );
+    ));
   }
 }
