@@ -142,7 +142,8 @@
   "select_district_key" : "select district",
   "bid_started_key" : "bid successfully started with duration",
   "contact_support_key" : "support",
-  "reach_us_key" : "Reach Us At:",
-  "office_address_key_1" : "F-15, Ganpati Plaza, Ranthambore Chauraha,",
-  "office_address_key_2" : "Sawai Madhopur, Rajasthan"
+  "reach_us_key" : "Reach us at :",
+  "office_address_key" : "F-15, Ganpati Plaza, Ranthambore Chauraha, Sawai Madhopur, Rajasthan",
+  "contact_us_key" : "Contact Us",
+  "office_key" : "office"
 }

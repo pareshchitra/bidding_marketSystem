@@ -4,6 +4,9 @@ import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/services/auth.dart';
+import 'package:bidding_market/screens/authenticate/authenticate.dart';
 
 class Settings extends StatefulWidget {
   @override
@@ -11,6 +14,8 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+
+  final AuthService _auth = AuthService();
 
   void _changeLanguage(Language language) async {
     selectedLanguage = language.languageCode;
@@ -22,27 +27,28 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(
-            Icons.chevron_left,
-            size: 40.0,
-            color: Colors.black,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        drawer: NavDrawer(),
         backgroundColor: Colors.white,
-        title: Text(
-          toBeginningOfSentenceCase(getTranslated(context, "settings_key")),
-          style: TextStyle(
-            color: Colors.black,
-          ),
+        appBar: AppBar(
+          title: Text(toBeginningOfSentenceCase(getTranslated(context, "settings_key"))),
+          backgroundColor: Colors.green[700],
+          elevation: 0.0,
+          actions: <Widget>[
+            FlatButton.icon(
+              icon: Icon(Icons.person),
+              label: Text(getTranslated(context, "logout_key")),
+              onPressed: () async {
+                //Navigator.of(context).pop();
+                await _auth.signOut();
+                Navigator.of(context)
+                    .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Authenticate() ), (Route<dynamic> route) => false
+                );
+                //PhoneAuthDataProvider().signOut();
+              },
+            ),
+          ],
         ),
-      ),
-      body: Column(
+        body: Column(
 
       children: [
           SizedBox(height: 40.0),
