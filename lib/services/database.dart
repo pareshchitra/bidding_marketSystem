@@ -1100,6 +1100,27 @@ class DatabaseService {
   }, timeout: Duration(seconds: 10));
         }
 
+  Future<String> getUserPhoneNo(String userUid) async
+  {
+    var phoneDocuments =  dbPhoneCollection.get();
+    String phoneNo = "";
+    await phoneDocuments.then((snapshot) {
+      snapshot.docs.forEach((result) {
+        //print(result.data(['category']);
+
+        String uid = result.data()['Uid'] ?? '';
+        print("Uid " + uid);
+        if (uid == userUid) {
+          phoneNo = result.id;
+          print("PhoneNo " + phoneNo);
+          //return phoneNo;
+        }
+      });
+    });
+    if( phoneNo == "" ) print("No matching given uid $userUid found in database");
+    return phoneNo;
+  }
+
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
 

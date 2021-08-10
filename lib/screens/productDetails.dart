@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/products.dart';
+
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/constants.dart';
@@ -14,17 +15,19 @@ import 'package:intl/intl.dart';
 class ProductDetails extends StatefulWidget {
   final Product product;
   final Bid bid;
-  ProductDetails({this.product, this.bid});
+  String userPhoneNo;
+  ProductDetails({this.product, this.bid, this.userPhoneNo});
 
   @override
-  _ProductDetails createState() => _ProductDetails(product,bid);
+  _ProductDetails createState() => _ProductDetails(product,bid,userPhoneNo);
 }
 
 class _ProductDetails extends State<ProductDetails>
     with TickerProviderStateMixin {
   final Product product;
   final Bid bid;
-  _ProductDetails(this.product, this.bid);
+  String userPhoneNo;
+  _ProductDetails(this.product, this.bid, this.userPhoneNo);
 
 
   DatabaseService dbConnection = DatabaseService();
@@ -267,6 +270,13 @@ class _ProductDetails extends State<ProductDetails>
 
   _buildDetailsAndMaterialWidgets() {
     TabController tabController = new TabController(length: 2, vsync: this);
+    if( userPhoneNo ==  null ) userPhoneNo = "XXXXX-XXXXX";
+    // String userPhoneNo = "XXXXX-XXXXX";
+    // if( SharedPrefs().adminId != "" &&
+    //     FireBase.auth.currentUser == null ) {
+    //   userPhoneNo = await dbConnection.getUserPhoneNo(
+    //       product.id.split("#")[0]);
+    // }
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,11 +317,21 @@ class _ProductDetails extends State<ProductDetails>
                     color: Colors.black,
                   ),
                 ),
-                Text(
-                  product.owner,
-                  style: TextStyle(
-                    color: Colors.black,
-                  ),
+                Column(
+                  children: [
+                    Text(
+                      product.owner,
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      "Contact No: " + userPhoneNo,
+                      style: TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
                 )
               ],
             ),

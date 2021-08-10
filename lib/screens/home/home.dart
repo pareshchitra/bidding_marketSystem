@@ -122,13 +122,35 @@ class _HomeState extends State<Home> {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductDetails(product: productsList[index]);
-            },
-          ),
-        );
+        if( SharedPrefs().adminId != "" &&
+            FireBase.auth.currentUser == null ) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return FutureBuilder<String>(
+                    future: dbConnection.getUserPhoneNo(productsList[index].id.split("#")[0]),
+                  builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                    if (snapshot.hasData)
+                      return ProductDetails(product: productsList[index],
+                        userPhoneNo: snapshot.data,);
+
+                    return Container(child: CircularProgressIndicator());
+                  }
+
+                );
+              },
+            ),
+          );
+        }
+        else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return ProductDetails(product: productsList[index]);
+              },
+            ),
+          );
+        }
       },
       child: Padding(
           padding: padding,

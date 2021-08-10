@@ -119,7 +119,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
   }
 
   void retreiveImage(ImageSource source, int imageNumber ,BuildContext context) async {
-    final pickedFile = await _picker.getImage(imageQuality: imageQuality, source: source, maxWidth: 250.0 , maxHeight: 200.0);
+    final pickedFile = await _picker.getImage(imageQuality: imageQuality, source: source);
     File _imageFile = File(pickedFile.path);
     Navigator.pop(context);
     setState(() {
