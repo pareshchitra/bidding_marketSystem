@@ -1,3 +1,4 @@
+import 'package:bidding_market/main.dart';
 import 'package:bidding_market/screens/authenticate/sign_in.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/services/language_constants.dart';
@@ -184,6 +185,8 @@ class _AdminLoginScreenState extends State<AdminLoginScreen> {
                 content: Text(toBeginningOfSentenceCase(getTranslated(context, "welcome_admin_key")) + ", " + result.data()["name"])));
 
             SharedPrefs().adminId = result.data()['id'];
+            loggedUser.Name = result.data()['name'];
+            loggedUser.type = 3; // FOR ADMIN
             Navigator.pushReplacement(context, MaterialPageRoute(
                 builder: (context) => Home()
             ));

@@ -1,12 +1,14 @@
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/screens/admin/liveBidding.dart';
 import 'package:bidding_market/models/user.dart';
+import 'package:bidding_market/screens/authenticate/authenticate.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/myBids.dart';
 import 'package:bidding_market/screens/myProducts.dart';
 import 'package:bidding_market/screens/registeration/BuyerForm.dart';
 import 'package:bidding_market/screens/registeration/SellerForm.dart';
 import 'package:bidding_market/screens/viewProfile.dart';
+import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/settings.dart';
 import 'package:flutter/cupertino.dart';
@@ -43,7 +45,7 @@ class _NavDrawerState extends State<NavDrawer> {
   //   //super.initState();
   //   _getTranslatedValues(context);
   // }
-
+  final AuthService _auth = AuthService();
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -152,7 +154,12 @@ class _NavDrawerState extends State<NavDrawer> {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text(toBeginningOfSentenceCase(getTranslated(context, "logout_key"))),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () async{
+              await _auth.signOut();
+              Navigator.of(context)
+                  .pushAndRemoveUntil(MaterialPageRoute(builder: (BuildContext context) => Authenticate() ), (Route<dynamic> route) => false
+              );
+            },
           ),
         ],
       ),

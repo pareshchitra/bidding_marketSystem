@@ -24,8 +24,10 @@ class Profile extends StatelessWidget {
     String type;
     if(user.type == 2)
       type = "Farmer";
-    else
+    else if(user.type == 1)
       type = "Buyer";
+    else if(user.type == 3)
+      type = "Admin";
     return Scaffold(
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
@@ -61,10 +63,13 @@ class Profile extends StatelessWidget {
                   height: 150,
                   child: Container(
                     alignment: Alignment(0.0,4.5),
-                    child: CircleAvatar(
+                    child: (type != "Admin") ? CircleAvatar(
                       backgroundImage: NetworkImage(
                           "${user.photo}"
                       ),
+                      radius: 60.0,
+                    ) : CircleAvatar(
+                      backgroundColor: Colors.blue,
                       radius: 60.0,
                     ),
                   ),
@@ -86,6 +91,7 @@ class Profile extends StatelessWidget {
               SizedBox(
                 height: 10,
               ),
+              ( type != "Admin" ) ?
               Text(
                 "${user.Village}, ${user.District}"
                 ,style: TextStyle(
@@ -94,11 +100,11 @@ class Profile extends StatelessWidget {
                   letterSpacing: 2.0,
                   fontWeight: FontWeight.w300
               ),
-              ),
+              ) : SizedBox(height:0),
               SizedBox(
                 height: 10,
               ),
-
+              ( type != "Admin" ) ?
               Text(
                 toBeginningOfSentenceCase(getTranslated(context, "state_key")) + " : " + user.State
                 ,style: TextStyle(
@@ -107,11 +113,12 @@ class Profile extends StatelessWidget {
                   letterSpacing: 2.0,
                   fontWeight: FontWeight.w300
               ),
-              ),
+              ) : SizedBox(height:0),
 
               SizedBox(
                 height: 10,
               ),
+              ( type != "Admin" ) ?
               Text(
                 "${user.Pincode}"
                 ,style: TextStyle(
@@ -120,11 +127,11 @@ class Profile extends StatelessWidget {
                   letterSpacing: 2.0,
                   fontWeight: FontWeight.w300
               ),
-              ),
+              ) : SizedBox(height:0),
               SizedBox(
                 height: 10,
               ),
-
+              ( type != "Admin" ) ?
               Text(
                 toBeginningOfSentenceCase(getTranslated(context, "contact_key")) + " : ${user.PhoneNo}"
                 ,style: TextStyle(
@@ -133,11 +140,12 @@ class Profile extends StatelessWidget {
                   letterSpacing: 2.0,
                   fontWeight: FontWeight.w300
               ),
-              ),
+              ) : SizedBox(height:0),
 
               SizedBox(
                 height: 50,
               ),
+              ( type != "Admin" ) ?
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -218,6 +226,7 @@ class Profile extends StatelessWidget {
                   )
                 ],
               )
+                  : SizedBox(height:0)
             ],
           ),
         )

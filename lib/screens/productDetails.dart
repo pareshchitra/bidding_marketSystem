@@ -93,13 +93,13 @@ class _ProductDetails extends State<ProductDetails>
                 _buildDivider(screenSize),
                 SizedBox(height: 4.0),
                 _buildStyleNoteData(),
-                SizedBox(height: 20.0),
-                _buildMoreInfoHeader(),
-                SizedBox(height: 6.0),
-                _buildDivider(screenSize),
-                SizedBox(height: 4.0),
-                _buildMoreInfoData(),
-                SizedBox(height: 24.0),
+                SizedBox(height: 10.0),
+                //_buildMoreInfoHeader(),
+                //SizedBox(height: 6.0),
+                //_buildDivider(screenSize),
+                //SizedBox(height: 4.0),
+                //_buildMoreInfoData(),
+                //SizedBox(height: 24.0),
               ],
             ),
           ),
@@ -270,13 +270,20 @@ class _ProductDetails extends State<ProductDetails>
 
   _buildDetailsAndMaterialWidgets() {
     TabController tabController = new TabController(length: 2, vsync: this);
-    if( userPhoneNo ==  null ) userPhoneNo = "XXXXX-XXXXX";
+    if (userPhoneNo == null) userPhoneNo = "XXXXX-XXXXX";
     // String userPhoneNo = "XXXXX-XXXXX";
     // if( SharedPrefs().adminId != "" &&
     //     FireBase.auth.currentUser == null ) {
     //   userPhoneNo = await dbConnection.getUserPhoneNo(
     //       product.id.split("#")[0]);
     // }
+    String price1 = currencyFormat.format(30*100*product.noOfPlants);
+    String price2 = currencyFormat.format(30*150*product.noOfPlants);
+    product.description =
+        "${product.category} : A fully matured plant(after 6 years of age) yields about 100 to 150 kg of fruits in a year." +
+            "The modal price for ${product.category} in the Azadpur mandi, Delhi is about Rs 3000 per Quintal in November 2020." +
+            "At this price, this farm may generate Estimated gross income = " +
+                  "Rs. (30*100*${product.noOfPlants} = $price1 to 30*150*${product.noOfPlants} = $price2)";
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +312,7 @@ class _ProductDetails extends State<ProductDetails>
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
-            height: 60.0,
+            height: 120.0,
             child: TabBarView(
               controller: tabController,
               children: <Widget>[
@@ -389,8 +396,7 @@ class _ProductDetails extends State<ProductDetails>
         left: 12.0,
       ),
       child: Text(
-        toBeginningOfSentenceCase(getTranslated(context, "product_code_key")) + ": ${product
-            .id}\n" + toBeginningOfSentenceCase(getTranslated(context, "size_key")) + ": ${product.size} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
+      toBeginningOfSentenceCase(getTranslated(context, "size_key")) + ": ${product.size} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
         style: TextStyle(
           color: Colors.grey[600],
         ),
