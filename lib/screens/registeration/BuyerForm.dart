@@ -94,52 +94,62 @@ class _buyerFormState extends State<buyerForm> {
       });
 }
 
-  String _state, _district;
+  String _state, _district, _defDistrict;
   List<String> _districtList = [];
   TextEditingController _stateController = new TextEditingController();
+  TextEditingController _pincodeController = new TextEditingController();
 
 
   @override
   // ignore: must_call_super
-  void didChangeDependencies() async{
-    //super.initState();
-    if( user != null )
-    {
+  void initState() {
+    super.initState();
+    if( user != null ) {
       loading = true;
-      await pincodeFetchObj.getPincodeDetails(user.Pincode).then((value) {
-        loading = false;
-        if(value[0] == 'Error')
-        {
-          setState(() {
-            _stateController.text = "";
-            if(_districtList.isNotEmpty) {
-              _districtList.clear();
-            }
-            _district = null;
-            _districtList = null;
-            _districtList = [];
-          });
-          return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
-        }
-        else {
-          setState(() {
-            _stateController.text = "";
-            _stateController.text = value[0];
-            value.removeAt(0);
-            if(_districtList.isNotEmpty) {
-              _districtList.clear();
-            }
-            _district = null;
-            _districtList = null;
-            _districtList = [];
-            _districtList.addAll(value);
-            buyer.State = _stateController.text;
-            print('Inside set state ${_stateController.text}');
-            print('Inside set state $_districtList');
-          });
-        }
-      });
+      stateFromPincode(user.Pincode);
+      _stateController.text = user.State;
+      _pincodeController.text = user.Pincode;
+      _district = user.District;
+      _defDistrict = user.District;
     }
+  }
+
+  void stateFromPincode(String pincode) async{
+
+    await pincodeFetchObj.getPincodeDetails(pincode).then((value) {
+      loading = false;
+      if(value[0] == 'Error')
+      {
+        setState(() {
+          _stateController.text = "";
+          if(_districtList.isNotEmpty) {
+            _districtList.clear();
+          }
+          _district = null;
+          _districtList = null;
+          _districtList = [];
+        });
+        return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
+      }
+      else {
+        setState(() {
+          _stateController.text = "";
+          _stateController.text = value[0];
+          value.removeAt(0);
+          if(_districtList.isNotEmpty) {
+            _districtList.clear();
+          }
+          _district = null;
+          _districtList = null;
+          _districtList = [];
+          _districtList.addAll(value);
+          buyer.State = _stateController.text;
+          print('Inside set state ${_stateController.text}');
+          print('Inside set state $_districtList');
+        });
+      }
+    });
+
   }
 
   @override
@@ -244,7 +254,8 @@ class _buyerFormState extends State<buyerForm> {
               ),
               SizedBox(height: 10.0),
               TextFormField(
-                initialValue: (user != null) ? user.Pincode : buyer.Pincode,
+                //initialValue: (user != null) ? user.Pincode : buyer.Pincode,
+                controller: _pincodeController,
                 maxLength: 6,
                 decoration: new InputDecoration(
                   labelText: toBeginningOfSentenceCase(getTranslated(context, "pincode_key")),
@@ -270,39 +281,7 @@ class _buyerFormState extends State<buyerForm> {
                     buyer.Pincode = val;
                     loading = true;
                     //toDo Call StateGet Function here
-                    await pincodeFetchObj.getPincodeDetails(val).then((value) {
-                      loading = false;
-                      if(value[0] == 'Error')
-                      {
-                        setState(() {
-                          _stateController.text = "";
-                          if(_districtList.isNotEmpty) {
-                            _districtList.clear();
-                          }
-                          _district = null;
-                          _districtList = null;
-                          _districtList = [];
-                        });
-                        return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
-                      }
-                      else {
-                        setState(() {
-                          _stateController.text = "";
-                          _stateController.text = value[0];
-                          value.removeAt(0);
-                          if(_districtList.isNotEmpty) {
-                            _districtList.clear();
-                          }
-                          _district = null;
-                          _districtList = null;
-                          _districtList = [];
-                          _districtList.addAll(value);
-                          buyer.State = _stateController.text;
-                          print('Inside set state ${_stateController.text}');
-                          print('Inside set state $_districtList');
-                        });
-                      }
-                    });
+                    stateFromPincode(val);
                   }
                   else {
                     _district = null;
@@ -333,7 +312,7 @@ class _buyerFormState extends State<buyerForm> {
                   value: label,
                 ))
                     .toList(),
-                hint: Text( (user != null) ? user.District : (_districtList.isEmpty) ? getTranslated(context, "no_district_key") : getTranslated(context, "select_district_key")),
+                hint: Text( (user != null) ? _defDistrict : (_districtList.isEmpty) ? getTranslated(context, "no_district_key") : getTranslated(context, "select_district_key")),
                 onChanged: (value) {
                   setState(() {
                     _district = value;
@@ -397,11 +376,12 @@ class _buyerFormState extends State<buyerForm> {
                   //fillColor: Colors.green
                 ),
                 validator: (val) {
-                  if (val.length < 12) {
-                    return toBeginningOfSentenceCase(getTranslated(context, "aadhar_non_empty_key"));
-                  } else {
-                    return null;
-                  }
+                  // if (val.length < 12) {
+                  //   return toBeginningOfSentenceCase(getTranslated(context, "aadhar_non_empty_key"));
+                  // } else {
+                  //   return null;
+                  // }
+                  return null;  // changed AadharNo to OPTIONAL
                 },
                 keyboardType: TextInputType.number,
                 onChanged: (val) {

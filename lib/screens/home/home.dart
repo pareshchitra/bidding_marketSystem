@@ -123,7 +123,7 @@ class _HomeState extends State<Home> {
     return InkWell(
       onTap: () {
         if( SharedPrefs().adminId != "" &&
-            FireBase.auth.currentUser == null ) {
+            FireBase.auth.currentUser == null ) {  // Admin is Logged In
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) {
@@ -173,13 +173,15 @@ class _HomeState extends State<Home> {
                           borderRadius: BorderRadius.circular(15.0),
                           color: Colors.green[500],
                         ),
+                        height: 200.0,
+                        width: 200.0,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
 
                           child: (productsList[index].image1 != null && productsList[index].image1 != "" ) ? Image.network(
                             "${productsList[index].image1}" ,
                             fit: BoxFit.cover,
-                          ) : Text(getTranslated(context, "no_image_key")),
+                          ) : Center(child: Text(getTranslated(context, "no_image_key"))),
                         ),
                       ),
                     ),

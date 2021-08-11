@@ -100,7 +100,7 @@ class _sellerFormState extends State<sellerForm> {
     super.initState();
     if( user != null ) {
       loading = true;
-      stateFromPincode();
+      stateFromPincode(user.Pincode);
       _stateController.text = user.State;
       _pincodeController.text = user.Pincode;
       _district = user.District;
@@ -108,9 +108,9 @@ class _sellerFormState extends State<sellerForm> {
     }
   }
 
-  void stateFromPincode() async{
+  void stateFromPincode(String pincode) async{
 
-      await pincodeFetchObj.getPincodeDetails(user.Pincode).then((value) {
+      await pincodeFetchObj.getPincodeDetails(pincode).then((value) {
         loading = false;
         if(value[0] == 'Error')
         {
@@ -251,41 +251,7 @@ class _sellerFormState extends State<sellerForm> {
                     seller.Pincode = val;
                     loading = true;
                     //toDo Call StateGet Function here
-                    await pincodeFetchObj.getPincodeDetails(val).then((value) {
-                      loading = false;
-                      if(value[0] == 'Error')
-                      {
-                        setState(() {
-                          _stateController.text = "";
-                          if(_districtList.isNotEmpty) {
-                            _districtList.clear();
-                          }
-                          _district = null;
-                          _districtList = null;
-                          _districtList = [];
-                          _defDistrict = getTranslated(context, "no_district_key");
-                        });
-                        return toBeginningOfSentenceCase(getTranslated(context, "pincode_non_empty_key"));
-                      }
-                      else {
-                        setState(() {
-                          _stateController.text = "";
-                          _stateController.text = value[0];
-                          value.removeAt(0);
-                          if(_districtList.isNotEmpty) {
-                            _districtList.clear();
-                          }
-                          _district = null;
-                          _districtList = null;
-                          _districtList = [];
-                          _districtList.addAll(value);
-                          _defDistrict = getTranslated(context, "select_district_key");
-                          seller.State = _stateController.text;
-                          print('Inside set state ${_stateController.text}');
-                          print('Inside set state $_districtList');
-                        });
-                      }
-                    });
+                    stateFromPincode(val);
                   }
                   else {
                     _district = null;

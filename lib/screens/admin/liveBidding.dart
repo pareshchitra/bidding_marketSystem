@@ -58,7 +58,7 @@ class _LiveBidsState extends State<LiveBids> {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(property,style: TextStyle(color: Colors.grey, fontSize: 15)),
+          Text(property,style: TextStyle(color: Colors.grey, fontSize: 13)),
           RichText(
               text: TextSpan(
                   children : [
@@ -69,7 +69,7 @@ class _LiveBidsState extends State<LiveBids> {
                     TextSpan(
                       text: propertyValue,
                       style: TextStyle(color: Colors.black,
-                          fontSize: 18),
+                          fontSize: 15),
                     ),
                   ]
               )),
@@ -97,13 +97,36 @@ class _LiveBidsState extends State<LiveBids> {
 
     return InkWell(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return ProductDetails(product: productsList[index], bid: bidList[index]);
-            },
-          ),
-        );
+        if( SharedPrefs().adminId != "" &&
+            FireBase.auth.currentUser == null ) {  // Admin is Logged In
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return FutureBuilder<String>(
+                    future: dbConnection.getUserPhoneNo(productsList[index].id.split("#")[0]),
+                    builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                      if (snapshot.hasData)
+                        return ProductDetails(product: productsList[index],
+                          userPhoneNo: snapshot.data,);
+
+                      return Container(child: CircularProgressIndicator());
+                    }
+
+                );
+              },
+            ),
+          );
+        }
+        else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) {
+                return ProductDetails(
+                    product: productsList[index], bid: bidList[index]);
+              },
+            ),
+          );
+        }
       },
       child: Padding(
           padding: padding,
@@ -126,6 +149,8 @@ class _LiveBidsState extends State<LiveBids> {
                           borderRadius: BorderRadius.circular(15.0),
                           color: Colors.green[500],
                         ),
+                        height: 250.0,
+                        width: 250.0,
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
 

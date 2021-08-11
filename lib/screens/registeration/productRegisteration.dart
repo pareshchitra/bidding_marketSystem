@@ -419,6 +419,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                  firstDate: DateTime(1980, 1, 1),
                  lastDate: DateTime.now(),
                  selectedDate: product.age,
+                 initialDatePickerMode: DatePickerMode.year,
                ),
 
                 SizedBox(height: 10.0),

@@ -17,7 +17,7 @@ const textInputDecoration = InputDecoration(
 
 var currencyFormat = NumberFormat.currency(locale: 'gu', symbol: '\u{20B9}');
 
-const int imageQuality = 75;
+const int imageQuality = 0;
 
  const Map<String, List<String>> states = {
     'Rajasthan': ['Sawai Madhopur', 'Dausa']

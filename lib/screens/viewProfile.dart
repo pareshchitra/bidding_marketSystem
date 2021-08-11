@@ -13,60 +13,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends StatelessWidget {
   final User user;
   Profile(this.user);
 
-  @override
-  _ProfileState createState() => _ProfileState();
-}
-
-class _ProfileState extends State<Profile> {
   final AuthService _auth = AuthService();
-
-  // //Translated values
-  // User _translatedUser = new User();
-  //
-  // void _getTranslatedValues(BuildContext context)
-  // {
-  //   _translatedUser.Name = widget.user.Name;
-  //   _translatedUser.Village = widget.user.Village;
-  //   _translatedUser.District = widget.user.District;
-  //   _translatedUser.State = widget.user.State;
-  //
-  //   getTranslatedOnline(context, _translatedUser.Name, "0").then((
-  //       value) =>
-  //       setState(() {
-  //         _translatedUser.Name = value;
-  //       }));
-  //   getTranslatedOnline(context, _translatedUser.Village, "0").then((
-  //       value) =>
-  //       setState(() {
-  //         _translatedUser.Village = value;
-  //       }));
-  //   getTranslatedOnline(context, _translatedUser.District, "0").then((
-  //       value) =>
-  //       setState(() {
-  //         _translatedUser.District = value;
-  //       }));
-  //   getTranslatedOnline(context, _translatedUser.State, "0").then((
-  //       value) =>
-  //       setState(() {
-  //         _translatedUser.State = value;
-  //       }));
-  // }
-  //
-  // @override
-  // // ignore: must_call_super
-  // void didChangeDependencies() {
-  //   //super.initState();
-  //   _getTranslatedValues(context);
-  // }
 
   @override
   Widget build(BuildContext context) {
     String type;
-    if(widget.user.type == 2)
+    if(user.type == 2)
       type = "Farmer";
     else
       type = "Buyer";
@@ -102,12 +58,12 @@ class _ProfileState extends State<Profile> {
                 ),
                 child: Container(
                   width: double.infinity,
-                  height: 200,
+                  height: 150,
                   child: Container(
-                    alignment: Alignment(0.0,2.5),
+                    alignment: Alignment(0.0,4.5),
                     child: CircleAvatar(
                       backgroundImage: NetworkImage(
-                          "${widget.user.photo}"
+                          "${user.photo}"
                       ),
                       radius: 60.0,
                     ),
@@ -119,7 +75,7 @@ class _ProfileState extends State<Profile> {
                 height: 60,
               ),
               Text(
-                widget.user.Name + "  (" + toBeginningOfSentenceCase(getTranslated(context, (type.toLowerCase() + "_key"))) + ")"
+                user.Name  + "  (" + toBeginningOfSentenceCase(getTranslated(context, (type.toLowerCase() + "_key"))) + ")"
                 ,style: TextStyle(
                   fontSize: 25.0,
                   color:Colors.blueGrey,
@@ -131,7 +87,7 @@ class _ProfileState extends State<Profile> {
                 height: 10,
               ),
               Text(
-                widget.user.Village + ", " + widget.user.District
+                "${user.Village}, ${user.District}"
                 ,style: TextStyle(
                   fontSize: 18.0,
                   color:Colors.black45,
@@ -144,7 +100,7 @@ class _ProfileState extends State<Profile> {
               ),
 
               Text(
-                toBeginningOfSentenceCase(getTranslated(context, "state_key")) + " : " + widget.user.State
+                toBeginningOfSentenceCase(getTranslated(context, "state_key")) + " : " + user.State
                 ,style: TextStyle(
                   fontSize: 18.0,
                   color:Colors.black45,
@@ -157,7 +113,7 @@ class _ProfileState extends State<Profile> {
                 height: 10,
               ),
               Text(
-                "${widget.user.Pincode}"
+                "${user.Pincode}"
                 ,style: TextStyle(
                   fontSize: 15.0,
                   color:Colors.black45,
@@ -170,7 +126,7 @@ class _ProfileState extends State<Profile> {
               ),
 
               Text(
-                toBeginningOfSentenceCase(getTranslated(context, "contact_key")) + " : ${widget.user.PhoneNo}"
+                toBeginningOfSentenceCase(getTranslated(context, "contact_key")) + " : ${user.PhoneNo}"
                 ,style: TextStyle(
                   fontSize: 18.0,
                   color:Colors.black45,
