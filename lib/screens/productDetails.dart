@@ -280,10 +280,9 @@ class _ProductDetails extends State<ProductDetails>
     String price1 = currencyFormat.format(30*100*product.noOfPlants);
     String price2 = currencyFormat.format(30*150*product.noOfPlants);
     product.description =
-        "${product.category} : A fully matured plant(after 6 years of age) yields about 100 to 150 kg of fruits in a year." +
-            "The modal price for ${product.category} in the Azadpur mandi, Delhi is about Rs 3000 per Quintal in November 2020." +
-            "At this price, this farm may generate Estimated gross income = " +
-                  "Rs. (30*100*${product.noOfPlants} = $price1 to 30*150*${product.noOfPlants} = $price2)";
+        getTranslated(context, (product.category.toLowerCase() + "_category_key")).toUpperCase() + ": " +
+            getTranslated(context, "product_description_key_1") + getTranslated(context, (product.category.toLowerCase() + "_category_key")).toUpperCase() +
+            getTranslated(context, "product_description_key_2");
     return Container(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,7 +332,7 @@ class _ProductDetails extends State<ProductDetails>
                       ),
                     ),
                     Text(
-                      "Contact No: " + userPhoneNo,
+                      getTranslated(context, "contact_key") + ": " +userPhoneNo,
                       style: TextStyle(
                         color: Colors.black,
                       ),

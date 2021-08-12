@@ -40,9 +40,9 @@ class ContactSupport extends StatelessWidget {
       alignment: Alignment.center,
       child: Column(
         children: <Widget>[
-          SizedBox(height: 100,),
-          Text(toBeginningOfSentenceCase(getTranslated(context, "reach_us_key")),style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),),
-          SizedBox(height: 60,),
+          SizedBox(height: 30,),
+          Text(toBeginningOfSentenceCase(getTranslated(context, "reach_us_key")),style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),),
+          SizedBox(height: 20,),
           //Text(toBeginningOfSentenceCase(getTranslated(context, "contact_key")), style: TextStyle(fontSize: 30),),
           Icon(Icons.import_contacts, size: 40,color: Colors.grey,),
           SizedBox(height: 20,),
@@ -93,16 +93,16 @@ class ContactSupport extends StatelessWidget {
               Icon(Icons.alternate_email, color: Colors.grey,size: 25,),
               SizedBox(width: 20,),
               InkWell(
-                child: Text("farmwaybase@gmail.com", style: TextStyle(color: Colors.blue[400],fontSize: 25)),
+                child: Text("farmwaymedia@gmail.com", style: TextStyle(color: Colors.blue[400],fontSize: 25)),
                 onTap: () {
                   //print("clicked");
-                  launch("mailto:farmwaybase@gmail.com");
+                  launch("mailto:farmwaymedia@gmail.com");
                 },
 
               ),
             ],
           ),
-          SizedBox(height: 60,),
+          SizedBox(height: 30,),
           //Text(toBeginningOfSentenceCase(getTranslated(context, "office_key")), style: TextStyle(fontSize: 30),),
           Icon(Icons.location_pin, size: 40,color: Colors.grey,),
           SizedBox(height: 20,),
