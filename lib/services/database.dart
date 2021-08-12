@@ -7,6 +7,7 @@ import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/registeration/BuyerForm.dart';
+import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -136,17 +137,21 @@ class DatabaseService {
     if(type == 1)
       {
         //SharedPreference Update
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        //prefs = await _prefs;
-        prefs.setString('PhoneNo', Phone);
-        prefs.setInt('RegisterState', 1);
-        prefs.commit();
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        // //prefs = await _prefs;
+        // prefs.setString('PhoneNo', Phone);
+        // prefs.setInt('RegisterState', 1);
+        // prefs.commit();
+        SharedPrefs().phoneNo = Phone;
+        SharedPrefs().registerState = 1;
       }
     else if(type == 2)
       {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setInt('RegisterState', 2);
-        prefs.commit();
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        // prefs.setInt('RegisterState', 2);
+        // prefs.commit();
+        SharedPrefs().registerState = 2;
+
         return await dbPhoneCollection.document(Phone).setData({
           'Uid': uid
         });

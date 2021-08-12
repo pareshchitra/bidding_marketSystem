@@ -9,6 +9,7 @@ import 'package:bidding_market/screens/registeration/registerDetails.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/nav-drawer.dart';
+import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -133,7 +134,7 @@ class Profile extends StatelessWidget {
               ),
               ( type != "Admin" ) ?
               Text(
-                toBeginningOfSentenceCase(getTranslated(context, "contact_key")) + " : ${user.PhoneNo}"
+                toBeginningOfSentenceCase(getTranslated(context, "contact_key")) + " : ${SharedPrefs().phoneNo}"
                 ,style: TextStyle(
                   fontSize: 18.0,
                   color:Colors.black45,
