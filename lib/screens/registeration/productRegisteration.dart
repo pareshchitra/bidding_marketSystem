@@ -437,8 +437,11 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   ),
                   validator: (val) {
                     if (val.length < 1) {
-                      return toBeginningOfSentenceCase(getTranslated(context, "bigha_non_empty_key"));
-                    } else {
+                      return toBeginningOfSentenceCase(getTranslated(context, "bigha_int_key"));
+                    }else if(val.contains('.')){
+                      return toBeginningOfSentenceCase(getTranslated(context, "bigha_int_key"));
+                      }
+                    else {
                       return null;
                     }
                   },
@@ -465,6 +468,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   validator: (val) {
                     if (val.length < 0) {
                       return toBeginningOfSentenceCase(getTranslated(context, "number_plants_non_empty_key"));
+                    }else if(val.contains('.')){
+                      return toBeginningOfSentenceCase(getTranslated(context, "plants_int_key"));
                     } else {
                       return null;
                     }
