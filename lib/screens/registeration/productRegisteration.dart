@@ -437,10 +437,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   ),
                   validator: (val) {
                     if (val.length < 1) {
-                      return toBeginningOfSentenceCase(getTranslated(context, "bigha_int_key"));
-                    }else if(val.contains('.')){
-                      return toBeginningOfSentenceCase(getTranslated(context, "bigha_int_key"));
-                      }
+                      return toBeginningOfSentenceCase(getTranslated(context, "bigha_non_empty_key"));
+                    }
                     else {
                       return null;
                     }
@@ -448,7 +446,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                   keyboardType: TextInputType.number,
                   onChanged: (val) {},
                   onSaved: (String value) {
-                    product.size = int.parse(value);
+                    product.size = double.parse(value);
                   },
                 ),
 
@@ -528,7 +526,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                           builder: ((builder) => imageSourceSelector(context, 1)));
                     }
                 ),
-                productPhoto1 != null ? Container(height: 200, child: Image.file(productPhoto1)) : SizedBox(height: 5.0),
+                productPhoto1 == null ? ( prod != null && prod.image1 != "" ? Container(height: 200, child: Image.network(prod.image1)) : SizedBox(height: 5.0) ) : Container(height: 200, child: Image.file(productPhoto1)),
 
                 RaisedButton(
                     color: Colors.green[700],
@@ -538,7 +536,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                           builder: ((builder) => imageSourceSelector(context, 2)));
                     }
                 ),
-                productPhoto2 != null ? Container(height: 200, child: Image.file(productPhoto2)) : SizedBox(height: 5.0),
+                productPhoto2 == null ? ( prod != null && prod.image2 != "" ? Container(height: 200, child: Image.network(prod.image2)) : SizedBox(height: 5.0) ) : Container(height: 200, child: Image.file(productPhoto2)),
 
                 RaisedButton(
                     color: Colors.green[700],
@@ -548,7 +546,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                           builder: ((builder) => imageSourceSelector(context, 3)));
                     }
                 ),
-                productPhoto3 != null ? Container(height: 200, child: Image.file(productPhoto3)) : SizedBox(height: 5.0),
+                productPhoto3 == null ? ( prod != null && prod.image3 != "" ? Container(height: 200, child: Image.network(prod.image3)) : SizedBox(height: 5.0) ) : Container(height: 200, child: Image.file(productPhoto3)),
 
                 // RaisedButton(
                 //   onPressed: () async {

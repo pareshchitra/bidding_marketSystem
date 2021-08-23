@@ -7,7 +7,7 @@ class Product {
   String owner;
   String location;
   DateTime age;
-  int size;
+  double size;
   int noOfPlants;
   String image1; //URL
   String image2;

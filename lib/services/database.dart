@@ -393,7 +393,7 @@ class DatabaseService {
 
 
   Future<void> addProductData(Product  product, File productPhoto1, File productPhoto2, File productPhoto3) async {
-    print("Entering UpdateProductData");
+    print("Entering addProductData");
 
     print(product.id);
     print(product.category);
@@ -459,7 +459,7 @@ class DatabaseService {
   Future<void> updateProductData(Product  orgProduct, Product updatedProduct, File productPhoto1, File productPhoto2, File productPhoto3) async {
     print("Entering UpdateProductData");
 
-    print("ID : ${updatedProduct.id}");
+    print("ID : ${updatedProduct.id}"); // UpdatedProductID has not been set to originalProductID as ProductID will never change
     print("Category : ${updatedProduct.category}");
     print("Description : ${updatedProduct.description}");
     print("Rating : ${updatedProduct.rating}");
@@ -473,9 +473,9 @@ class DatabaseService {
     print("Photo2 : $productPhoto2");
 
 
-    String photo1 = "product/${updatedProduct.id}/Photo1";
-    String photo2 = "product/${updatedProduct.id}/Photo2";
-    String photo3 = "product/${updatedProduct.id}/Photo3";
+    String photo1 = "product/${orgProduct.id}/Photo1";
+    String photo2 = "product/${orgProduct.id}/Photo2";
+    String photo3 = "product/${orgProduct.id}/Photo3";
     String photo1Url='';
     String photo2Url='';
     String photo3Url= '';
@@ -626,7 +626,7 @@ class DatabaseService {
     image3 : document['Image3'] ?? '',
     reservePrice : document['ReservePrice'] ?? '',
     noOfPlants : document['NoOfPlants'] ?? '',
-    size : document['Size'] ?? '',
+    size : double.parse(document['Size'].toString()) ?? '',  // Conversion is required for data before 23/08/21 when size was int
     lastUpdatedOn : document['LastUpdatedOn'] .toDate() ?? ''
     )).toList();
 
@@ -684,7 +684,7 @@ class DatabaseService {
         //p.isVerfied = result.data['IsVerfied'] ?? '';
         p.reservePrice = result.data()['ReservePrice'] ?? '';
         p.noOfPlants = result.data()['NoOfPlants'] ?? '';
-        p.size = result.data()['Size'] ?? '';
+        p.size = double.parse(result.data()['Size'].toString()) ?? '';// Conversion is required for data before 23/08/21 when size was int
         p.lastUpdatedOn = result.data()['LastUpdatedOn'] .toDate() ?? '';
 
         //p.lastUpdatedOn = result.data['LastUpdatedOn'] ?? '';
@@ -740,7 +740,7 @@ class DatabaseService {
           //p.isVerfied = result.data['IsVerfied'] ?? '';
           p.reservePrice = res.data()['ReservePrice'] ?? '';
           p.noOfPlants = res.data()['NoOfPlants'] ?? '';
-          p.size = res.data()['Size'] ?? '';
+          p.size = double.parse(res.data()['Size'].toString()) ?? ''; // Conversion is required for data before 23/08/21 when size was int
           p.location = res.data()['Location'] ?? '';
           p.lastUpdatedOn = res.data()['LastUpdatedOn'] .toDate() ?? '';
           productList.add(p);
@@ -778,7 +778,7 @@ class DatabaseService {
       //p.isVerfied = result.data['IsVerfied'] ?? '';
       product.reservePrice = ds.data()['ReservePrice'] ?? '';
       product.noOfPlants = ds.data()['NoOfPlants'] ?? '';
-      product.size = ds.data()['Size'] ?? '';
+      product.size = double.parse(ds.data()['Size'].toString()) ?? ''; // Conversion is required for data before 23/08/21 when size was int
       product.location = ds.data()['Location'] ?? '';
       product.lastUpdatedOn = ds.data()['LastUpdatedOn'] .toDate() ?? '';
       return product;
