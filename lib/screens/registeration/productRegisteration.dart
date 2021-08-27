@@ -619,6 +619,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                         });
                         product.lastUpdatedOn = DateTime.now();
                         product.lastUpdatedBy = user.uid;
+                        if( product.age == null )
+                          product.age = DateTime.now();
                         await dbConnection.addProductData(
                             product, productPhoto1, productPhoto2,
                             productPhoto3);
