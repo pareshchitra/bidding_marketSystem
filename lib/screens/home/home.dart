@@ -248,7 +248,7 @@ class _HomeState extends State<Home> {
                                     WidgetSpan(
                                         child: SizedBox(width: 8.0)),
                                     TextSpan(
-                                      text: "${productsList[index].size} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
+                                      text: "${prettifyDouble(productsList[index].size)} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
                                       style: TextStyle(color: Colors.black,
                                           fontSize: 20),
                                     ),

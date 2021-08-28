@@ -21,3 +21,6 @@ String camelCasingFields(String value)
     return correctedString;
   }
 }
+
+String prettifyDouble(double realNo) =>
+  realNo.toStringAsFixed(1).replaceFirst(RegExp(r'\.?0*$'), '');
