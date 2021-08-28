@@ -11,6 +11,7 @@ import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:date_field/date_field.dart';
@@ -443,7 +444,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                       return null;
                     }
                   },
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}'))], // Check for only one decimal place
                   onChanged: (val) {},
                   onSaved: (String value) {
                     product.size = double.parse(value);
@@ -619,6 +621,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                         });
                         product.lastUpdatedOn = DateTime.now();
                         product.lastUpdatedBy = user.uid;
+                        if( product.age == null )
+                          product.age = DateTime.now();
                         await dbConnection.addProductData(
                             product, productPhoto1, productPhoto2,
                             productPhoto3);
