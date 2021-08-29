@@ -7,6 +7,7 @@ import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/services/database.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/constants.dart';
+import 'package:bidding_market/shared/regFunctions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -165,7 +166,7 @@ class _ProductDetails extends State<ProductDetails>
       child: Center(
         child: Text(
           //name,
-          getTranslated(context, (product.category.toLowerCase() + "_category_key")).toUpperCase() + " - " + product.size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " + product.location,
+          getTranslated(context, (product.category.toLowerCase() + "_category_key")).toUpperCase() + " - " + prettifyDouble(product.size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " + product.location,
           style: TextStyle(fontSize: 16.0, color: Colors.black),
         ),
       ),
@@ -395,7 +396,7 @@ class _ProductDetails extends State<ProductDetails>
         left: 12.0,
       ),
       child: Text(
-      toBeginningOfSentenceCase(getTranslated(context, "size_key")) + ": ${product.size} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
+      toBeginningOfSentenceCase(getTranslated(context, "size_key")) + ": ${prettifyDouble(product.size)} " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
         style: TextStyle(
           color: Colors.grey[600],
         ),

@@ -97,7 +97,7 @@ class _MyBidsState extends State<MyBids> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( getTranslated(context, (bidsMapList[index]['Product'].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + bidsMapList[index]['Product'].size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - "
+                  title: Text( getTranslated(context, (bidsMapList[index]['Product'].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + prettifyDouble(bidsMapList[index]['Product'].size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - "
                       + bidsMapList[index]['Product'].location, style: TextStyle( color : Colors.green[600], fontSize: 25)),
                 ),
                 //Row(
@@ -171,7 +171,7 @@ class _MyBidsState extends State<MyBids> {
                     SizedBox(width: 10.0,),
                     tilesInfo(camelCasingFields(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
                     SizedBox(width: 10.0,),
-                    tilesInfo(camelCasingFields(getTranslated(context, "size_key")), Icons.fence, (bidsMapList[index]['Product'].size).toString()),
+                    tilesInfo(camelCasingFields(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(bidsMapList[index]['Product'].size)),
                     SizedBox(width: 10.0,),
                     tilesInfo(camelCasingFields(getTranslated(context, "plants_key")), Icons.nature, (bidsMapList[index]['Product'].noOfPlants).toString()),
                     SizedBox(width: 10.0,),

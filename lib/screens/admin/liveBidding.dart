@@ -137,7 +137,7 @@ class _LiveBidsState extends State<LiveBids> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + productsList[index].size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - "
+                  title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + prettifyDouble(productsList[index].size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - "
                                + productsList[index].location, style: TextStyle( color : Colors.green[600], fontSize: 25)),
                 ),
                 //Row(
@@ -201,7 +201,7 @@ class _LiveBidsState extends State<LiveBids> {
                           SizedBox(width: 10.0,),
                           tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
                           SizedBox(width: 10.0,),
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, (productsList[index].size).toString()),
+                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(productsList[index].size) ),
                           SizedBox(width: 10.0,),
                           tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
                           SizedBox(width: 10.0,),

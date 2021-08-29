@@ -1058,6 +1058,7 @@ class DatabaseService {
 
   // DELETE PRODUCT should be preceded with delete from bid data & if any buyer has placed bid on that product
   dbDeleteProduct(Product p) async{
+    print("deleteProduct called");
 
     await FirebaseFirestore.instance.runTransaction((transaction) async{
     String bidId = p.id; // BidId is same as ProductId
@@ -1066,15 +1067,20 @@ class DatabaseService {
     DocumentSnapshot ds = await transaction.get(bidRef);
     if (ds.exists == true) // This Product is in the bids collection
     {
+      print("Product with id ${p.id} found in bids collection");
       List bidders = [];
-      List bidData = ds.data()['Bids'];
+      List bidData = ds.data()['Bids'];  // TODO: Only max 3 buyers will be taken from this data. Find all the buyers who have placed bids on this product and delete entried from there
 
       for (var bid in bidData) {
-        if (bid['id'] != null) bidders.add(bid['id']);
+        if (bid['id'] != null) {
+          print("Bidder for this product has id ${bid['id']} ");
+          bidders.add(bid['id']);
+        }
       }
-      if (bidders.length != 0)
+      if (bidders.length != 0) // This Bid is having some buyers
       {
         for(var buyerId in bidders) {
+          print("Finding buyer info with id $buyerId ");
           DocumentReference buyerRef = dbBuyerCollection.doc(buyerId);
           DocumentSnapshot buyerDoc = await transaction.get(buyerRef);
           List buyerBidList = buyerDoc.data()['ProductBids'];
@@ -1084,6 +1090,7 @@ class DatabaseService {
           {
             String productId = buyerBid['ProductId'];
             if( productId != p.id ){
+              print("Updated Bid list of the buyer contains productId $productId");
               updatedBuyerBidList.add(buyerBid);
             }
           }
@@ -1092,14 +1099,24 @@ class DatabaseService {
           await transaction.update(buyerRef,{
             'ProductBids': updatedBuyerBidList,
           });
-          await transaction.delete(bidRef);
-          DocumentReference productRef = dbProductCollection.doc(p.id);
-          await transaction.delete(productRef);
-          // TRANSACTION ENDS
+
         }
+        await transaction.delete(bidRef);
+        DocumentReference productRef = dbProductCollection.doc(p.id);
+        await transaction.delete(productRef);
+        // TRANSACTION ENDS
+      }
+      else{ // This bid is not having any buyer
+        print("This product bid with id $bidId is not having any buyer, Deleting.....");
+        print("Deleting Bid from Bids Collection");
+        await transaction.delete(bidRef);
+        DocumentReference productRef = dbProductCollection.doc(p.id);
+        print("Deleting Product from Products Collection");
+        await transaction.delete(productRef);
       }
     } else // Not in Bids Collection , can be deleted safely
       {
+      print("Product with id ${p.id} not found in bids collection");
       await deleteProduct(p);
     }
   }, timeout: Duration(seconds: 10));

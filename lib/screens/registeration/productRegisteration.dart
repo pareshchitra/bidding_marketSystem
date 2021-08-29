@@ -501,7 +501,8 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                       return null;
                     }
                   },
-                  keyboardType: TextInputType.number,
+                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,1}'))], // Check for only one decimal place
                   onChanged: (val) {},
                   onSaved: (String value) {
                     product.reservePrice = double.parse(value);

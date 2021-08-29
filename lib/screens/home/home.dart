@@ -161,7 +161,7 @@ class _HomeState extends State<Home> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + productsList[index].size.toString() + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " +  productsList[index].location,
+                  title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + prettifyDouble(productsList[index].size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " +  productsList[index].location,
                       style: TextStyle( color : Colors.green[600],
                           fontSize: 25)),
                 ),
