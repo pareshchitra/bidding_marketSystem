@@ -514,7 +514,15 @@ class DatabaseService {
   }
 
   Future<void> deleteProduct(Product p)  async{
-    await dbProductCollection.doc(p.id).delete();
+    Reference firestoreStorageRef = FirebaseStorage.instance.ref().child("product/${p.id}/Photo1");
+    await firestoreStorageRef.delete().then((value) {
+      print("Product images deleted successfully from Storage");
+      dbProductCollection.doc(p.id).delete();
+    }).catchError((onError)
+    {
+      print("Error in deleting product images from Storage with errorCode $onError");
+    });
+    //await dbProductCollection.doc(p.id).delete();
   }
 
   Future<int> checkIfUserExists(String documentId/*documentId is uid of user*/) async {
@@ -1103,7 +1111,15 @@ class DatabaseService {
         }
         await transaction.delete(bidRef);
         DocumentReference productRef = dbProductCollection.doc(p.id);
-        await transaction.delete(productRef);
+        Reference firestoreStorageRef = FirebaseStorage.instance.ref().child("product/${p.id}/Photo1");
+        await firestoreStorageRef.delete().then((value) {
+          print("Product images deleted successfully from Storage");
+          print("Deleting Product from Products Collection");
+          transaction.delete(productRef);
+        }).catchError((onError)
+        {
+          print("Error in deleting product images from Storage with errorCode $onError");
+        });
         // TRANSACTION ENDS
       }
       else{ // This bid is not having any buyer
@@ -1111,8 +1127,16 @@ class DatabaseService {
         print("Deleting Bid from Bids Collection");
         await transaction.delete(bidRef);
         DocumentReference productRef = dbProductCollection.doc(p.id);
-        print("Deleting Product from Products Collection");
-        await transaction.delete(productRef);
+        Reference firestoreStorageRef = FirebaseStorage.instance.ref().child("product/${p.id}/Photo1");
+        await firestoreStorageRef.delete().then((value) {
+          print("Product images deleted successfully from Storage");
+          print("Deleting Product from Products Collection");
+          transaction.delete(productRef);
+        }).catchError((onError)
+        {
+          print("Error in deleting product images from Storage with errorCode $onError");
+        });
+
       }
     } else // Not in Bids Collection , can be deleted safely
       {
