@@ -514,16 +514,28 @@ class DatabaseService {
   }
 
   Future<void> deleteProduct(Product p)  async{
-    Reference firestoreStorageRef = FirebaseStorage.instance.ref().child("product/${p.id}/Photo1");
-    await firestoreStorageRef.delete().then((value) {
-      print("Product images deleted successfully from Storage");
-      dbProductCollection.doc(p.id).delete();
-    }).catchError((onError)
-    {
-      print("Error in deleting product images from Storage with errorCode $onError");
+    Reference storageRef = FirebaseStorage.instance.ref().child("product/${p.id}");
+
+    storageRef.listAll()
+        .then((dir)  {
+    dir.items.forEach((fileRef)  {
+      deleteFile(storageRef.fullPath, fileRef.name);
+    });
+    print("Product images deleted successfully from Storage");
+    dbProductCollection.doc(p.id).delete();
+    }).catchError((error) => {
+    print("Error in deleting product images from Storage with errorCode $error")
     });
     //await dbProductCollection.doc(p.id).delete();
   }
+
+
+
+  deleteFile(pathToFile, fileName) {
+    Reference ref = FirebaseStorage.instance.ref(pathToFile);
+    Reference childRef = ref.child(fileName);
+    childRef.delete();
+}
 
   Future<int> checkIfUserExists(String documentId/*documentId is uid of user*/) async {
 
@@ -1111,14 +1123,18 @@ class DatabaseService {
         }
         await transaction.delete(bidRef);
         DocumentReference productRef = dbProductCollection.doc(p.id);
-        Reference firestoreStorageRef = FirebaseStorage.instance.ref().child("product/${p.id}/Photo1");
-        await firestoreStorageRef.delete().then((value) {
+        Reference storageRef = FirebaseStorage.instance.ref().child("product/${p.id}");
+
+        storageRef.listAll()
+            .then((dir)  {
+          dir.items.forEach((fileRef)  {
+            deleteFile(storageRef.fullPath, fileRef.name);
+          });
           print("Product images deleted successfully from Storage");
           print("Deleting Product from Products Collection");
           transaction.delete(productRef);
-        }).catchError((onError)
-        {
-          print("Error in deleting product images from Storage with errorCode $onError");
+        }).catchError((error) => {
+          print("Error in deleting product images from Storage with errorCode $error")
         });
         // TRANSACTION ENDS
       }
@@ -1127,14 +1143,18 @@ class DatabaseService {
         print("Deleting Bid from Bids Collection");
         await transaction.delete(bidRef);
         DocumentReference productRef = dbProductCollection.doc(p.id);
-        Reference firestoreStorageRef = FirebaseStorage.instance.ref().child("product/${p.id}/Photo1");
-        await firestoreStorageRef.delete().then((value) {
+        Reference storageRef = FirebaseStorage.instance.ref().child("product/${p.id}");
+
+        storageRef.listAll()
+            .then((dir)  {
+          dir.items.forEach((fileRef)  {
+            deleteFile(storageRef.fullPath, fileRef.name);
+          });
           print("Product images deleted successfully from Storage");
           print("Deleting Product from Products Collection");
           transaction.delete(productRef);
-        }).catchError((onError)
-        {
-          print("Error in deleting product images from Storage with errorCode $onError");
+        }).catchError((error) => {
+          print("Error in deleting product images from Storage with errorCode $error")
         });
 
       }
