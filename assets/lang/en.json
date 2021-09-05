@@ -149,5 +149,6 @@
   "product_description_key_1" : "A fully matured plant(after 6 years of age) yields about 100 to 150 kg of fruits in a year. The modal price for ",
   "product_description_key_2" : " in the Azadpur mandi, Delhi is about Rs 3000 per Quintal in November 2020. \nAt this price, this farm may generate profitable income.",
   "bigha_int_key" : "Bigha cannot contain a decimal value",
-  "plants_int_key" : "Number of plants cannot contain a decimal value"
+  "plants_int_key" : "Number of plants cannot contain a decimal value",
+  "category_non_empty_key" : "Please select a valid product category"
 }

@@ -274,18 +274,27 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     //fillColor: Colors.green
                   ),
                   value: _category,
+
+                  hint: (prod != null) ? Text(  getTranslated(context, (prod.category.toLowerCase() + "_category_key")).toUpperCase() ) : null,
+                  onChanged: (value) {
+                    setState(() {
+                      _category = value;
+                    });
+                  },
+                  validator: (val){
+                    print("Category val is $val");
+                    if( val == null || val == "" ){
+                      return toBeginningOfSentenceCase(getTranslated(context, "category_non_empty_key"));
+                    }
+                    else
+                      return null;
+                  },
                   items: product.categoryList
                       .map((label) => DropdownMenuItem(
                     child: Text(getTranslated(context, (label.toLowerCase() + "_category_key")).toUpperCase()),
                     value: label,
                   ))
                       .toList(),
-                  hint: Text( (prod != null) ? getTranslated(context, (prod.category.toLowerCase() + "_category_key")).toUpperCase() : toBeginningOfSentenceCase(getTranslated(context, "category_key"))),
-                  onChanged: (value) {
-                    setState(() {
-                      _category = value;
-                    });
-                  },
                   onSaved: (String value){
                     product.category = value;
                     },
@@ -426,7 +435,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                 SizedBox(height: 10.0),
                 TextFormField(
                   initialValue: prod !=null ? prod.size.toString() : "",
-                  maxLength: 6,
+                  maxLength: 5,
                   decoration: new InputDecoration(
                     labelText: toBeginningOfSentenceCase(getTranslated(context, "bigha_key")),
                     fillColor: Colors.white,
@@ -455,7 +464,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                 SizedBox(height: 2.0),
                 TextFormField(
                   initialValue: prod !=null ? prod.noOfPlants.toString() : "",
-                  maxLength: 6,
+                  maxLength: 5,
                   decoration: new InputDecoration(
                     labelText: toBeginningOfSentenceCase(getTranslated(context, "number_plants_key")),
                     fillColor: Colors.white,
@@ -466,15 +475,16 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     //fillColor: Colors.green
                   ),
                   validator: (val) {
-                    if (val.length < 0) {
+                    if (val.length < 1) {
                       return toBeginningOfSentenceCase(getTranslated(context, "number_plants_non_empty_key"));
-                    }else if(val.contains('.')){
+                    }else if(val.contains(',')){
                       return toBeginningOfSentenceCase(getTranslated(context, "plants_int_key"));
                     } else {
                       return null;
                     }
                   },
                   keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   onChanged: (val) {},
                   onSaved: (String value) {
                     product.noOfPlants = int.parse(value);
@@ -495,7 +505,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     //fillColor: Colors.green
                   ),
                   validator: (val) {
-                    if (val.length < 0) {
+                    if (val.length < 1) {
                       return toBeginningOfSentenceCase(getTranslated(context, "reserve_price_non_empty_key"));
                     } else {
                       return null;
@@ -665,4 +675,13 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
         )
     );
   }
+
+  // bool isValidNumber(String input)
+  // {
+  //   if(input.contains('.'))
+  //     return false;
+  //   else if(int.parse(input) == 0 )
+  //     return false;
+  //   else
+  // }
 }
