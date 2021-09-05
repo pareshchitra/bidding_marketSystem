@@ -150,5 +150,7 @@
   "product_description_key_2" : " in the Azadpur mandi, Delhi is about Rs 3000 per Quintal in November 2020. \nAt this price, this farm may generate profitable income.",
   "bigha_int_key" : "Bigha cannot contain a decimal value",
   "plants_int_key" : "Number of plants cannot contain a decimal value",
-  "category_non_empty_key" : "Please select a valid product category"
+  "category_non_empty_key" : "Please select a valid product category",
+  "dashboard_key" : "Dashboard",
+  "product_key" : "Product"
 }

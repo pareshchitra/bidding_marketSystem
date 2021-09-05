@@ -16,7 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:intl/intl.dart';
 
-import 'contactSupport.dart';
+import 'package:bidding_market/shared/contactSupport.dart';
+import 'package:bidding_market/shared/dashboard.dart';
 
 class NavDrawer extends StatefulWidget {
   @override
@@ -79,6 +80,14 @@ class _NavDrawerState extends State<NavDrawer> {
                           Navigator.push(context, MaterialPageRoute(
                           builder: (context) => Home()
             ))},
+          ),
+          ListTile(
+            leading: Icon(Icons.dashboard_outlined),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "dashboard_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Dashboard()
+              ))},
           ),
           ListTile(
               leading: Icon(CupertinoIcons.hammer_fill),
