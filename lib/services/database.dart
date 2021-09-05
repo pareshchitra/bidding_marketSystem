@@ -1193,6 +1193,8 @@ class DatabaseService {
         });
 
       }
+      await dbCounterCollection.document('Product').updateData({"count": FieldValue.increment(-1)});
+      await dbCounterCollection.document('Bid').updateData({"count": FieldValue.increment(-1)});
     } else // Not in Bids Collection , can be deleted safely
       {
       print("Product with id ${p.id} not found in bids collection");
