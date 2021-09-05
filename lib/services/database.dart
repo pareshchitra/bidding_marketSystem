@@ -513,20 +513,28 @@ class DatabaseService {
     });
   }
 
-  Future<void> deleteProduct(Product p)  async{
-    Reference storageRef = FirebaseStorage.instance.ref().child("product/${p.id}");
+  Future<void> deleteProduct(Product p)  async {
 
-    storageRef.listAll()
-        .then((dir)  {
-    dir.items.forEach((fileRef)  {
-      deleteFile(storageRef.fullPath, fileRef.name);
-    });
-    print("Product images deleted successfully from Storage");
-    dbProductCollection.doc(p.id).delete();
-    }).catchError((error) => {
-    print("Error in deleting product images from Storage with errorCode $error")
-    });
-    //await dbProductCollection.doc(p.id).delete();
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      Reference storageRef = FirebaseStorage.instance.ref().child(
+          "product/${p.id}");
+      DocumentReference productDoc = dbProductCollection.doc(p.id);
+      //DocumentSnapshot productSnap = await transaction.get(productDoc);
+      await storageRef.listAll()
+          .then((dir) async{
+        dir.items.forEach((fileRef) {
+          deleteFile(storageRef.fullPath, fileRef.name);
+        });
+        print("Product images deleted successfully from Storage");
+        await transaction.delete(productDoc);
+      }).catchError((error) =>
+      {
+        print(
+            "Error in deleting product images from Storage with errorCode $error")
+      });
+
+      //await dbProductCollection.doc(p.id).delete();
+      });
   }
 
 
@@ -1099,12 +1107,15 @@ class DatabaseService {
       }
       if (bidders.length != 0) // This Bid is having some buyers
       {
+        DocumentReference productRef = dbProductCollection.doc(p.id);
+        Reference storageRef = FirebaseStorage.instance.ref().child("product/${p.id}");
         for(var buyerId in bidders) {
           print("Finding buyer info with id $buyerId ");
           DocumentReference buyerRef = dbBuyerCollection.doc(buyerId);
           DocumentSnapshot buyerDoc = await transaction.get(buyerRef);
           List buyerBidList = buyerDoc.data()['ProductBids'];
           List updatedBuyerBidList = [];
+
 
           for(var buyerBid in buyerBidList)
           {
@@ -1121,16 +1132,15 @@ class DatabaseService {
           });
 
         }
-        await transaction.delete(bidRef);
-        DocumentReference productRef = dbProductCollection.doc(p.id);
-        Reference storageRef = FirebaseStorage.instance.ref().child("product/${p.id}");
 
-        storageRef.listAll()
-            .then((dir)  {
+        await storageRef.listAll()
+            .then((dir)  async{
           dir.items.forEach((fileRef)  {
             deleteFile(storageRef.fullPath, fileRef.name);
           });
           print("Product images deleted successfully from Storage");
+          print("Deleting Bid from Bids Collection");
+          await transaction.delete(bidRef);
           print("Deleting Product from Products Collection");
           transaction.delete(productRef);
         }).catchError((error) => {
@@ -1140,19 +1150,20 @@ class DatabaseService {
       }
       else{ // This bid is not having any buyer
         print("This product bid with id $bidId is not having any buyer, Deleting.....");
-        print("Deleting Bid from Bids Collection");
-        await transaction.delete(bidRef);
+
         DocumentReference productRef = dbProductCollection.doc(p.id);
         Reference storageRef = FirebaseStorage.instance.ref().child("product/${p.id}");
 
-        storageRef.listAll()
-            .then((dir)  {
+        await storageRef.listAll()
+            .then((dir)  async{
           dir.items.forEach((fileRef)  {
             deleteFile(storageRef.fullPath, fileRef.name);
           });
           print("Product images deleted successfully from Storage");
+          print("Deleting Bid from Bids Collection");
+          await transaction.delete(bidRef);
           print("Deleting Product from Products Collection");
-          transaction.delete(productRef);
+          await transaction.delete(productRef);
         }).catchError((error) => {
           print("Error in deleting product images from Storage with errorCode $error")
         });
