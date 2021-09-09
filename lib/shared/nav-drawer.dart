@@ -1,4 +1,5 @@
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/screens/admin/buyerProfiles.dart';
 import 'package:bidding_market/screens/admin/liveBidding.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
@@ -16,7 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
 import 'package:intl/intl.dart';
 
-import 'contactSupport.dart';
+import 'package:bidding_market/shared/contactSupport.dart';
+import 'package:bidding_market/shared/dashboard.dart';
 
 class NavDrawer extends StatefulWidget {
   @override
@@ -81,6 +83,14 @@ class _NavDrawerState extends State<NavDrawer> {
             ))},
           ),
           ListTile(
+            leading: Icon(Icons.dashboard_outlined),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "dashboard_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Dashboard()
+              ))},
+          ),
+          ListTile(
               leading: Icon(CupertinoIcons.hammer_fill),
               title: Text(toBeginningOfSentenceCase(getTranslated(context, "live_bids_key"))),
               onTap:() {
@@ -120,6 +130,16 @@ class _NavDrawerState extends State<NavDrawer> {
             onTap: () => {
               Navigator.push(context, MaterialPageRoute(
                   builder: (context) => MyProducts()
+              ))
+            },
+          ) : SizedBox(),
+          (loggedUser.type == 2) ?
+          ListTile(
+            leading: Icon(Icons.border_color),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "my_products_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => BuyerProfiles()
               ))
             },
           ) : SizedBox(),

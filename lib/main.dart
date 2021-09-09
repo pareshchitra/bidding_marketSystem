@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/wrapper.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/screenutil_init.dart';
 import 'package:provider/provider.dart';
 import 'package:bidding_market/models/user.dart';
 
@@ -85,8 +86,13 @@ class _MyAppState extends State<MyApp> {
           value: PhoneAuthDataProvider().user,
         )
       ],
-
-        child: MaterialApp(
+    child: ScreenUtilInit( // New Widget Here!!
+    designSize: Size(430, 907),
+      builder: () => MaterialApp(
+          theme: ThemeData(
+            //primarySwatch: Colors.blue,
+            visualDensity: VisualDensity.adaptivePlatformDensity,
+          ),
           home: Wrapper(),
           debugShowCheckedModeBanner: false,
           locale: _locale,
@@ -110,6 +116,7 @@ class _MyAppState extends State<MyApp> {
             return supportedLocales.first;
           },
         ),
+    )
       );
     }
   }

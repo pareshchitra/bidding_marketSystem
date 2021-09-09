@@ -104,6 +104,7 @@ class DatabaseService {
   final CollectionReference dbPhoneCollection = FirebaseFirestore.instance.collection('PhoneNo');
   final CollectionReference dbProductCollection = FirebaseFirestore.instance.collection('Product');
   final CollectionReference dbBidCollection = FirebaseFirestore.instance.collection('Bid');
+  final CollectionReference dbCounterCollection = FirebaseFirestore.instance.collection('Counter');
 
 
 
@@ -220,6 +221,7 @@ class DatabaseService {
     print(loggedUser.PhoneNo);
 
     await updatePhoneData(loggedUser.PhoneNo, seller.uid, 2);
+    await dbCounterCollection.document('Seller').updateData({"count": FieldValue.increment(1)});
     return await dbSellerCollection.document(seller.uid).setData({
       'Name': seller.Name,
       'Village': seller.Village,
@@ -283,6 +285,20 @@ class DatabaseService {
     }
 
     await updatePhoneData(loggedUser.PhoneNo, buyer.uid, 2) ;
+
+    //var document = await dbCounterCollection.document('Buyer');
+    //increase counter
+    await dbCounterCollection.document('Buyer').updateData({"count": FieldValue.increment(1)});
+    // document.get().then((value) async {
+    //   print('value- ${value['count']}');
+    //   var count = value['count'];
+    //   count++;
+    //   await dbCounterCollection.document('Buyer').setData({
+    //     'count': count
+    //   }).catchError((onError) {
+    //     print("Database addition failed with error msg $onError");
+    //   });
+    // });
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,
@@ -434,6 +450,7 @@ class DatabaseService {
     }
     print("photo3Url value is $photo3Url");
 
+    await dbCounterCollection.document('Product').updateData({"count": FieldValue.increment(1)});
     return await dbProductCollection.document(product.id).setData({
       'ID': product.id,
       'Category': product.category,
@@ -526,6 +543,7 @@ class DatabaseService {
           deleteFile(storageRef.fullPath, fileRef.name);
         });
         print("Product images deleted successfully from Storage");
+        await dbCounterCollection.document('Product').updateData({"count": FieldValue.increment(-1)});
         await transaction.delete(productDoc);
       }).catchError((error) =>
       {
@@ -840,6 +858,7 @@ class DatabaseService {
       };
       bidders.add(bidMap);
     }
+    await dbCounterCollection.document('Bid').updateData({"count": FieldValue.increment(1)});
     return await dbBidCollection.doc(bid.id).set({
       'ProductId': bid.productId,
       'StartTime': bid.startTime,
@@ -888,6 +907,7 @@ class DatabaseService {
   }
 
   Future<void> deleteBid(String bidId)  async{
+    await dbCounterCollection.document('Bid').updateData({"count": FieldValue.increment(-1)});
     await dbBidCollection.doc(bidId).delete();
   }
 
@@ -972,6 +992,10 @@ class DatabaseService {
     DocumentSnapshot ds = await dbBidCollection.doc(bidId).get();
     if( ds.exists == true )
     {
+      if(status == "Closed") {
+        await dbCounterCollection.document('Bid').updateData(
+            {"count": FieldValue.increment(-1)});
+      }
       return await dbBidCollection.doc(bidId).update({
         'Status': status,
         //'PriceIncrement' : bid.priceIncrement,
@@ -1169,6 +1193,8 @@ class DatabaseService {
         });
 
       }
+      await dbCounterCollection.document('Product').updateData({"count": FieldValue.increment(-1)});
+      await dbCounterCollection.document('Bid').updateData({"count": FieldValue.increment(-1)});
     } else // Not in Bids Collection , can be deleted safely
       {
       print("Product with id ${p.id} not found in bids collection");
@@ -1198,6 +1224,33 @@ class DatabaseService {
     return phoneNo;
   }
 
+  Future<List> getCounterDetails() async {
+    List<int> counterDetails = List.filled(4, 0);
+    QuerySnapshot querySnapshot;
+    querySnapshot = await dbCounterCollection.get();
+    querySnapshot.docs.forEach((document)
+    {
+      // print('documentName- ${document.id}');
+      if(document.id == 'Product')
+      {
+        counterDetails[0] = document.data()['count'];
+      }
+      else if(document.id == 'Buyer')
+      {
+        counterDetails[1] = document.data()['count'];
+      }
+      else if(document.id == 'Seller')
+      {
+        counterDetails[2] = document.data()['count'];
+      }
+      else if(document.id == 'Bid')
+      {
+        counterDetails[3] = document.data()['count'];
+      }
+    });
+    print('counterDb- $counterDetails');
+    return counterDetails;
+  }
 
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
 
