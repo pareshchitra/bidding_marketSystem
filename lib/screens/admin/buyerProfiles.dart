@@ -4,6 +4,7 @@ import 'package:bidding_market/models/bid.dart';
 import 'package:bidding_market/models/brew.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/models/user.dart';
+import 'package:bidding_market/screens/admin/buyerProfileDetails.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
 import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/home/brew_list.dart';
@@ -48,120 +49,110 @@ class _BuyerProfilesState extends State<BuyerProfiles> {
               text: TextSpan(
                   children : [
                     WidgetSpan(
-                        child: Icon(icon,size: 25,color: Colors.green[700])),
+                        child: Icon(icon,size: 22,color: Colors.green[700])),
                     WidgetSpan(
                         child: SizedBox(width: 8.0)),
                     TextSpan(
                       text: propertyValue,
                       style: TextStyle(color: Colors.black,
-                          fontSize: 20),
+                          fontSize: 18),
                     ),
                   ]
               ));
   }
 
-  Widget showProductTiles(BuildContext context, List<User> buyerList,int index) {
-
+  Widget showBuyerTiles(BuildContext context, List<User> buyerList,int index) {
     final border = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.0),
     );
     final padding = const EdgeInsets.all(4.0);
 
 
-    // return InkWell(
-    //   onTap: () {
-    //     if( SharedPrefs().adminId != "" &&
-    //         FireBase.auth.currentUser == null ) {  // Admin is Logged In
-    //       Navigator.of(context).push(
-    //         MaterialPageRoute(
-    //           builder: (context) {
-    //             return FutureBuilder<String>(
-    //                 future: dbConnection.getUserPhoneNo(productsList[index].id.split("#")[0]),
-    //                 builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-    //                   if (snapshot.hasData)
-    //                     return ProductDetails(product: productsList[index],
-    //                       userPhoneNo: snapshot.data,);
-    //
-    //                   return Container(child: CircularProgressIndicator());
-    //                 }
-    //
-    //             );
-    //           },
-    //         ),
-    //       );
-    //     }
-    //     else {
-    //       Navigator.of(context).push(
-    //         MaterialPageRoute(
-    //           builder: (context) {
-    //             return ProductDetails(product: productsList[index]);
-    //           },
-    //         ),
-    //       );
-    //     }
-    //   },
-    //   child:
-    return Padding(
-        padding: padding,
-        //margin: const EdgeInsets.only(bottom: 25),
-        child :Card(
-            shape: border,
-            color: Colors.green[100],
-            child: Column(
-                children: [
-                  //HEADING
-                  // ListTile(
-                  //   title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + prettifyDouble(productsList[index].size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " +  productsList[index].location,
-                  //       style: TextStyle( color : Colors.green[600],
-                  //           fontSize: 25)),
-                  // ),
-                  Row(
-                      children: <Widget>[
-                        Expanded(
-                          //PHOTO
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              color: Colors.green[500],
+    return InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(
+                  builder: (context) {
+                    return BuyerProfileDetails(userId: buyerList[index].uid);
+                  })
+          );
+        },
+
+        child: Padding(
+            padding: padding,
+            //margin: const EdgeInsets.only(bottom: 25),
+            child: Card(
+                shape: border,
+                color: Colors.green[100],
+                child: Column(
+                    children: [
+                      //HEADING
+                      // ListTile(
+                      //   title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase() + " - " + prettifyDouble(productsList[index].size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key")) + " - " +  productsList[index].location,
+                      //       style: TextStyle( color : Colors.green[600],
+                      //           fontSize: 25)),
+                      // ),
+                      Row(
+                          children: <Widget>[
+                            Expanded(
+                              //PHOTO
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  color: Colors.green[500],
+                                ),
+                                height: 200.0,
+                                width: 200.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+
+                                  child: (buyerList[index].idFrontURL != null &&
+                                      buyerList[index].idFrontURL != "") ? Image
+                                      .network(
+                                    "${buyerList[index].idFrontURL}",
+                                    fit: BoxFit.cover,
+                                  ) : Center(child: Text(
+                                      getTranslated(context, "no_image_key"))),
+                                ),
+                              ),
                             ),
-                            height: 200.0,
-                            width: 200.0,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-
-                              child: (buyerList[index].photo != null && buyerList[index].photo != "" ) ? Image.network(
-                                "${buyerList[index].photo}" ,
-                                fit: BoxFit.cover,
-                              ) : Center(child: Text(getTranslated(context, "no_image_key"))),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              // Icon(Icons.account_circle),
-                              // Text(
-                              //   "${productsList[i].owner}",
-                              //   style: Theme
-                              //       .of(context)
-                              //       .textTheme
-                              //       .title,
-                              // ),
-                              tilesInfo("", Icons.account_circle, buyerList[index].Name),
-                              tilesInfo("", Icons.home, buyerList[index].Village),
-                              tilesInfo("", Icons.phone, buyerList[index].PhoneNo),
-                              tilesInfo("", Icons.credit_card, buyerList[index].AadharNo),
-
-                              //IsVERIFIED
+                            SizedBox(width: 15),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  // Icon(Icons.account_circle),
+                                  // Text(
+                                  //   "${productsList[i].owner}",
+                                  //   style: Theme
+                                  //       .of(context)
+                                  //       .textTheme
+                                  //       .title,
+                                  // ),
+                                  tilesInfo("", Icons.account_circle,
+                                      buyerList[index].Name),
+                                  tilesInfo("", Icons.home, buyerList[index]
+                                      .HouseNo + ", " +
+                                      buyerList[index].Village + ", " +
+                                      buyerList[index].District + ", " +
+                                      buyerList[index].State
+                                      + "-" + buyerList[index].Pincode),
+                                  //tilesInfo("", Icons.phone, buyerList[index].PhoneNo),
+                                  tilesInfo("", Icons.credit_card,
+                                      buyerList[index].AadharNo),
+                                  tilesInfo("", Icons.verified,
+                                  getTranslated(context, "verified_key") + ": " + ((buyerList[index]
+                                          .isVerified) ? getTranslated(context, "yes_key") : getTranslated(context, "no_key")))
+                                  //IsVERIFIED
 
 
-                            ],
-                          ),
-                        )]
-                  )
-                ])
+                                ],
+                              ),
+                            )
+                          ]
+                      )
+                    ])
+            )
         )
     );
   }
@@ -185,40 +176,63 @@ class _BuyerProfilesState extends State<BuyerProfiles> {
                   ),
                 ));
           }
-          if(snapshot.connectionState == ConnectionState.done) {
+
             if (snapshot.hasData) {
               if (buyerList == null) {
                 buyerList = [];
                 //_translatedProductsList = [];
               }
               print("Length of snapshot data is ${snapshot.data.docs.length}");
-              snapshot.data.docs.map((DocumentSnapshot document)  {
-                buyerList.add(new User(
-                  Name : document["Name"],
-                  District : document["District"],
-                  State : document["State"],
-                  Village : document["Village"],
-                  Pincode : document["Pincode"],
-                  uid : document['Uid'],
-                  //TODO : PHOTO OF BUYER
-                  photo : document["IdFrontUrl"],
-                  HouseNo : document["HouseNo"],
-                  AadharNo : document["AadharNo"],
+              print("Snapshot Data is ${snapshot.data.docs[0].data()["Name"]}");
+              for( QueryDocumentSnapshot document in snapshot.data.docs)
+                {
+                  //Future<String> phoneNo =  dbConnection.getUserPhoneNo(document.id);
+                  buyerList.add(new User(
+                    Name : document.data()["Name"],
+                    District : document.data()["District"],
+                    State : document.data()["State"],
+                    Village : document.data()["Village"],
+                    Pincode : document.data()["Pincode"],
+                    uid : document.id,
+                    //TODO : PHOTO AND PHONENO OF BUYER
+                    idFrontURL : document.data()["IdFrontUrl"],
+                    idBackURL: document.data()["IdBackUrl"],
+                    HouseNo : document.data()["HouseNo"],
+                    AadharNo : document.data()["AadharNo"],
+                    isVerified: document.data()["IsVerified"]
 
-                ));
-              });
+                  ));
+                }
+              // snapshot.data.docs.map((QueryDocumentSnapshot document)  {
+              //   print("Snapshot Data 2 is ${document.data()}");
+              //   buyerList.add(new User(
+              //     Name : document.data()["Name"],
+              //     //District : document.data()["District"],
+              //     //State : document.data()["State"],
+              //     //Village : document.data()["Village"],
+              //     //Pincode : document.data()["Pincode"],
+              //     //uid : document['Uid'],
+              //     //TODO : PHOTO OF BUYER
+              //     //photo : document.data()["IdFrontUrl"],
+              //     //HouseNo : document.data()["HouseNo"],
+              //     //AadharNo : document.data()["AadharNo"],
+              //
+              //   ));
+              // });
               // _translatedProductsList = List.from(productsList);
               //_getTranslatedValues(context);
               print("Buyer list is now");
               print(buyerList);
               // productsList.sort((a, b) =>
               // a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
-              for( User buyer in buyerList )
+              for( User buyer in buyerList ) {
+                print("Buyer Id is ${buyer.uid}");
                 villageList.add(buyer.Village);
+              }
               villageList = villageList.toSet().toList();
               print("Village List is $villageList");
             }
-          }
+
 
 
           return Column(
@@ -261,8 +275,8 @@ class _BuyerProfilesState extends State<BuyerProfiles> {
                         ? ((!selectedVillageList
                         .contains(buyerList[index - 1].Village)) // if selected filter does not contain village
                         ? SizedBox(height: 0)
-                        : showProductTiles(context, buyerList, index - 1))
-                        : showProductTiles(context, buyerList, index - 1);
+                        : showBuyerTiles(context, buyerList, index - 1))
+                        : showBuyerTiles(context, buyerList, index - 1);
                   },
                 )
                 )
@@ -283,7 +297,7 @@ class _BuyerProfilesState extends State<BuyerProfiles> {
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(toBeginningOfSentenceCase(getTranslated(context, "buyers_key"))),
+          title: Text(getTranslated(context, "buyers_key")),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[

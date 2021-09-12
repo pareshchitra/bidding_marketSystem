@@ -10,10 +10,13 @@ class User {
   String photo; //URL
   String HouseNo; // For Buyer ONLY
   String AadharNo; // For Buyer ONLY
-  bool isVerified;
+  bool isVerified;// For Buyer ONLY
+  String idFrontURL;// For Buyer ONLY
+  String idBackURL;// For Buyer ONLY
   List<Map<String,String>> bidsPlacedOn; // For Buyer ONLY
   int type = 0; //0 for new user, 1 for buyer, 2 for seller
 
-  User({ this.uid, this.Name, this.State, this.Village, this.District, this.Pincode, this.PhoneNo, this.photo, this.HouseNo, this.AadharNo, this.type });
+  User({ this.uid, this.Name, this.State, this.Village, this.District, this.Pincode, this.PhoneNo,
+          this.photo, this.HouseNo, this.AadharNo, this.isVerified, this.idFrontURL, this.idBackURL, this.type });
 
 }

@@ -3,6 +3,7 @@ import 'package:bidding_market/screens/admin/buyerProfiles.dart';
 import 'package:bidding_market/screens/admin/liveBidding.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/authenticate/authenticate.dart';
+import 'package:bidding_market/screens/authenticate/phone_auth.dart';
 import 'package:bidding_market/screens/home/home.dart';
 import 'package:bidding_market/screens/myBids.dart';
 import 'package:bidding_market/screens/myProducts.dart';
@@ -12,6 +13,7 @@ import 'package:bidding_market/screens/viewProfile.dart';
 import 'package:bidding_market/services/auth.dart';
 import 'package:bidding_market/services/language_constants.dart';
 import 'package:bidding_market/shared/settings.dart';
+import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:bidding_market/screens/registeration/productRegisteration.dart';
@@ -133,10 +135,11 @@ class _NavDrawerState extends State<NavDrawer> {
               ))
             },
           ) : SizedBox(),
-          (loggedUser.type == 2) ?
+          ( SharedPrefs().adminId != "" &&
+              FireBase.auth.currentUser == null ) ? //Admin is Logged In
           ListTile(
             leading: Icon(Icons.border_color),
-            title: Text(toBeginningOfSentenceCase(getTranslated(context, "my_products_key"))),
+            title: Text("Buyers"), //TODO: Hindi text
             onTap: () => {
               Navigator.push(context, MaterialPageRoute(
                   builder: (context) => BuyerProfiles()

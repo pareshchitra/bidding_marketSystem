@@ -1224,6 +1224,16 @@ class DatabaseService {
     return phoneNo;
   }
 
+  Future verifyBuyer(String userId) async{
+    await dbBuyerCollection.doc(userId).update({
+       'IsVerified': true,
+    }).then((value) {
+        print("Buyer with uid $userId successfully verified");
+    }).catchError((error){
+      print("Error in updating verification status of buyer with uid $userId  and error $error");
+    });
+  }
+
   Future<List> getCounterDetails() async {
     List<int> counterDetails = List.filled(4, 0);
     QuerySnapshot querySnapshot;

@@ -344,7 +344,7 @@ class _MyProductsState extends State<MyProducts> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
-          content: Text(toBeginningOfSentenceCase(getTranslated(context, "delete_confirm_key"))),
+          content: Text(toBeginningOfSentenceCase(getTranslated(context, "delete_confirm_key_product"))),
           actions: <Widget>[
             FlatButton(
               child: Text(getTranslated(context, "yes_key").toUpperCase()),
