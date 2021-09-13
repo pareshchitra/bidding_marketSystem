@@ -299,6 +299,7 @@ class DatabaseService {
     //     print("Database addition failed with error msg $onError");
     //   });
     // });
+    buyer.isVerified = false; // By default all buyers should be marked as NOT VERIFIED
     return await dbBuyerCollection.document(buyer.uid).setData({
       'Name': buyer.Name,
       'HouseNo': buyer.HouseNo,
@@ -308,7 +309,8 @@ class DatabaseService {
       'Pincode': buyer.Pincode,
       'AadharNo': buyer.AadharNo,
       'IdFrontUrl': IdFrontUrl,
-      'IdBackUrl': IdBackUrl
+      'IdBackUrl': IdBackUrl,
+      'IsVerified': buyer.isVerified
     }).then((value) => loggedUser = buyer).
     catchError((error){
       print("Database addition failed with error msg $error");
@@ -600,6 +602,7 @@ class DatabaseService {
         loggedUser.type = 1;
         loggedUser.HouseNo = ds.data()["HouseNo"];
         loggedUser.AadharNo = ds.data()["AadharNo"];
+        loggedUser.isVerified = ds.data()["IsVerified"];
         return 1; //Buyer
       }
     else
@@ -1232,6 +1235,21 @@ class DatabaseService {
     }).catchError((error){
       print("Error in updating verification status of buyer with uid $userId  and error $error");
     });
+  }
+
+  Future<bool> getVerificationStatus(String userId) async{
+    DocumentSnapshot ds = await dbBuyerCollection.doc(userId).get();
+
+    print('Document in Buyer with uid $userId : ${ds.exists}');
+    if(ds.exists == true)
+    {
+      return  ds.data()["IsVerified"];
+    }
+    else
+    {
+      print('Error fetching Document in Buyer with uid $userId');
+      return false;
+    }
   }
 
   Future<List> getCounterDetails() async {

@@ -528,50 +528,83 @@ class _ProductDetails extends State<ProductDetails>
             print("Place bid database operation failed with msg : $errorMsg"));
   }
 
-  placeBid()
+  placeBid() async
   {
-    List<String> validPrices = priceList(bid.basePrice);
-    if( validPrices.contains(selectedPrice)) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-                title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
-                content: Text(getTranslated(context, "price_bid_confirm_key_1") + " $selectedPrice " + getTranslated(context, "price_bid_confirm_key_2")),
-                actions: <Widget>[
-                  FlatButton(
+    bool verificationStatus = await dbConnection.getVerificationStatus(loggedUser.uid);
+    if( verificationStatus ) { // Only Verified Users must be allowed to place bids
+      List<String> validPrices = priceList(bid.basePrice);
+      if (validPrices.contains(selectedPrice)) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                  title: Text(toBeginningOfSentenceCase(
+                      getTranslated(context, "alert_dialog_key"))),
+                  content: Text(
+                      getTranslated(context, "price_bid_confirm_key_1") +
+                          " $selectedPrice " +
+                          getTranslated(context, "price_bid_confirm_key_2")),
+                  actions: <Widget>[
+                    FlatButton(
+                        child: Text(toBeginningOfSentenceCase(
+                            getTranslated(context, "yes_key"))),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          callDbPlaceBid();
+                        }),
+                    FlatButton(
                       child: Text(toBeginningOfSentenceCase(
-                          getTranslated(context, "yes_key"))),
+                          getTranslated(context, "no_key"))),
                       onPressed: () {
                         Navigator.of(context).pop();
-                        callDbPlaceBid();
-                      }),
-                  FlatButton(
-                    child: Text(toBeginningOfSentenceCase(
-                        getTranslated(context, "no_key"))),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ]);
-          });
+                      },
+                    ),
+                  ]);
+            });
+      }
+      else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                  title: Text(toBeginningOfSentenceCase(
+                      getTranslated(context, "alert_dialog_key"))),
+                  content: Text(
+                      getTranslated(context, "choose_amount_alert_key") +
+                          " !!"),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text(
+                          getTranslated(context, "ok_key").toUpperCase()),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ]);
+            });
+      }
     }
     else {
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-                title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
-                content: Text(getTranslated(context, "choose_amount_alert_key") + " !!"),
+                title: Text(toBeginningOfSentenceCase(
+                    getTranslated(context, "alert_dialog_key"))),
+                content: Text(
+                    "Your account is not verified!! Contact support to get verification done" +
+                        " !!") ,  //TODO: Hindi Text
                 actions: <Widget>[
                   FlatButton(
-                    child: Text(getTranslated(context, "ok_key").toUpperCase()),
+                    child: Text(
+                        getTranslated(context, "ok_key").toUpperCase()),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                   ),
                 ]);
           });
-    }
+
+      }
   }
 }

@@ -138,8 +138,8 @@ class _NavDrawerState extends State<NavDrawer> {
           ( SharedPrefs().adminId != "" &&
               FireBase.auth.currentUser == null ) ? //Admin is Logged In
           ListTile(
-            leading: Icon(Icons.border_color),
-            title: Text("Buyers"), //TODO: Hindi text
+            leading: Icon(Icons.people),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "buyers_key"))),
             onTap: () => {
               Navigator.push(context, MaterialPageRoute(
                   builder: (context) => BuyerProfiles()
