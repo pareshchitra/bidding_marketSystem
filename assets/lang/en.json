@@ -74,7 +74,7 @@
   "delete_key" : "delete",
   "my_products_key" : "my products",
   "alert_dialog_key" : "alert dialog",
-  "delete_confirm_key" : "are you sure you want to delete this product",
+  "delete_confirm_key_product" : "are you sure you want to delete this product",
   "yes_key" : "yes",
   "no_key" : "no",
   "update_farm_photos_key" : "please update farm photos",
@@ -152,5 +152,10 @@
   "plants_int_key" : "Number of plants cannot contain a decimal value",
   "category_non_empty_key" : "Please select a valid product category",
   "dashboard_key" : "Dashboard",
-  "product_key" : "Product"
+  "product_key" : "Product",
+  "buyers_key" : "BUYERS",
+  "buyer_details_key" : "Buyer Details",
+  "verified_key" : "Verified",
+  "verify_account_key" : "Verify Account",
+  "verify_account_confirm_key" : "Are you sure you want to verify this account?"
 }

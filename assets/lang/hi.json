@@ -74,7 +74,7 @@
   "delete_key" : "डिलीट",
   "my_products_key" : "मेरे उत्पाद",
   "alert_dialog_key" : "चेतावनी",
-  "delete_confirm_key" : "क्या आप वाकई इस उत्पाद को हटाना चाहते हैं",
+  "delete_confirm_key_product" : "क्या आप वाकई इस उत्पाद को हटाना चाहते हैं",
   "yes_key" : "हाँ",
   "no_key" : "ना",
   "update_farm_photos_key" : "कृपया अपने खेत की फोटो अपडेट करें",
@@ -152,5 +152,10 @@
   "plants_int_key" : "पौधों की संख्या में दशमलव मान नहीं हो सकता",
   "category_non_empty_key" : "कृपया कोई मान्य उत्पाद श्रेणी का चयन करें",
   "dashboard_key" : "डैशबोर्ड",
-  "product_key" : "उत्पाद"
+  "product_key" : "उत्पाद",
+  "buyers_key" : "खरीदार",
+  "buyer_details_key" : "खरीदार विवरण",
+  "verified_key" : "सत्यापित",
+  "verify_account_key" : "खाता सत्यापित करें",
+  "verify_account_confirm_key" : "क्या आप वाकई इस खाते को सत्यापित करना चाहते हैं?"
 }
