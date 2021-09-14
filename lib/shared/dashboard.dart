@@ -19,25 +19,28 @@ class Dashboard extends StatelessWidget {
 
   Material listTiles(String heading, int count, int color) {
     return Material(
-      color: Colors.green[100],
-      //elevation: 14.0,
-      //shadowColor: Color(0x802196F3),
+      color: new Color(color),
+      elevation: 14.0,
+      shadowColor: Color(0x802196F3),
       borderRadius: BorderRadius.circular(24.0.sp),
       child: Padding(
         padding: EdgeInsets.all(8.0.sp),
         child: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Center(
                     child: Padding(
-                      padding: EdgeInsets.all(8.0.sp),
+                      padding: EdgeInsets.all(16.0.sp),
                       child: Text(heading,
                       style: TextStyle(
-                        color: new Color(color),
-                        fontSize: 22.sp,
+                        color: Colors.white,
+                        fontSize: 35.sp,
                       ),),
                     ),
                   ),
@@ -45,11 +48,10 @@ class Dashboard extends StatelessWidget {
     ),
     Row(
     mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.center,
     children: <Widget>[
                   //Counter
-                  Material(
-                    color: new Color(color),
-                    borderRadius: BorderRadius.circular(24.0.sp),
+                  Center(
                     child: Padding(
                       padding: EdgeInsets.all(16.0.sp),
                       child: Countup(
@@ -58,11 +60,11 @@ class Dashboard extends StatelessWidget {
                         duration: Duration(seconds: 1),
                         separator: ',',
                         style: TextStyle(
-                          fontSize: 32.sp,
+                          fontSize: 40.sp,
                           color: Colors.white,
                         ),
                       )
-                    )
+                    ),
                   )
                 ],
               ),
@@ -95,7 +97,7 @@ class Dashboard extends StatelessWidget {
           return StaggeredGridView.count(
               crossAxisCount: 2,
               crossAxisSpacing: 12.0.w,
-              mainAxisSpacing: 12.0.h,
+              mainAxisSpacing: 8.0.h,
             padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 8.0.h),
             children: <Widget>[
               listTiles(toBeginningOfSentenceCase(getTranslated(context, "product_key")), counterDetails[0], 0xffed622b),
@@ -104,10 +106,10 @@ class Dashboard extends StatelessWidget {
               listTiles(toBeginningOfSentenceCase(getTranslated(context, "live_bids_key")), counterDetails[3], 0xff3399fe)
             ],
           staggeredTiles: [
-            StaggeredTile.extent(2, 130.0.w),
-            StaggeredTile.extent(1, 130.0.w),
-          StaggeredTile.extent(1, 130.0.w),
-          StaggeredTile.extent(2, 130.0.w),
+            StaggeredTile.extent(2, 250.0.h),
+            StaggeredTile.extent(1, 250.0.h),
+          StaggeredTile.extent(1, 250.0.h),
+          StaggeredTile.extent(2, 250.0.h),
           ],
           );
         });

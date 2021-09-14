@@ -16,6 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart' as FirebaseAuth;
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -58,7 +59,7 @@ class _SignInState extends State<SignIn> {
       appBar: AppBar(
         backgroundColor: Colors.green[700],
         elevation: 0.0,
-        title: Center(child: Text('Farmway', textAlign: TextAlign.center)),
+        title: Center(child: Text('Farmway', style: TextStyle(fontSize: 21.sp), textAlign: TextAlign.center)),
         // actions: <Widget>[
         //   FlatButton.icon(
         //     icon: Icon(Icons.person),
@@ -69,7 +70,7 @@ class _SignInState extends State<SignIn> {
       ),
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(32),
+            padding: EdgeInsets.all(32.sp),
             child: Form(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,17 +78,17 @@ class _SignInState extends State<SignIn> {
 
                 children: <Widget>[
                   Container(
-                  height: 200.0,
-                  width: 600.0,
+                  height: 170.0.h,
+                  width: 600.0.w,
                     alignment: Alignment.center,
                     child:Image.asset(
                         'assets/images/appLogo_v2.png',
                          scale: 5
                          ),
                   ),
-                  Text(getTranslated(context, 'login_key'), style: TextStyle(color: Colors.green[500], fontSize: 36, fontWeight: FontWeight.w500),),
+                  Text(getTranslated(context, 'login_key'), style: TextStyle(color: Colors.green[500], fontSize: 30.sp, fontWeight: FontWeight.w500),),
 
-                 SizedBox(height: 16,),
+                 SizedBox(height: 16.h,),
 
                   TextFormField(
                     decoration: InputDecoration(
@@ -110,7 +111,7 @@ class _SignInState extends State<SignIn> {
                       .phoneNumberController ,//_phoneController,  //OTP CHANGE HERE
                 ),
 
-                SizedBox(height: 16,),
+                SizedBox(height: 16.h,),
 
 
               /*
@@ -119,9 +120,9 @@ class _SignInState extends State<SignIn> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  SizedBox(width: 10),
-                  Icon(Icons.info, color: Colors.green, size: 20.0),
-                  SizedBox(width: 10.0),
+                  SizedBox(width: 10.w),
+                  Icon(Icons.info, color: Colors.green, size: 20.0.sp),
+                  SizedBox(width: 10.0.w),
                   Expanded(
                     child: RichText(
                         text: TextSpan(children: [
@@ -133,7 +134,7 @@ class _SignInState extends State<SignIn> {
                               text: getTranslated(context, 'OTP_send_key_2'),
                               style: TextStyle(
                                   color: Colors.green,
-                                  fontSize: 16.0,
+                                  fontSize: 16.0.sp,
                                   fontWeight: FontWeight.w700)),
                           TextSpan(
                               text: " " + getTranslated(context, 'OTP_send_key_3'),
@@ -141,18 +142,18 @@ class _SignInState extends State<SignIn> {
                                   color: Colors.green, fontWeight: FontWeight.w400)),
                         ])),
                   ),
-                  SizedBox(width: 10 ,height : 20),
+                  SizedBox(width: 10 ,height : 20.h),
             ],
               ),
 
 
-                  SizedBox(height : 30),
+                  SizedBox(height : 30.h),
                   Container(
                   width: double.infinity,
                   child: FlatButton(
                     child: Text(getTranslated(context, 'login_key').toUpperCase()),
                     textColor: Colors.white,
-                    padding: EdgeInsets.all(16),
+                    padding: EdgeInsets.all(16.sp),
                     onPressed: () async {
                       // setState(() => loading = true);
                       // final phone = "+91"+ _phoneController.text.trim();
@@ -171,27 +172,27 @@ class _SignInState extends State<SignIn> {
                     color: Colors.green[400],
                   ),
                 ),
-                  SizedBox(height: 50.0),
+                  SizedBox(height: 50.0.h),
                 Container(
-                    height : 4.0,
+                    height : 4.0.h,
                     width : _screenWidth * 0.8,
                     color: Colors.green
                 ),
-                  SizedBox(height: 20.0),
+                  SizedBox(height: 20.0.h),
                 Center(
                   child: FlatButton.icon(
                       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AdminLoginPage())),
                       icon: (Icon(Icons.nature_people, color : Colors.green)),
-                      label: Text(toBeginningOfSentenceCase(getTranslated(context, "admin_info_key")) , style: TextStyle(color: Colors.green , fontSize: 20.0, fontWeight: FontWeight.bold),)
+                      label: Text(toBeginningOfSentenceCase(getTranslated(context, "admin_info_key")) , style: TextStyle(color: Colors.green , fontSize: 20.0.sp, fontWeight: FontWeight.bold),)
                   ),
                 ),
 
-                SizedBox(height: 12.0),
+                SizedBox(height: 12.0.h),
                 Text(
                   error,
-                  style: TextStyle(color: Colors.red, fontSize: 14.0),
+                  style: TextStyle(color: Colors.red, fontSize: 14.0.sp),
                 ),
-                  SizedBox(height: 40.0),
+                  SizedBox(height: 40.0.h),
                   Container(
                       alignment: Alignment.center,
                       child: Column(
@@ -204,7 +205,7 @@ class _SignInState extends State<SignIn> {
                     //   color: Colors.green,size: 40,
                     // ),
                     hint: Text(getTranslated(context, 'language_key'),
-                    style: TextStyle(color: Colors.green, fontSize: 20)),
+                    style: TextStyle(color: Colors.green, fontSize: 20.sp)),
                     onChanged: (Language language) {
                       _changeLanguage(language);
                     },
@@ -215,7 +216,9 @@ class _SignInState extends State<SignIn> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
-                            Text(e.name)
+                            Text(e.name, style: TextStyle(
+                              fontSize: 20.sp
+                            ),)
                           ],
                         ),
                       ),
