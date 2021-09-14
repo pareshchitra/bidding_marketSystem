@@ -32,6 +32,7 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
   FocusNode focusNode5 = FocusNode();
   FocusNode focusNode6 = FocusNode();
   String code = "";
+  List<int> intOtpCode = new List(6);
 
   @override
   void initState() {
@@ -197,6 +198,10 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
   }
 
   signIn() {
+    FocusScope.of(context).requestFocus(FocusNode()); // Bug fix
+    print("Int Code is $intOtpCode");
+    code = intOtpCode.map((i) => i.toString()).join(""); // Bug fix
+    print("Code is $code");
     if (code.length != 6) {
       _showSnackBar(getTranslated(context, "OTP_invalid_key"));
     }
@@ -216,8 +221,9 @@ class _PhoneAuthVerifyState extends State<PhoneAuthVerify> {
       focusNode: focusNode,
       onChanged: (String value) {
         if (value.length == 1) {
-          code += value;
-          switch (code.length) {
+          intOtpCode[int.parse(key) - 1] = int.parse(value); // Bug fix
+           print("Code is $intOtpCode");
+          switch (int.parse(key)) {
             case 1:
               FocusScope.of(context).requestFocus(focusNode2);
               break;
