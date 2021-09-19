@@ -157,5 +157,6 @@
   "buyer_details_key" : "Buyer Details",
   "verified_key" : "Verified",
   "verify_account_key" : "Verify Account",
-  "verify_account_confirm_key" : "Are you sure you want to verify this account?"
+  "verify_account_confirm_key" : "Are you sure you want to verify this account?",
+  "my_products_bidding_key" : "My Product Bidders"
 }

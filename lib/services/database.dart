@@ -1013,6 +1013,7 @@ class DatabaseService {
 
   closeBid(String bidId)
   {
+    print("Calling updateBidStatus to close bid $bidId");
     updateBidStatus(bidId, "Closed");
   }
 
@@ -1250,6 +1251,41 @@ class DatabaseService {
       print('Error fetching Document in Buyer with uid $userId');
       return false;
     }
+  }
+
+  Future<List<Bid>> getSellerBidProducts(User currentUser) async{
+    List<Product> userProducts = await myProducts(currentUser);
+    List<Bid> bidProducts = new List();
+    for( Product product in userProducts)
+      {
+        DocumentSnapshot ds = await dbBidCollection.doc(product.id).get();
+        if( ds.exists )
+          {
+            print("Product $product.id exists in Bid collection");
+            Bid bid = new Bid();
+            bid.id = ds.id;
+            bid.productId = ds.data()['ProductId'];
+            bid.startTime = ds.data()['StartTime'].toDate();
+            bid.endTime = ds.data()['EndTime'].toDate();
+            bid.basePrice = ds.data()['BasePrice'];
+            bid.status = ds.data()['Status'];
+            bid.type = ds.data()['Type'];
+            List bidders = ds.data()['Bids'];
+            bid.bidders = [];
+            bid.bidVal = [];
+            for(var bidder in bidders)
+            {
+              if( bidder['name'] != null )
+                bid.bidders.add(bidder['name']);
+              if( bidder['price'] != null )
+                bid.bidVal.add(double.parse(bidder['price']));
+            }
+            print("Bidders are $bidders");
+            bid.priceIncrement = bid.basePrice * 0.1;
+            bidProducts.add(bid);
+          }
+      }
+    return bidProducts;
   }
 
   Future<List> getCounterDetails() async {

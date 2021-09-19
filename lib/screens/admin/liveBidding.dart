@@ -475,11 +475,17 @@ class _LiveBidsState extends State<LiveBids> {
               icon: Icon(Icons.stop),
               label: Text(getTranslated(context, "stop_bidding_key").toUpperCase()),
               color: Colors.redAccent,
-              onPressed: () {}),
+              onPressed: () { stopBidding(index); }
+              ),
 
       ],
     );
 
+  }
+
+  stopBidding(int index)
+  {
+    dbConnection.closeBid(bidList[index].id);
   }
 
   String selectedDuration;
