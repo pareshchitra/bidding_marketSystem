@@ -157,5 +157,6 @@
   "buyer_details_key" : "खरीदार विवरण",
   "verified_key" : "सत्यापित",
   "verify_account_key" : "खाता सत्यापित करें",
-  "verify_account_confirm_key" : "क्या आप वाकई इस खाते को सत्यापित करना चाहते हैं?"
+  "verify_account_confirm_key" : "क्या आप वाकई इस खाते को सत्यापित करना चाहते हैं?",
+  "my_products_bidding_key" : "मेरे उत्पाद बोलीदाता"
 }

@@ -313,25 +313,6 @@ class _BidStatusState extends State<BidStatus> {
             ListView.builder(
               itemCount: productsList.length ,
               itemBuilder: (ctx, index) {
-                String differenceInYears = '';
-                if( index == 0 )
-                {
-                  return Container(
-                    alignment: Alignment.topRight,
-                    color: Colors.brown[200],
-                    child: RaisedButton.icon(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15.0),
-                          side: BorderSide(color: Colors.red)
-                      ),
-                      icon: Icon(Icons.filter_alt_outlined),
-                      onPressed: _openFilterList,
-                      label : Text(toBeginningOfSentenceCase(getTranslated(context, "filter_key"))),
-                      color: Colors.red[100],
-
-                    ),
-                  );
-                }
 
                 print("Length of snapshot data is ${snapshot.data.length} && index is $index");
                 return showProductTiles(context, productsList, index);

@@ -1261,7 +1261,7 @@ class DatabaseService {
         DocumentSnapshot ds = await dbBidCollection.doc(product.id).get();
         if( ds.exists )
           {
-            print("Product $product.id exists in Bid collection");
+            print("Product ${product.id} exists in Bid collection");
             Bid bid = new Bid();
             bid.id = ds.id;
             bid.productId = ds.data()['ProductId'];

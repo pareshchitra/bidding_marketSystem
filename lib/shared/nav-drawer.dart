@@ -1,3 +1,4 @@
+import 'package:bidding_market/bidStatus.dart';
 import 'package:bidding_market/main.dart';
 import 'package:bidding_market/screens/admin/buyerProfiles.dart';
 import 'package:bidding_market/screens/admin/liveBidding.dart';
@@ -132,6 +133,16 @@ class _NavDrawerState extends State<NavDrawer> {
             onTap: () => {
               Navigator.push(context, MaterialPageRoute(
                   builder: (context) => MyProducts()
+              ))
+            },
+          ) : SizedBox(),
+          (loggedUser.type == 2) ?
+          ListTile(
+            leading: Icon(CupertinoIcons.hammer_fill),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "my_products_bidding_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => BidStatus()
               ))
             },
           ) : SizedBox(),
