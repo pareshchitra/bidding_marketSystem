@@ -167,68 +167,58 @@ class _BidStatusState extends State<BidStatus> {
                 SizedBox(height: 15),
                 //Expanded(
                 //  child:
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Bid Status : ${bidList[index].status}" ,
-                          style: TextStyle(fontSize: 23, color: Colors.black))
-                    ]),
+
 
 
                 Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children:[
+                    children: <Widget> [
 
                       Text("Bid Status : ${bidList[index].status}" ,
                           style: TextStyle(fontSize: 18, color: Colors.black)),
-                      Text("Bid Start Date : ${bidList[index].startTime.day} ${bidList[index].startTime.month} ${bidList[index].startTime.year}" ,
+                      Text("Bid Start Date : ${bidList[index].startTime.day}/ ${bidList[index].startTime.month}/ ${bidList[index].startTime.year}" ,
                           style: TextStyle(fontSize: 18, color: Colors.black)),
                       (isBidActive) ?
-                      Text("Days Left : $differenceInYears" ,
+                      Text( getTranslated(context, "days_left_key") + ":  ${(bidList[index].endTime.difference(DateTime.now())).inDays}" ,
                           style: TextStyle(fontSize: 18, color: Colors.black))
-                          : Text("Bid Ended On : ${bidList[index].endTime.day} ${bidList[index].endTime.month} ${bidList[index].endTime.year}" ,
+                          : Text("Bid Ended On : ${bidList[index].endTime.day}/ ${bidList[index].endTime.month}/ ${bidList[index].endTime.year}" ,
                           style: TextStyle(fontSize: 18, color: Colors.black)),
 
+                      (bidList[index].bidders.length == 0) ?  Text("No Bidders !!!" ,
+                          style: TextStyle(fontSize: 18, color: Colors.black))
+                        : SizedBox(height: 0) ,
 
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [( bidList[index].bidders[0]  != null ) ? Text("1. ${bidList[index].bidders[0]}" ,
-                              style: TextStyle(fontSize: 18, color: Colors.black))
-                              : Text("1. -  ",style: TextStyle(fontSize: 18)),
-                            ( bidList[index].bidders[0] != null ) ? Text("${currencyFormat.format(bidList[index].bidVal[0])}",
-                              style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),)
-                                : Text('\u{20B9} ' + "-", style: TextStyle(fontSize: 18))
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [( bidList[index].bidders[1]  != null ) ? Text("2. ${bidList[index].bidders[1]}" ,
-                              style: TextStyle(fontSize: 18, color: Colors.black))
-                              : Text("2. -  ",style: TextStyle(fontSize: 18)),
-                            ( bidList[index].bidders[1] != null ) ? Text("${currencyFormat.format(bidList[index].bidVal[1])}",
-                              style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),)
-                                : Text('\u{20B9} ' + "-", style: TextStyle(fontSize: 18))
-                          ]),
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [( bidList[index].bidders[2]  != null ) ? Text("3. ${bidList[index].bidders[2]}" ,
-                              style: TextStyle(fontSize: 18, color: Colors.black))
-                              : Text("3. -  ",style: TextStyle(fontSize: 18)),
-                            ( bidList[index].bidders[2] != null ) ? Text("${currencyFormat.format(bidList[index].bidVal[2])}",
-                              style: TextStyle(fontSize: 30, color: Colors.black, fontWeight: FontWeight.bold),)
-                                : Text('\u{20B9} ' + "-", style: TextStyle(fontSize: 18))
-                          ]),
+                       for(var count = 0; count < bidList[index].bidders.length; count++)
+                       new Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              (bidList[index].bidders[count] != null) ? Text(
+                                  "$count. ${bidList[index].bidders[count]}",
+                                  style: TextStyle(fontSize: 18, color: Colors
+                                      .black))
+                                  : Text(
+                                  "$count. -  ", style: TextStyle(fontSize: 18)),
+                              (bidList[index].bidders[count] != null) ? Text(
+                                "${currencyFormat.format(bidList[index]
+                                    .bidVal[count])}",
+                                style: TextStyle(fontSize: 18, color: Colors
+                                    .black, fontWeight: FontWeight.bold),)
+                                  : Text('\u{20B9} ' + "-",
+                                  style: TextStyle(fontSize: 18))
+                            ]),
+
                     ]),
-                Row(
-                  children: [
-                    SizedBox(width: 10.0,),
-                    Text(getTranslated(context, "days_left_key") + " : ",style: TextStyle(fontSize: 20, color: Colors.red)),
-                    Text("${(bidList[index].endTime.difference(DateTime.now())).inDays}",style: TextStyle(fontSize: 20)),
-                    SizedBox(width: 10.0,),
-                    // ( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" ,
-                    //                                         style: TextStyle(fontSize: 23, color: Colors.cyan))
-                    //     : Text("- " + getTranslated(context, "no_bids_key"),style: TextStyle(fontSize: 20)),,
-                  ],
-                ),
+                // Row(
+                //   children: [
+                //     SizedBox(width: 10.0,),
+                //     Text(getTranslated(context, "days_left_key") + " : ",style: TextStyle(fontSize: 20, color: Colors.red)),
+                //     Text("${(bidList[index].endTime.difference(DateTime.now())).inDays}",style: TextStyle(fontSize: 20)),
+                //     SizedBox(width: 10.0,),
+                //     // ( bidList[index].bidders.length > 0 ) ? Text("${bidList[index].bidders[0]}" ,
+                //     //                                         style: TextStyle(fontSize: 23, color: Colors.cyan))
+                //     //     : Text("- " + getTranslated(context, "no_bids_key"),style: TextStyle(fontSize: 20)),,
+                //   ],
+                // ),
                 SizedBox(height: 10.0,),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
