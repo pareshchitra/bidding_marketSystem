@@ -12,10 +12,10 @@ class Bid {
   double basePrice;
   String status; // Active/Closed
   String bidWinner;
-  double finalPrice;
+  double finalBidPrice;
 
 
   Bid({ this.id, this.type, this.productId, this.bidders, this.bidVal, this.startTime,
-        this.endTime, this.priceIncrement, this.basePrice, this.status, this.bidWinner, this.finalPrice });
+        this.endTime, this.priceIncrement, this.basePrice, this.status, this.bidWinner, this.finalBidPrice });
 
 }

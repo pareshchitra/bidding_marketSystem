@@ -530,7 +530,9 @@ class _LiveBidsState extends State<LiveBids> {
     bid.startTime = date;
     bid.endTime = date.add(new Duration( days: int.parse(selectedDuration) ));
     bid.basePrice = productsList[index].reservePrice;
-    bid.type = "Best Price";
+    bid.type = "Best Buyer";
+    bid.bidWinner = null;
+    bid.finalBidPrice = null;
 
     dbConnection.addNewBid(bid);
   }

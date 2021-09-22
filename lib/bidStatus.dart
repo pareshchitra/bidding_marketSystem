@@ -283,11 +283,104 @@ class _BidStatusState extends State<BidStatus> {
                 ),
                 SizedBox(height: 10.0,),
 
+                RaisedButton.icon(
+                    icon: Icon(Icons.stop),
+                    label: Text(getTranslated(context, "select_bid_winner_key").toUpperCase()),
+                    color: Colors.blueGrey,
+                    onPressed: () { selectBidWinner(bidList[index], index); }
+                ),
+
 
               ],
             ),
           )),
     );
+  }
+
+  callDbBidWinnerUpdate(String bidId, String bidderName, double bidValue)
+  {
+    dbConnection.updateBidWinner(bidId, bidderName, bidValue)
+        .then((value) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(toBeginningOfSentenceCase(
+                    getTranslated(context, "alert_dialog_key"))),
+                content: Text(
+                    "Bid Winner successfully updated as $bidderName !!!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(getTranslated(context, "ok_key").toUpperCase()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }).catchError((errorMsg) =>
+        print("Update bid winner database operation failed with msg : $errorMsg"));
+  }
+
+  selectBidWinner(Bid bid, int index){
+    if(biddersCheckboxList[index].containsValue(true)){
+      String bidderName;
+      double bidValue;
+      for(MapEntry map in biddersCheckboxList[index].entries){
+        if(map.value == true) {
+          bidderName = map.key;
+          bidValue = bid.bidVal[bid.bidders.indexOf(bidderName)];
+        }
+      }
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(toBeginningOfSentenceCase(
+                    getTranslated(context, "alert_dialog_key"))),
+                content: Text(
+                    getTranslated(context, "select_bidder_confirm_key_1") +
+                        " $bidderName " +
+                        getTranslated(context, "select_bidder_confirm_key_1")),
+                actions: <Widget>[
+                  FlatButton(
+                      child: Text(toBeginningOfSentenceCase(
+                          getTranslated(context, "yes_key"))),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        callDbBidWinnerUpdate(bid.id, bidderName, bidValue);
+                      }),
+                  FlatButton(
+                    child: Text(toBeginningOfSentenceCase(
+                        getTranslated(context, "no_key"))),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }
+    else{ // No Bidder checkbox is selected
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(toBeginningOfSentenceCase(
+                    getTranslated(context, "alert_dialog_key"))),
+                content: Text(
+                    getTranslated(context, "select_bidder_alert_key") +
+                        " !!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(
+                        getTranslated(context, "ok_key").toUpperCase()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }
   }
 
   Widget showList() {

@@ -870,6 +870,8 @@ class DatabaseService {
       'Status' : bid.status,
       'Type' : bid.type,
       'Bids' : FieldValue.arrayUnion(bidders),
+      'BidWinner' : bid.bidWinner,
+      'FinalBidPrice' : bid.finalBidPrice
       //'PriceIncrement' : bid.priceIncrement,
     });
   }
@@ -1286,6 +1288,13 @@ class DatabaseService {
           }
       }
     return bidProducts;
+  }
+
+  Future updateBidWinner(String bidId, String bidderName, double bidValue) async{
+    await dbBidCollection.doc(bidId).update(
+        {"BidWinner": bidderName,
+        "FinalBidPrice" : bidValue}
+        ).then((value) => print("Successfully updated bid winner of bid $bidId as $bidderName & $bidValue"));
   }
 
   Future<List> getCounterDetails() async {

@@ -158,5 +158,9 @@
   "verified_key" : "Verified",
   "verify_account_key" : "Verify Account",
   "verify_account_confirm_key" : "Are you sure you want to verify this account?",
-  "my_products_bidding_key" : "My Product Bidders"
+  "my_products_bidding_key" : "My Product Bidders",
+  "select_bid_winner_key" : "Select Bid Winner",
+  "select_bidder_alert_key" : "Choose one of the bidders, please!!!",
+  "select_bidder_confirm_key_1" : "Are you sure you want to select",
+  "select_bidder_confirm_key_2" : "as this bid winner?"
 }

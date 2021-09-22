@@ -158,5 +158,9 @@
   "verified_key" : "सत्यापित",
   "verify_account_key" : "खाता सत्यापित करें",
   "verify_account_confirm_key" : "क्या आप वाकई इस खाते को सत्यापित करना चाहते हैं?",
-  "my_products_bidding_key" : "मेरे उत्पाद बोलीदाता"
+  "my_products_bidding_key" : "मेरे उत्पाद बोलीदाता",
+  "select_bid_winner_key" : "बोली विजेता चुनें",
+  "select_bidder_alert_key" : "कृपया बोलीदाताओं में से किसी एक को चुनें!!!",
+  "select_bidder_confirm_key_1" : "क्या आप वाकई ",
+  "select_bidder_confirm_key_2" : "चुनना चाहते हैं इस बोली विजेता के रूप में?"
 }
