@@ -33,12 +33,24 @@ class _BidStatusState extends State<BidStatus> {
 
   DatabaseService dbConnection = DatabaseService();
 
-  List<Product> productsList ;
+  //List<Product> productsList ;
+  Future<List<Product>> productsListFuture;
   List<Bid> bidList = [];
   List<String>  villageList = [];
   List<String> selectedVillageList = [];
 
   int pagesPerBatch = 10;
+  List<Map<String,bool>> biddersCheckboxList = new List();
+
+  @override
+  void initState() {
+    super.initState();
+
+    // initial load
+    productsListFuture = getMyBidProducts();
+
+  }
+
 
   Future<List<Product>> getMyBidProducts() async {
     List<Bid> bids = await dbConnection.getSellerBidProducts(loggedUser);
@@ -49,6 +61,11 @@ class _BidStatusState extends State<BidStatus> {
     {
       Product prod = await dbConnection.getProduct(bid.productId);
       products.add(prod);
+      Map<String,bool> bidderCheckbox = new Map();
+      for(var count = 0; count < bid.bidders.length; count++){
+        bidderCheckbox[bid.bidders[count]] = false; // Set default checkbox to false for all bidder
+      }
+      biddersCheckboxList.add(bidderCheckbox);
     }
     bidList.addAll(bids); // ORDER OF GET IN PRODUCTS AND BIDS ??
     return products;
@@ -84,6 +101,7 @@ class _BidStatusState extends State<BidStatus> {
       isBidActive = true;
     else
       isBidActive = false;
+
 
     final border = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.0),
@@ -184,28 +202,52 @@ class _BidStatusState extends State<BidStatus> {
                           : Text("Bid Ended On : ${bidList[index].endTime.day}/ ${bidList[index].endTime.month}/ ${bidList[index].endTime.year}" ,
                           style: TextStyle(fontSize: 18, color: Colors.black)),
 
-                      (bidList[index].bidders.length == 0) ?  Text("No Bidders !!!" ,
-                          style: TextStyle(fontSize: 18, color: Colors.black))
+
+                      (bidList[index].bidders.length == 0) ?  (Text("No Bidders !!!" ,
+                          style: TextStyle(fontSize: 18, color: Colors.black)))
                         : SizedBox(height: 0) ,
 
+
                        for(var count = 0; count < bidList[index].bidders.length; count++)
-                       new Row(
+                         (isBidActive) ? ( new Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               (bidList[index].bidders[count] != null) ? Text(
-                                  "$count. ${bidList[index].bidders[count]}",
+                                  "${count+1}. ${bidList[index].bidders[count]}",
                                   style: TextStyle(fontSize: 18, color: Colors
                                       .black))
                                   : Text(
-                                  "$count. -  ", style: TextStyle(fontSize: 18)),
+                                  "${count+1}. -  ", style: TextStyle(fontSize: 18)),
                               (bidList[index].bidders[count] != null) ? Text(
-                                "${currencyFormat.format(bidList[index]
+                                "  ${currencyFormat.format(bidList[index]
                                     .bidVal[count])}",
                                 style: TextStyle(fontSize: 18, color: Colors
                                     .black, fontWeight: FontWeight.bold),)
                                   : Text('\u{20B9} ' + "-",
                                   style: TextStyle(fontSize: 18))
-                            ]),
+                            ]) )
+                      :
+                      new //Column(
+                       // mainAxisAlignment: MainAxisAlignment.center,
+                        //children: [
+                          CheckboxListTile(
+                          title: Text("${count+1}. " + biddersCheckboxList[index].keys.elementAt(count) + " -  ${currencyFormat.format(bidList[index].bidVal[count])}"),
+                          value: biddersCheckboxList[index][biddersCheckboxList[index].keys.elementAt(count)],
+                          contentPadding: EdgeInsets.only(left:60.0, right:60.0, top:0.0, bottom:0.0),
+                          onChanged: (bool value){
+                            setState(() {
+                              if( value == true ){
+                                for(var count = 0; count < bidList[index].bidders.length; count++){
+                                  biddersCheckboxList[index][bidList[index].bidders[count]] = false; // Set default checkbox to false for all bidder
+                                }
+                              }
+                              biddersCheckboxList[index][biddersCheckboxList[index].keys.elementAt(count)] = value;
+                            });
+                          },
+                        )
+
+                        ,
+                      //]),
 
                     ]),
                 // Row(
@@ -250,7 +292,7 @@ class _BidStatusState extends State<BidStatus> {
 
   Widget showList() {
     return FutureBuilder(
-        future: getMyBidProducts(),
+        future: productsListFuture,
         builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
           print("Snapshot is " + snapshot.toString());
           //productsList.addAll(snapshot.data);
@@ -267,49 +309,61 @@ class _BidStatusState extends State<BidStatus> {
                   ),
                 ));
           }
-          if(snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              if (productsList == null) {
-                productsList = [];
-              }
-              print("Length of snapshot data is ${snapshot.data.length}");
-              productsList.addAll(snapshot.data);
-              print("products list is now");
-              print(productsList);
-              // productsList.sort((a, b) =>
-              // a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
-              for( Product product in productsList )
-                villageList.add(product.location);
-              villageList = villageList.toSet().toList();
-              print("Village List is $villageList");
-            }
+          if(snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+            // if (productsList == null) {
+            //   productsList = [];
+            // }
+            print("Length of snapshot data is ${snapshot.data.length}");
+            List<Product> productsList = snapshot.data;
+            print("products list is now");
+            print(productsList);
+            // productsList.sort((a, b) =>
+            // a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
+            for (Product product in productsList)
+              villageList.add(product.location);
+            villageList = villageList.toSet().toList();
+            print("Village List is $villageList");
+
+
+            return (productsList.length == 0)
+                ? Center(
+                child: Text(
+                    getTranslated(context, "zero_active_bids_key") + " !!!",
+                    style: TextStyle(color: Colors.black, fontSize: 30)))
+                : Column(children: [
+              // Text(
+              //   "Product Count is " + (productsList.length).toString(),
+              //   style: TextStyle(
+              //     fontFamily: "Montesserat",
+              //     fontWeight: FontWeight.w700,
+              //     fontSize: 20.0,
+              //     fontStyle: FontStyle.italic,
+              //   ),
+              // ),
+              Expanded(child:
+              ListView.builder(
+                itemCount: productsList.length,
+                itemBuilder: (ctx, index) {
+                  print("Length of snapshot data is ${snapshot.data
+                      .length} && index is $index");
+                  return showProductTiles(context, productsList, index);
+                },
+              )
+              )
+            ]);
           }
-
-          return (productsList.length == 0)
-              ? Center(
-              child: Text(getTranslated(context, "zero_active_bids_key") + " !!!",
-                  style: TextStyle(color: Colors.black, fontSize: 30)))
-              : Column(children: [
-            // Text(
-            //   "Product Count is " + (productsList.length).toString(),
-            //   style: TextStyle(
-            //     fontFamily: "Montesserat",
-            //     fontWeight: FontWeight.w700,
-            //     fontSize: 20.0,
-            //     fontStyle: FontStyle.italic,
-            //   ),
-            // ),
-            Expanded(child:
-            ListView.builder(
-              itemCount: productsList.length ,
-              itemBuilder: (ctx, index) {
-
-                print("Length of snapshot data is ${snapshot.data.length} && index is $index");
-                return showProductTiles(context, productsList, index);
-              },
-            )
-            )
-          ]);
+          else{
+            return Center(
+                child: Text(
+                  toBeginningOfSentenceCase(getTranslated(context, "loading_key")) + "...",
+                  style: TextStyle(
+                    fontFamily: "Montesserat",
+                    fontWeight: FontWeight.w700,
+                    fontSize: 40.0,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ));
+          }
         });
   }
 
