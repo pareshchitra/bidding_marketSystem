@@ -4,8 +4,8 @@ class Bid {
   String id;
   String type; // highest price or buyer
   String productId;
-  List<String> bidders; // Max of 3
-  List<double> bidVal; // Max of 3
+  List<String> bidders; // Max of ANY - NO LIMIT
+  List<double> bidVal; // Max of ANY - NO LIMIT
   DateTime startTime;
   DateTime endTime;
   double priceIncrement;

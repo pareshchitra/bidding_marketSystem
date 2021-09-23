@@ -160,11 +160,9 @@ class Profile extends StatelessWidget {
                       //      return sellerForm(user: loggedUser);
                       //
                       // }
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => RegisterDetails(user: loggedUser)
-                      ));
+                          updateUserProfile(context);
+                          },
 
-                    },
                     shape:  RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(80.0),
                     ),
@@ -232,5 +230,34 @@ class Profile extends StatelessWidget {
           ),
         )
     );
+  }
+
+  updateUserProfile(BuildContext context) {
+    print("Verification Status ${user.isVerified}");
+    if( user.isVerified == false) {
+      Navigator.push(context, MaterialPageRoute(
+          builder: (context) => RegisterDetails(user: loggedUser)));
+    }
+    else{
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(toBeginningOfSentenceCase(
+                    getTranslated(context, "alert_dialog_key"))),
+                content: Text(
+                    getTranslated(context, "verified_user_alert_key") +
+                        " !!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(
+                        getTranslated(context, "ok_key").toUpperCase()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ]);
+          });
+    }
   }
 }

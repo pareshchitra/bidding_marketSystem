@@ -611,7 +611,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  startBidding( int index )
+  startBidding( int index ) async
   {
     if (selectedDuration == null) {
       // NO Duration has been selected
@@ -643,23 +643,53 @@ class _HomeState extends State<Home> {
       bid.basePrice = productsList[index].reservePrice;
       bid.type = "Best Price";
 
-      dbConnection.addNewBid(bid).then((value) {
+      //Check if Bid is already Active
+      Bid Oldbid = await dbConnection.getBid(bid.id);
+      if (Oldbid.status == "Active") {
         showDialog(
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                  title: Text(toBeginningOfSentenceCase(getTranslated(context, "alert_dialog_key"))),
-                  content: Text(camelCasingFields(getTranslated(context, "bid_started_key")) + " $selectedDuration !!!"),
+                  title: Text(toBeginningOfSentenceCase(
+                      getTranslated(context, "alert_dialog_key"))),
+                  content: Text(camelCasingFields(
+                      getTranslated(context, "bid_is_active_key"))),
                   actions: <Widget>[
                     FlatButton(
-                      child: Text(getTranslated(context, "ok_key").toUpperCase()),
+                      child: Text(
+                          getTranslated(context, "ok_key").toUpperCase()),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
                     ),
                   ]);
             });
-      }).catchError((errorMsg) => print("Add New bid database operation failed with msg : $errorMsg"));
+      }
+      else {
+        dbConnection.addNewBid(bid).then((value) {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                    title: Text(toBeginningOfSentenceCase(
+                        getTranslated(context, "alert_dialog_key"))),
+                    content: Text(camelCasingFields(
+                        getTranslated(context, "bid_started_key")) +
+                        " $selectedDuration !!!"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text(
+                            getTranslated(context, "ok_key").toUpperCase()),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ]);
+              });
+        }).catchError((errorMsg) =>
+            print(
+                "Add New bid database operation failed with msg : $errorMsg"));
+      }
     }
   }
 }

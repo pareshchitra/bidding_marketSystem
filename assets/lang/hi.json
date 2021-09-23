@@ -162,5 +162,8 @@
   "select_bid_winner_key" : "बोली विजेता चुनें",
   "select_bidder_alert_key" : "कृपया बोलीदाताओं में से किसी एक को चुनें!!!",
   "select_bidder_confirm_key_1" : "क्या आप वाकई ",
-  "select_bidder_confirm_key_2" : "चुनना चाहते हैं इस बोली विजेता के रूप में?"
+  "select_bidder_confirm_key_2" : "चुनना चाहते हैं इस बोली विजेता के रूप में?",
+  "verified_user_alert_key" : "सत्यापित उपयोगकर्ता को प्रोफ़ाइल अपडेट करने की अनुमति नहीं है",
+  "bid_already_placed_key" : "यह बोली राशि पहले ही नीलाम हो चुकी है !!! कृपया उच्च बोली चुनें",
+  "bid_is_active_key" : "यह बोली पहले से सक्रिय है !! पहले बोली बंद करो"
 }

@@ -7,6 +7,7 @@ import 'package:bidding_market/models/buyerModel.dart';
 import 'package:bidding_market/models/products.dart';
 import 'package:bidding_market/models/user.dart';
 import 'package:bidding_market/screens/registeration/BuyerForm.dart';
+import 'package:bidding_market/shared/constants.dart';
 import 'package:bidding_market/shared/sharedPrefs.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -603,6 +604,7 @@ class DatabaseService {
         loggedUser.HouseNo = ds.data()["HouseNo"];
         loggedUser.AadharNo = ds.data()["AadharNo"];
         loggedUser.isVerified = ds.data()["IsVerified"];
+        print("Logged User Verification Status ${loggedUser.isVerified}");
         return 1; //Buyer
       }
     else
@@ -849,7 +851,7 @@ class DatabaseService {
 
     bid.id = bid.productId;
     bid.status = "Active";
-    bid.priceIncrement = bid.basePrice * 0.1;
+    bid.priceIncrement = bidIncrementFactor;
 
     List<Map<String,String>> bidders = [];
 
@@ -901,7 +903,7 @@ class DatabaseService {
           bid.bidVal.add(double.parse(bidder['price']));
       }
       print("Bidders are $bidders");
-      bid.priceIncrement = bid.basePrice * 0.1;
+      bid.priceIncrement = bidIncrementFactor;
       return bid;
     }
     else
@@ -928,8 +930,8 @@ class DatabaseService {
       {
         List bidders = ds.data()["Bids"] ?? '';
 
-        if( bidders.length < 3 )
-          {
+        //if( bidders.length < 3 )    // All Bidders will be stored in database - No restriction of 3 to ease product deletion
+        //  {
             Map<String,String> bidMap = {
               'id': bidderId,
               'name': bidderName,
@@ -946,20 +948,20 @@ class DatabaseService {
               bidders.sort((a, b) =>
               (double.parse(a['price']) > (double.parse(b['price']))) ? -1 : 1);
               }
-            }
+         //   }
 
-        else {
-          for (Map<String, String> bidder in bidders) {
-            //bidderId.add(bidder['id']);
-            //bidderName.add(bidder['name']);
-            if (bidPrice > double.parse(bidder['price'])) {
-              bidder['id'] = bidderId;
-              bidder['name'] = bidderName;
-              bidder['price'] = bidPrice.toString();
-              break;
-            }
-          }
-        }
+        // else {
+        //   for (Map<String, String> bidder in bidders) {
+        //     //bidderId.add(bidder['id']);
+        //     //bidderName.add(bidder['name']);
+        //     if (bidPrice > double.parse(bidder['price'])) {
+        //       bidder['id'] = bidderId;
+        //       bidder['name'] = bidderName;
+        //       bidder['price'] = bidPrice.toString();
+        //       break;
+        //     }
+        //   }
+        // }
 
         Map<String,String> buyerBidInfo = {
           'ProductId' : productId,
@@ -991,8 +993,11 @@ class DatabaseService {
 
   }
 
+  // This function updates bidStatus as Active/Closed and also bid end date in case it is stopped earlier
   Future<void> updateBidStatus(String bidId, String status) async {
     print("Entering updateBidStatus");
+    DateTime now = new DateTime.now();
+    DateTime date = new DateTime(now.year, now.month, now.day);
 
     DocumentSnapshot ds = await dbBidCollection.doc(bidId).get();
     if( ds.exists == true )
@@ -1003,6 +1008,7 @@ class DatabaseService {
       }
       return await dbBidCollection.doc(bidId).update({
         'Status': status,
+        'EndTime': date  // UPDATE END TIME IN CASE BID STOPPED BY ADMIN
         //'PriceIncrement' : bid.priceIncrement,
       });
     }
@@ -1013,10 +1019,9 @@ class DatabaseService {
 
   }
 
-  closeBid(String bidId)
-  {
+  Future closeBid(String bidId) async {
     print("Calling updateBidStatus to close bid $bidId");
-    updateBidStatus(bidId, "Closed");
+    await updateBidStatus(bidId, "Closed");
   }
 
   //OPTIMIZATION : KEEP BID IDs IN PLACE OF PRODUCT IDs in Buyer Table
@@ -1105,7 +1110,7 @@ class DatabaseService {
             bid.bidVal.add(double.parse(bidder['price']));
         }
         print("Bidders are $bidders");
-        bid.priceIncrement = bid.basePrice * 0.1;
+        bid.priceIncrement = bidIncrementFactor;
 
         bidListPagination.add(bid);
       }
@@ -1282,8 +1287,10 @@ class DatabaseService {
               if( bidder['price'] != null )
                 bid.bidVal.add(double.parse(bidder['price']));
             }
+            bid.bidWinner = ds.data()['BidWinner'];
+            bid.finalBidPrice = ds.data()['FinalBidPrice'];
             print("Bidders are $bidders");
-            bid.priceIncrement = bid.basePrice * 0.1;
+            bid.priceIncrement = bidIncrementFactor;
             bidProducts.add(bid);
           }
       }

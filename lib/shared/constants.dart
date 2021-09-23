@@ -19,6 +19,8 @@ var currencyFormat = NumberFormat.currency(locale: 'gu', symbol: '\u{20B9}');
 
 const int imageQuality = 0;
 
+const double bidIncrementFactor = 5000;
+
  const Map<String, List<String>> states = {
     'Rajasthan': ['Sawai Madhopur', 'Dausa']
  };

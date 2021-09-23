@@ -247,6 +247,8 @@ class _LiveBidsState extends State<LiveBids> {
                 productsList = [];
               }
               print("Length of snapshot data is ${snapshot.data.length}");
+              productsList.clear();
+              villageList.clear();
               productsList.addAll(snapshot.data);
               print("products list is now");
               print(productsList);
@@ -485,7 +487,29 @@ class _LiveBidsState extends State<LiveBids> {
 
   stopBidding(int index)
   {
-    dbConnection.closeBid(bidList[index].id);
+    dbConnection.closeBid(bidList[index].id).then((value) {
+      print("Bid status of bid ${bidList[index].id} is now ${bidList[index].status}");
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+                title: Text(toBeginningOfSentenceCase(
+                    getTranslated(context, "alert_dialog_key"))),
+                content: Text(
+                    "Bid stopped successfully !!!"),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text(getTranslated(context, "ok_key").toUpperCase()),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      setState(() {});
+                    },
+                  ),
+                ]);
+          });
+    }).catchError((errorMsg) =>
+        print("Close Bid database operation failed with msg : $errorMsg"));
+
   }
 
   String selectedDuration;

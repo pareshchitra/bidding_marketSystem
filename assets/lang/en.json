@@ -162,5 +162,8 @@
   "select_bid_winner_key" : "Select Bid Winner",
   "select_bidder_alert_key" : "Choose one of the bidders, please!!!",
   "select_bidder_confirm_key_1" : "Are you sure you want to select",
-  "select_bidder_confirm_key_2" : "as this bid winner?"
+  "select_bidder_confirm_key_2" : "as this bid winner?",
+  "verified_user_alert_key" : "Verified User is not allowed to update profile",
+  "bid_already_placed_key" : "This bid amount has been already auctioned !!! Please select higher bid",
+  "bid_is_active_key" : "This bid is already Active!! Stop the bid first"
 }

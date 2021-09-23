@@ -170,7 +170,7 @@ class _BidStatusState extends State<BidStatus> {
                     borderRadius: BorderRadius.circular(15.0),
                     color: Colors.green[500],
                   ),
-                  height: 250.0,
+                  height: 200.0,
                   width: 250.0,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -202,13 +202,17 @@ class _BidStatusState extends State<BidStatus> {
                           : Text("Bid Ended On : ${bidList[index].endTime.day}/ ${bidList[index].endTime.month}/ ${bidList[index].endTime.year}" ,
                           style: TextStyle(fontSize: 18, color: Colors.black)),
 
+                      (bidList[index].bidWinner != null) ?
+                      (Text("SOLD !!! Bid Winner is ${bidList[index].bidWinner} - ${currencyFormat.format(bidList[index].finalBidPrice)}" ,
+                          style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold)))
+                          : (
 
                       (bidList[index].bidders.length == 0) ?  (Text("No Bidders !!!" ,
                           style: TextStyle(fontSize: 18, color: Colors.black)))
-                        : SizedBox(height: 0) ,
+                        : SizedBox(height: 0) ),
 
 
-                       for(var count = 0; count < bidList[index].bidders.length; count++)
+                       for(var count = 0; (bidList[index].bidWinner == null) && count < bidList[index].bidders.length; count++)
                          (isBidActive) ? ( new Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -244,11 +248,16 @@ class _BidStatusState extends State<BidStatus> {
                               biddersCheckboxList[index][biddersCheckboxList[index].keys.elementAt(count)] = value;
                             });
                           },
-                        )
-
-                        ,
+                        ),
+                      (bidList[index].bidWinner == null && !isBidActive) ?
+                      RaisedButton.icon(
+                          icon: Icon(Icons.verified_user),
+                          label: Text(getTranslated(context, "select_bid_winner_key").toUpperCase()),
+                          color: Colors.grey,
+                          onPressed: () { selectBidWinner(bidList[index], index); }
+                      )
+                      : SizedBox(height:0),
                       //]),
-
                     ]),
                 // Row(
                 //   children: [
@@ -262,33 +271,34 @@ class _BidStatusState extends State<BidStatus> {
                 //   ],
                 // ),
                 SizedBox(height: 10.0,),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(width: 10.0,),
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "owner_key")), Icons.account_circle, productsList[index].owner),
-                    SizedBox(width: 10.0,),
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "location_key")), Icons.place, productsList[index].location),
-                    SizedBox(width: 10.0,),
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
-                    SizedBox(width: 10.0,),
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(productsList[index].size) ),
-                    SizedBox(width: 10.0,),
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
-                    SizedBox(width: 10.0,),
-                    Expanded(child:
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(productsList[index].reservePrice)).toString())
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.0,),
+                // Row(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     SizedBox(width: 10.0,),
+                //     tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "owner_key")), Icons.account_circle, productsList[index].owner),
+                //     SizedBox(width: 10.0,),
+                //     tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "location_key")), Icons.place, productsList[index].location),
+                //     SizedBox(width: 10.0,),
+                //     tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
+                //     SizedBox(width: 10.0,),
+                //     tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(productsList[index].size) ),
+                //     SizedBox(width: 10.0,),
+                //     tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
+                //     SizedBox(width: 10.0,),
+                //     Expanded(child:
+                //     tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(productsList[index].reservePrice)).toString())
+                //     ),
+                //   ],
+                // ),
+                SizedBox(height: 5.0,),
 
-                RaisedButton.icon(
-                    icon: Icon(Icons.stop),
-                    label: Text(getTranslated(context, "select_bid_winner_key").toUpperCase()),
-                    color: Colors.blueGrey,
-                    onPressed: () { selectBidWinner(bidList[index], index); }
-                ),
+                // RaisedButton.icon(
+                //     icon: Icon(Icons.verified_user),
+                //     label: Text(getTranslated(context, "select_bid_winner_key").toUpperCase()),
+                //     color: Colors.grey,
+                //     onPressed: () { selectBidWinner(bidList[index], index); }
+                // ),
+
 
 
               ],
@@ -297,7 +307,7 @@ class _BidStatusState extends State<BidStatus> {
     );
   }
 
-  callDbBidWinnerUpdate(String bidId, String bidderName, double bidValue)
+  callDbBidWinnerUpdate(String bidId, String bidderName, double bidValue, int index)
   {
     dbConnection.updateBidWinner(bidId, bidderName, bidValue)
         .then((value) {
@@ -314,6 +324,10 @@ class _BidStatusState extends State<BidStatus> {
                     child: Text(getTranslated(context, "ok_key").toUpperCase()),
                     onPressed: () {
                       Navigator.of(context).pop();
+                      setState(() {
+                        bidList[index].bidWinner = bidderName;
+                        bidList[index].finalBidPrice = bidValue;
+                      });
                     },
                   ),
                 ]);
@@ -341,14 +355,14 @@ class _BidStatusState extends State<BidStatus> {
                 content: Text(
                     getTranslated(context, "select_bidder_confirm_key_1") +
                         " $bidderName " +
-                        getTranslated(context, "select_bidder_confirm_key_1")),
+                        getTranslated(context, "select_bidder_confirm_key_2")),
                 actions: <Widget>[
                   FlatButton(
                       child: Text(toBeginningOfSentenceCase(
                           getTranslated(context, "yes_key"))),
                       onPressed: () {
                         Navigator.of(context).pop();
-                        callDbBidWinnerUpdate(bid.id, bidderName, bidValue);
+                        callDbBidWinnerUpdate(bid.id, bidderName, bidValue, index);
                       }),
                   FlatButton(
                     child: Text(toBeginningOfSentenceCase(

@@ -459,15 +459,15 @@ class _ProductDetails extends State<ProductDetails>
     int count = 0;
     while( count < 10 )
       {
-        price = price + 0.1*currentPrice;
-        if( bid.bidVal.length > 0 && price > bid.bidVal[0]) {
+        price = price + bid.priceIncrement;
+       // if( bid.bidVal.length > 0 && price > bid.bidVal[0]) {
           prList.add(price.toString());
           count++;
-        }
-        else if( bid.bidVal.length == 0 ) {
-          prList.add(price.toString());
-          count++;
-        }
+        //}
+        // else if( bid.bidVal.length == 0 ) {
+        //   prList.add(price.toString());
+        //   count++;
+        // }
       }
     return prList;
   }
@@ -475,12 +475,15 @@ class _ProductDetails extends State<ProductDetails>
   String selectedPrice;
   Widget priceDropDownList()
   {
+    double currentPrice = bid.basePrice;
+    if( bid.bidVal.length > 0 && currentPrice < bid.bidVal[0])
+      currentPrice = bid.bidVal[0];
     return DropdownButton<String>(
       value: selectedPrice,
       //elevation: 5,
       style: TextStyle(color: Colors.black),
 
-      items: priceList(bid.basePrice).map<DropdownMenuItem<String>>((String value) {
+      items: priceList(currentPrice).map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(currencyFormat.format(double.parse(value))),
@@ -531,36 +534,68 @@ class _ProductDetails extends State<ProductDetails>
   placeBid() async
   {
     bool verificationStatus = await dbConnection.getVerificationStatus(loggedUser.uid);
-    if( verificationStatus ) { // Only Verified Users must be allowed to place bids
-      List<String> validPrices = priceList(bid.basePrice);
+    if( verificationStatus ) {  // Only Verified Users must be allowed to place bids
+      double currentPrice = bid.basePrice;
+      if( bid.bidVal.length > 0 && currentPrice < bid.bidVal[0])
+        currentPrice = bid.bidVal[0];
+      print("Current price of this bid is $currentPrice");
+      List<String> validPrices = priceList(currentPrice);
       if (validPrices.contains(selectedPrice)) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                  title: Text(toBeginningOfSentenceCase(
-                      getTranslated(context, "alert_dialog_key"))),
-                  content: Text(
-                      getTranslated(context, "price_bid_confirm_key_1") +
-                          " $selectedPrice " +
-                          getTranslated(context, "price_bid_confirm_key_2")),
-                  actions: <Widget>[
-                    FlatButton(
+        Bid currentBid = await dbConnection.getBid(bid.id);  // GET CURRENT BID PRICE FROM DB AT RUNTIME
+        double currentBidPrice = currentBid.basePrice;
+        if( currentBid.bidVal.length > 0 )
+          currentBidPrice = currentBid.bidVal[0];
+        if( currentBidPrice >= double.parse(selectedPrice) ) // CHECK IF OTHER BIDDER HAS ALREADY AUCTIONED FOR THIS BID AT RUNTIME
+          {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                      title: Text(toBeginningOfSentenceCase(
+                          getTranslated(context, "alert_dialog_key"))),
+                      content: Text(
+                          getTranslated(context, "bid_already_placed_key") +
+                              " !!"),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text(
+                              getTranslated(context, "ok_key").toUpperCase()),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ]);
+                });
+          }
+        else {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                    title: Text(toBeginningOfSentenceCase(
+                        getTranslated(context, "alert_dialog_key"))),
+                    content: Text(
+                        getTranslated(context, "price_bid_confirm_key_1") +
+                            " $selectedPrice " +
+                            getTranslated(context, "price_bid_confirm_key_2")),
+                    actions: <Widget>[
+                      FlatButton(
+                          child: Text(toBeginningOfSentenceCase(
+                              getTranslated(context, "yes_key"))),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            callDbPlaceBid();
+                          }),
+                      FlatButton(
                         child: Text(toBeginningOfSentenceCase(
-                            getTranslated(context, "yes_key"))),
+                            getTranslated(context, "no_key"))),
                         onPressed: () {
                           Navigator.of(context).pop();
-                          callDbPlaceBid();
-                        }),
-                    FlatButton(
-                      child: Text(toBeginningOfSentenceCase(
-                          getTranslated(context, "no_key"))),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ]);
-            });
+                        },
+                      ),
+                    ]);
+              });
+        }
       }
       else {
         showDialog(
