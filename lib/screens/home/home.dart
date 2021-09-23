@@ -641,7 +641,7 @@ class _HomeState extends State<Home> {
       bid.startTime = date;
       bid.endTime = date.add(new Duration(days: int.parse(selectedDuration)));
       bid.basePrice = productsList[index].reservePrice;
-      bid.type = "Best Price";
+      bid.type = "Best Buyer";
 
       //Check if Bid is already Active
       Bid Oldbid = await dbConnection.getBid(bid.id);

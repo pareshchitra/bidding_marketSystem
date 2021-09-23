@@ -62,7 +62,7 @@ class _BidStatusState extends State<BidStatus> {
       Product prod = await dbConnection.getProduct(bid.productId);
       products.add(prod);
       Map<String,bool> bidderCheckbox = new Map();
-      for(var count = 0; count < bid.bidders.length; count++){
+      for(var count = 0; count < bid.bidders.length && count < topThreeBidders; count++){
         bidderCheckbox[bid.bidders[count]] = false; // Set default checkbox to false for all bidder
       }
       biddersCheckboxList.add(bidderCheckbox);
@@ -212,7 +212,8 @@ class _BidStatusState extends State<BidStatus> {
                         : SizedBox(height: 0) ),
 
 
-                       for(var count = 0; (bidList[index].bidWinner == null) && count < bidList[index].bidders.length; count++)
+                       for(var count = 0; (bidList[index].bidWinner == null) && count < bidList[index].bidders.length
+                           && count < topThreeBidders; count++)
                          (isBidActive) ? ( new Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -241,7 +242,7 @@ class _BidStatusState extends State<BidStatus> {
                           onChanged: (bool value){
                             setState(() {
                               if( value == true ){
-                                for(var count = 0; count < bidList[index].bidders.length; count++){
+                                for(var count = 0; count < bidList[index].bidders.length && count < topThreeBidders; count++){
                                   biddersCheckboxList[index][bidList[index].bidders[count]] = false; // Set default checkbox to false for all bidder
                                 }
                               }

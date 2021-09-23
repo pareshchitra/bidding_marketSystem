@@ -21,6 +21,8 @@ const int imageQuality = 0;
 
 const double bidIncrementFactor = 5000;
 
+const int topThreeBidders = 3;
+
  const Map<String, List<String>> states = {
     'Rajasthan': ['Sawai Madhopur', 'Dausa']
  };
