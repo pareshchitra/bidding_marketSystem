@@ -855,7 +855,7 @@ class DatabaseService {
 
     List<Map<String,String>> bidders = [];
 
-    for( int i = 0; i < 3; i++ ) {
+    for( int i = 0; i < 1; i++ ) {
       Map<String, String> bidMap = {
         'id': null,
         'name': null,
@@ -863,18 +863,73 @@ class DatabaseService {
       };
       bidders.add(bidMap);
     }
-    await dbCounterCollection.document('Bid').updateData({"count": FieldValue.increment(1)});
-    return await dbBidCollection.doc(bid.id).set({
-      'ProductId': bid.productId,
-      'StartTime': bid.startTime,
-      'EndTime': bid.endTime,
-      'BasePrice': bid.basePrice,
-      'Status' : bid.status,
-      'Type' : bid.type,
-      'Bids' : FieldValue.arrayUnion(bidders),
-      'BidWinner' : bid.bidWinner,
-      'FinalBidPrice' : bid.finalBidPrice
-      //'PriceIncrement' : bid.priceIncrement,
+
+    // Check if this Bid was previously started to delete bid info in buyer database
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      DocumentReference bidRef = dbBidCollection.doc(bid.id);
+      DocumentSnapshot ds = await transaction.get(bidRef);
+
+      DocumentReference counterRef = dbCounterCollection.doc('Bid');
+
+      DocumentReference newBidRef = dbBidCollection.doc(bid.id);
+
+      if (ds.exists) {
+        print("Bid ${bid
+            .id} was previously started ... Deleting bid info from Buyers DB");
+
+        List bidders = [];
+        List bidData = ds.data()['Bids'];
+
+        for (var bid in bidData) {
+          if (bid['id'] != null) {
+            print("Bidder for this product has id ${bid['id']} ");
+            bidders.add(bid['id']);
+          }
+        }
+        if (bidders.length != 0) // This Bid is having some buyers
+            {
+          for (var buyerId in bidders) {
+            print("Finding buyer info with id $buyerId ");
+            DocumentReference buyerRef = dbBuyerCollection.doc(buyerId);
+            DocumentSnapshot buyerDoc = await transaction.get(buyerRef);
+            List buyerBidList = buyerDoc.data()['ProductBids'];
+            List updatedBuyerBidList = [];
+
+
+            for (var buyerBid in buyerBidList) {
+              String productId = buyerBid['ProductId'];
+              if (productId != bid.id) {
+                print(
+                    "Updated Bid list of the buyer contains productId $productId");
+                updatedBuyerBidList.add(buyerBid);
+              }
+            }
+
+            // TRANSACTION STARTS
+            await transaction.update(buyerRef, {
+              'ProductBids': updatedBuyerBidList,
+            });
+          }
+        }
+        else { // This bid is not having any buyer
+          print("This product bid with id ${bid.id} is not having any buyer");
+        }
+      }
+      await transaction.update(counterRef, {
+          "count": FieldValue.increment(1)}
+          );
+      return await transaction.set(newBidRef, {
+        'ProductId': bid.productId,
+        'StartTime': bid.startTime,
+        'EndTime': bid.endTime,
+        'BasePrice': bid.basePrice,
+        'Status': bid.status,
+        'Type': bid.type,
+        'Bids': FieldValue.arrayUnion(bidders),
+        'BidWinner': bid.bidWinner,
+        'FinalBidPrice': bid.finalBidPrice
+        //'PriceIncrement' : bid.priceIncrement,
+      });
     });
   }
 

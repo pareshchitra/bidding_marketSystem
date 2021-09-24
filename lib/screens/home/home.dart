@@ -645,7 +645,7 @@ class _HomeState extends State<Home> {
 
       //Check if Bid is already Active
       Bid Oldbid = await dbConnection.getBid(bid.id);
-      if (Oldbid.status == "Active") {
+      if ( Oldbid != null && Oldbid.status == "Active") {
         showDialog(
             context: context,
             builder: (BuildContext context) {

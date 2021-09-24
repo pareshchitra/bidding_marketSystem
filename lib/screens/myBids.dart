@@ -43,7 +43,7 @@ class _MyBidsState extends State<MyBids> {
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(property,style: TextStyle(color: Colors.grey, fontSize: 15)),
+          Text(property,style: TextStyle(color: Colors.grey, fontSize: 13)),
           RichText(
               text: TextSpan(
                   children : [
@@ -54,7 +54,7 @@ class _MyBidsState extends State<MyBids> {
                     TextSpan(
                       text: propertyValue,
                       style: TextStyle(color: Colors.black,
-                          fontSize: 18),
+                          fontSize: 15),
                     ),
                   ]
               )),
@@ -109,6 +109,8 @@ class _MyBidsState extends State<MyBids> {
                     borderRadius: BorderRadius.circular(15.0),
                     color: Colors.green[500],
                   ),
+                  height: 250.0,
+                  width: 250.0,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
 
