@@ -166,6 +166,7 @@ class _BuyerProfileDetailsState extends State<BuyerProfileDetails> {
                         ),
                       ),
                       SizedBox(width: 5.0,),
+                      Expanded( child:
                       Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.0),
@@ -182,6 +183,7 @@ class _BuyerProfileDetailsState extends State<BuyerProfileDetails> {
                           ) : Center(child: Text(getTranslated(context, "no_image_key"))),
                         ),
                       ),
+                      )
                     ],
                   )
 
@@ -351,35 +353,37 @@ class _BuyerProfileDetailsState extends State<BuyerProfileDetails> {
                 ),
               ),
 
-              RaisedButton(
-                onPressed: (){
-                  (user.isVerified) ? null : verifyAccount(context);
-                },
-                disabledColor: Colors.grey,
-                disabledTextColor: Colors.black54,
-                shape:  RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(80.0),
-                ),
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [Colors.pink,Colors.redAccent]
-                    ),
+              Expanded(
+                child: RaisedButton(
+                  onPressed: (){
+                    (user.isVerified) ? null : verifyAccount(context);
+                  },
+                  disabledColor: Colors.grey,
+                  disabledTextColor: Colors.black54,
+                  shape:  RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(80.0),
-
                   ),
-                  child: Container(
-                    constraints: BoxConstraints(maxWidth: 100.0,maxHeight: 40.0,),
-                    alignment: Alignment.center,
-                    child: Text(
-                      getTranslated(context, "verify_account_key").toUpperCase(),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.0,
-                          letterSpacing: 2.0,
-                          fontWeight: FontWeight.w300
+                  child: Ink(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [Colors.pink,Colors.redAccent]
+                      ),
+                      borderRadius: BorderRadius.circular(80.0),
+
+                    ),
+                    child: Container(
+                      constraints: BoxConstraints(maxWidth: 100.0,maxHeight: 40.0,),
+                      alignment: Alignment.center,
+                      child: Text(
+                        getTranslated(context, "verify_account_key").toUpperCase(),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.0,
+                            letterSpacing: 2.0,
+                            fontWeight: FontWeight.w300
+                        ),
                       ),
                     ),
                   ),

@@ -154,10 +154,12 @@ class _LiveBidsState extends State<LiveBids> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
 
-                          child: (productsList[index].image1 != null && productsList[index].image1 != "" ) ? Image.network(
-                            "${productsList[index].image1}" ,
-                            fit: BoxFit.cover,
-                          ) : Text(getTranslated(context, "no_image_key")),
+                          child: Center(
+                            child: (productsList[index].image1 != null && productsList[index].image1 != "" ) ? Image.network(
+                              "${productsList[index].image1}" ,
+                              fit: BoxFit.cover,
+                            ) : Text(getTranslated(context, "no_image_key")),
+                          ),
                         ),
                       ),
                     //),
@@ -190,26 +192,33 @@ class _LiveBidsState extends State<LiveBids> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10.0,),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 10.0,),
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "owner_key")), Icons.account_circle, productsList[index].owner),
-                          SizedBox(width: 10.0,),
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "location_key")), Icons.place, productsList[index].location),
-                          SizedBox(width: 10.0,),
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
-                          SizedBox(width: 10.0,),
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(productsList[index].size) ),
-                          SizedBox(width: 10.0,),
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
-                          SizedBox(width: 10.0,),
-                          Expanded(child:
-                          tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(productsList[index].reservePrice)).toString())
-                          ),
-                        ],
-                      ),
+                SizedBox(height: 10.0,),
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(width: 10.0,),
+                      tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "owner_key")), Icons.account_circle, productsList[index].owner),
+                      SizedBox(width: 10.0,),
+                      Expanded(child:
+                      tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "location_key")), Icons.place, productsList[index].location),)
+                    ]),
+                Row(
+                 // crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(width: 10.0,),
+                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
+                    SizedBox(width: 10.0,),
+                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(productsList[index].size) ),
+                    SizedBox(width: 10.0,),
+                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
+                    SizedBox(width: 10.0,),
+                    Expanded(child:
+                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(productsList[index].reservePrice)).toString())
+                    ),
+                  ],
+                ),
                 SizedBox(height: 10.0,),
 
                 if( SharedPrefs().adminId != "" &&
