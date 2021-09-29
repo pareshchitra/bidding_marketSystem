@@ -147,7 +147,7 @@ class PhoneAuthDataProvider with ChangeNotifier {
     FireBase.auth
         .verifyPhoneNumber(
         phoneNumber: phone.toString(),
-        timeout: Duration(seconds: 60),
+        timeout: Duration(seconds: 60*3),  // OTP TIMEOUT INCREASED TO 3 MINUTES
         verificationCompleted: verificationCompleted,
         verificationFailed: verificationFailed,
         codeSent: codeSent,
