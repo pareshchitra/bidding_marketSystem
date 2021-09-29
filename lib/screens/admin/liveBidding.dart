@@ -36,7 +36,7 @@ class _LiveBidsState extends State<LiveBids> {
   List<Bid> bidList = [];
   List<String>  villageList = [];
   List<String> selectedVillageList = [];
-
+  bool loadMoreFlag = true;
   int pagesPerBatch = 10;
 
   Future<List<Product>> getActiveBidProducts() async {
@@ -194,7 +194,7 @@ class _LiveBidsState extends State<LiveBids> {
                       ),
                 SizedBox(height: 10.0,),
                 Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    //crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(width: 10.0,),
@@ -231,9 +231,13 @@ class _LiveBidsState extends State<LiveBids> {
     );
   }
 
+  Future<List<Product>> emptyList() async{
+    return new List<Product>();
+}
+
   Widget showList() {
     return FutureBuilder(
-        future: getActiveBidProducts(),
+        future: ( loadMoreFlag ) ? getActiveBidProducts() : emptyList(),
         builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
           print("Snapshot is " + snapshot.toString());
           //productsList.addAll(snapshot.data);
@@ -256,8 +260,8 @@ class _LiveBidsState extends State<LiveBids> {
                 productsList = [];
               }
               print("Length of snapshot data is ${snapshot.data.length}");
-              productsList.clear();
-              villageList.clear();
+              //productsList.clear();   // AVOID THIS AS ONLY 10 PRODUCTS ARE LOADED AT A TIME
+              //villageList.clear();
               productsList.addAll(snapshot.data);
               print("products list is now");
               print(productsList);
@@ -321,6 +325,7 @@ class _LiveBidsState extends State<LiveBids> {
                                     //List<Product> newProducts = await dbConnection.getProducts();
                                     setState(() {
                                     //productsList.addAll(newProducts);
+                                      loadMoreFlag = true;
                                     });
                                     },
                                 ),
@@ -511,7 +516,11 @@ class _LiveBidsState extends State<LiveBids> {
                     child: Text(getTranslated(context, "ok_key").toUpperCase()),
                     onPressed: () {
                       Navigator.of(context).pop();
-                      setState(() {});
+                      setState(() {
+                        productsList.removeAt(index);
+                        bidList.removeAt(index);
+                        loadMoreFlag = false;
+                      });
                     },
                   ),
                 ]);

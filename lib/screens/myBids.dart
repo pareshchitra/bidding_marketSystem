@@ -164,12 +164,18 @@ class _MyBidsState extends State<MyBids> {
                 ),
                 SizedBox(height: 10.0,),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                    //crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(width: 10.0,),
+                      tilesInfo(camelCasingFields(getTranslated(context, "owner_key")), Icons.account_circle, bidsMapList[index]['Product'].owner),
+                      SizedBox(width: 10.0,),
+                      tilesInfo(camelCasingFields(getTranslated(context, "location_key")), Icons.place, bidsMapList[index]['Product'].location),
+                    ]),
+                Row(
+                  //crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(width: 10.0,),
-                    tilesInfo(camelCasingFields(getTranslated(context, "owner_key")), Icons.account_circle, bidsMapList[index]['Product'].owner),
-                    SizedBox(width: 10.0,),
-                    tilesInfo(camelCasingFields(getTranslated(context, "location_key")), Icons.place, bidsMapList[index]['Product'].location),
                     SizedBox(width: 10.0,),
                     tilesInfo(camelCasingFields(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
                     SizedBox(width: 10.0,),

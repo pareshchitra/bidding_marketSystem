@@ -535,16 +535,18 @@ class _ProductDetails extends State<ProductDetails>
   {
     bool verificationStatus = await dbConnection.getVerificationStatus(loggedUser.uid);
     if( verificationStatus ) {  // Only Verified Users must be allowed to place bids
+      // currentPrice is to populate price list in UI & currentBidPrice is for runtime check to avoid conflict in buyers placing same bids TODO: stream listener for prices
       double currentPrice = bid.basePrice;
       if( bid.bidVal.length > 0 && currentPrice < bid.bidVal[0])
         currentPrice = bid.bidVal[0];
-      print("Current price of this bid is $currentPrice");
       List<String> validPrices = priceList(currentPrice);
-      if (validPrices.contains(selectedPrice)) {
+      if (validPrices.contains(selectedPrice)) {  // Amount selected from list UI check
         Bid currentBid = await dbConnection.getBid(bid.id);  // GET CURRENT BID PRICE FROM DB AT RUNTIME
         double currentBidPrice = currentBid.basePrice;
         if( currentBid.bidVal.length > 0 )
           currentBidPrice = currentBid.bidVal[0];
+        print("Current price of this bid is $currentBidPrice");
+
         if( currentBidPrice >= double.parse(selectedPrice) ) // CHECK IF OTHER BIDDER HAS ALREADY AUCTIONED FOR THIS BID AT RUNTIME
           {
             showDialog(
@@ -568,7 +570,7 @@ class _ProductDetails extends State<ProductDetails>
                 });
           }
         else {
-          showDialog(
+          showDialog(  // Confirm bid placement from user
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
@@ -598,7 +600,7 @@ class _ProductDetails extends State<ProductDetails>
         }
       }
       else {
-        showDialog(
+        showDialog( // Bid amount not selected from dropdown list
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
@@ -619,7 +621,7 @@ class _ProductDetails extends State<ProductDetails>
             });
       }
     }
-    else {
+    else {  // If buyer is not verified
       showDialog(
           context: context,
           builder: (BuildContext context) {
