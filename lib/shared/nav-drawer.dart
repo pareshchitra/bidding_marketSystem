@@ -1,5 +1,6 @@
 import 'package:bidding_market/bidStatus.dart';
 import 'package:bidding_market/main.dart';
+import 'package:bidding_market/screens/admin/bidStatusAdmin.dart';
 import 'package:bidding_market/screens/admin/buyerProfiles.dart';
 import 'package:bidding_market/screens/admin/liveBidding.dart';
 import 'package:bidding_market/models/user.dart';
@@ -154,6 +155,17 @@ class _NavDrawerState extends State<NavDrawer> {
             onTap: () => {
               Navigator.push(context, MaterialPageRoute(
                   builder: (context) => BuyerProfiles()
+              ))
+            },
+          ) : SizedBox(),
+          ( SharedPrefs().adminId != "" &&
+              FireBase.auth.currentUser == null ) ? //Admin is Logged In
+          ListTile(
+            leading: Icon(CupertinoIcons.hammer_fill),
+            title: Text(toBeginningOfSentenceCase(getTranslated(context, "bid_status_key"))),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => BidStatusAdmin()
               ))
             },
           ) : SizedBox(),
