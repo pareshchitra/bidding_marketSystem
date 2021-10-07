@@ -27,3 +27,14 @@ const int topThreeBidders = 3;
     'Rajasthan': ['Sawai Madhopur', 'Dausa']
  };
 
+
+List<String> categoryList = [
+  "GUAVA",
+  "PAPAYA",
+  "AMLA",
+  "ANAAR",
+  "LEMON",
+  "APPLE",
+  "BER"
+];
+

@@ -289,7 +289,7 @@ class _ProductRegisterFormState extends State<ProductRegisterForm> {
                     else
                       return null;
                   },
-                  items: product.categoryList
+                  items: categoryList
                       .map((label) => DropdownMenuItem(
                     child: Text(getTranslated(context, (label.toLowerCase() + "_category_key")).toUpperCase()),
                     value: label,

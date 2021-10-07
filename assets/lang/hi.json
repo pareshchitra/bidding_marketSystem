@@ -22,7 +22,7 @@
   "plants_key" : "पौधे",
   "years_key" : "वर्ष",
   "loading_key" : "लोड हो रहा है",
-  "filter_key" : "फिल्टर",
+  "village_filter_key" : "गांव फिल्टर",
   "load_more_key" : "और लोड करें",
   "home_key" : "होम",
   "logout_key" : "लॉगआउट",
@@ -36,8 +36,8 @@
   "address_key" : "पता",
   "house_key" : "घर का नंबर",
   "house_non_empty_key" : "घर का नंबर खाली नहीं हो सकता",
-  "village_key" : "गांव/शहर",
-  "village_non_empty_key" : "गांव/शहर खाली नहीं हो सकता",
+  "village_key" : "गांव",
+  "village_non_empty_key" : "गांव खाली नहीं हो सकता",
   "district_key" : "जिला",
   "district_non_empty_key" : "जिला खाली नहीं हो सकता",
   "state_key" : "राज्य",
@@ -101,6 +101,9 @@
   "papaya_category_key" : "पपीता",
   "amla_category_key" : "आंवला",
   "anaar_category_key" : "अनार",
+  "apple_category_key" : "सेब",
+  "lemon_category_key" : "नींबू",
+  "ber_category_key" : "बेर",
   "start_bidding_key" : "बोली शुरू करें",
   "choose_duration_key" : "अवधि चुनें",
   "choose_amount_key" : "राशि चुनें",
@@ -166,5 +169,7 @@
   "verified_user_alert_key" : "सत्यापित उपयोगकर्ता को प्रोफ़ाइल अपडेट करने की अनुमति नहीं है",
   "bid_already_placed_key" : "यह बोली राशि पहले ही नीलाम हो चुकी है !!! कृपया उच्च बोली चुनें",
   "bid_is_active_key" : "यह बोली पहले से सक्रिय है !! पहले बोली बंद करो",
-  "bid_status_key" : "बोलियों की स्थिति"
+  "bid_status_key" : "बोलियों की स्थिति",
+  "select_pincode_key" : "पिनकोड चुनें",
+  "pincode_filter_key" : "पिनकोड फ़िल्टर"
 }

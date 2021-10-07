@@ -22,7 +22,7 @@
   "plants_key" : "plants",
   "years_key" : "years",
   "loading_key" : "loading",
-  "filter_key" : "filter",
+  "village_filter_key" : "village filter",
   "load_more_key" : "load more",
   "home_key" : "home",
   "logout_key" : "logout",
@@ -36,8 +36,8 @@
   "address_key" : "address",
   "house_key" : "house number",
   "house_non_empty_key" : "house number cannot be empty",
-  "village_key" : "Village/City",
-  "village_non_empty_key" : "village or city cannot be empty",
+  "village_key" : "Village",
+  "village_non_empty_key" : "village cannot be empty",
   "district_key" : "district",
   "district_non_empty_key" : "district cannot be empty",
   "state_key" : "state",
@@ -101,6 +101,9 @@
   "papaya_category_key" : "papaya",
   "amla_category_key" : "amla",
   "anaar_category_key" : "anaar",
+  "apple_category_key" : "apple",
+  "lemon_category_key" : "lemon",
+  "ber_category_key" : "ber",
   "start_bidding_key" : "start bidding",
   "choose_duration_key" : "choose duration",
   "choose_amount_key" : "choose amount",
@@ -166,5 +169,7 @@
   "verified_user_alert_key" : "Verified User is not allowed to update profile",
   "bid_already_placed_key" : "This bid amount has been already auctioned !!! Please select higher bid",
   "bid_is_active_key" : "This bid is already Active!! Stop the bid first",
-  "bid_status_key" : "Bid Status"
+  "bid_status_key" : "Bid Status",
+  "select_pincode_key" : "select pincode",
+  "pincode_filter_key" : "pincode filter"
 }
