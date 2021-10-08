@@ -40,6 +40,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
   List<String> selectedVillageList = [];
   List<String> pincodeList = [];
   List<String> selectedPincodeList = [];
+  Map<Product, String> prodPinMap = new Map();
 
   int pagesPerBatch = 10;
   List<Map<String,bool>> biddersCheckboxList = new List();
@@ -49,41 +50,47 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
     super.initState();
 
     // initial load
-    bidsListFuture = dbConnection.dbBidCollection.snapshots()
+    bidsListFuture = dbConnection.dbBidCollection.orderBy("Bids", descending: true).snapshots()
     .asyncMap((bidDocs) => Future.wait([for (var bidDoc in bidDocs.docs) generateBid(bidDoc)]));
 
   }
 
   Future<Bid> generateBid(QueryDocumentSnapshot document) async {
-    Bid bid = new Bid(
-        productId : document.data()["ProductId"],
-        startTime : document.data()["StartTime"].toDate(),
-        endTime : document.data()["EndTime"].toDate(),
-        basePrice : document.data()["BasePrice"],
-        id : document.id,
-        status : document.data()["Status"],
-        bidWinner: document.data()["BidWinner"],
-        finalBidPrice : document.data()["FinalBidPrice"],
-        bidders : document.data()["Bids"].forEach((map) => map["name"]),
-        bidVal: document.data()["Bids"].forEach((map) => map["price"])
+    Bid bid = new Bid();
+    bid.id = document.id;
+    bid.productId = document.data()['ProductId'];
+    bid.startTime = document.data()['StartTime'].toDate();
+    bid.endTime = document.data()['EndTime'].toDate();
+    bid.basePrice = document.data()['BasePrice'];
+    bid.status = document.data()['Status'];
+    bid.bidWinner = document.data()["BidWinner"];
+    bid.finalBidPrice = document.data()["FinalBidPrice"];
+    List bidders = document.data()['Bids'];
+    bid.bidders = [];
+    bid.bidVal = [];
+    for(var bidder in bidders)
+    {
+      if( bidder['name'] != null )
+        bid.bidders.add(bidder['name']);
+      if( bidder['price'] != null )
+        bid.bidVal.add(double.parse(bidder['price']));
+    }
 
-    );
-    if( bid.bidders == null ) {
-        bid.bidders = [];
-        bid.bidVal = [];
-      }
     print("Bid ${bid.id} bidders are ${bid.bidders}");
-    Product prod = await dbConnection.getProduct(document.id);
+    Product prod = await dbConnection.getProduct(bid.id);
     productsList.add(prod);
     QuerySnapshot query = await dbConnection.dbSellerCollection.where("Name", isEqualTo : prod.owner).get();
     query.docs.forEach((doc) {
-      pincodeList.add(doc.data()["Pincode"]);
+      String pincode = doc.data()["Pincode"];
+      pincodeList.add(pincode);
+      prodPinMap[prod] = pincode;
     });
     Map<String,bool> bidderCheckbox = new Map();
     for(var count = 0;bid.bidders != null  && count < bid.bidders.length && count < topThreeBidders; count++){
       bidderCheckbox[bid.bidders[count]] = false; // Set default checkbox to false for all bidder
     }
     biddersCheckboxList.add(bidderCheckbox);
+    print("Bidders Checkbox list is  $biddersCheckboxList ");
     return bid;
 
   }
@@ -468,8 +475,23 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
             // }
             print("Length of snapshot data is ${snapshot.data.length}");
             bidList.addAll(snapshot.data);
-            print("products list is now");
-            print(productsList);
+            print("products list ids are");
+            int count = 0, count1=0;
+            for( Product p in productsList )
+              {
+                count++;
+                if( p != null )
+                  print(" $count + ${p.id} ");
+              }
+
+            print("Bids list ids are");
+            for( Bid b in bidList )
+            {
+              count1++;
+              if( b != null )
+                print(" $count1 + ${b.id} ");
+            }
+            bidList.forEach((bid) {print(bid.id + " ");});
             // productsList.sort((a, b) =>
             // a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
             for (Product product in productsList)
@@ -535,7 +557,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
                   print("Length of snapshot data is ${snapshot.data
                       .length} && index is $index");
                   return (filterCondition() == true)
-                      ? ((!selectedVillageList.contains(productsList[index - 1].location)) // if selected filter does not contain village
+                      ? ((!selectedVillageList.contains(productsList[index - 1].location) && !(selectedPincodeList.contains(prodPinMap[productsList[index - 1]]))) // if selected filter does not contain village and pincode
                           ? SizedBox(height: 0)
                           : showProductTiles(context, productsList, index - 1))
                       : showProductTiles(context, productsList, index - 1);
@@ -567,7 +589,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
         drawer: NavDrawer(),
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(getTranslated(context, "my_products_bidding_key").toUpperCase()),
+          title: Text(getTranslated(context, "bid_status_key").toUpperCase()),
           backgroundColor: Colors.green[700],
           elevation: 0.0,
           actions: <Widget>[
@@ -721,7 +743,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
 
   // Returns TRUE if any filter is selected otherwise false
   bool filterCondition() {
-    if (selectedVillageList == null || selectedVillageList.length == 0)
+    if ((selectedVillageList == null || selectedVillageList.length == 0 ) && (selectedPincodeList == null || selectedPincodeList.length == 0))
       return false;
     else
       return true;

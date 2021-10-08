@@ -380,7 +380,7 @@ class _HomeState extends State<Home> {
                             ),
                             icon: Icon(Icons.filter_alt_outlined),
                             onPressed: _openFilterList,
-                            label : Text(toBeginningOfSentenceCase(getTranslated(context, "filter_key"))),
+                            label : Text(toBeginningOfSentenceCase(getTranslated(context, "village_filter_key"))),
                             color: Colors.red[100],
 
                   ),
