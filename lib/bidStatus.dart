@@ -212,7 +212,7 @@ class _BidStatusState extends State<BidStatus> {
                         : SizedBox(height: 0) ),
 
 
-                       for(var count = 0; (bidList[index].bidWinner == null) && count < bidList[index].bidders.length
+                       for(var count = 0; (bidList[index].bidWinner == null) && count < biddersCheckboxList[index].length
                            && count < topThreeBidders; count++)
                          (isBidActive) ? ( new Row(
                             mainAxisAlignment: MainAxisAlignment.center,

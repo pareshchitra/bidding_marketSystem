@@ -41,6 +41,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
   List<String> pincodeList = [];
   List<String> selectedPincodeList = [];
   Map<Product, String> prodPinMap = new Map();
+  Map<Bid, Product> bidProdMap = new Map();
 
   int pagesPerBatch = 10;
   List<Map<String,bool>> biddersCheckboxList = new List();
@@ -51,7 +52,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
 
     // initial load
     bidsListFuture = dbConnection.dbBidCollection.orderBy("Bids", descending: true).snapshots()
-    .asyncMap((bidDocs) => Future.wait([for (var bidDoc in bidDocs.docs) generateBid(bidDoc)]));
+    .asyncMap((bidDocs) => Future.wait([for (var bidDoc in bidDocs.docs) generateBid(bidDoc),for (var bidDoc in bidDocs.docs) generateProduct(bidDoc) ] ));
 
   }
 
@@ -77,14 +78,14 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
     }
 
     print("Bid ${bid.id} bidders are ${bid.bidders}");
-    Product prod = await dbConnection.getProduct(bid.id);
-    productsList.add(prod);
-    QuerySnapshot query = await dbConnection.dbSellerCollection.where("Name", isEqualTo : prod.owner).get();
-    query.docs.forEach((doc) {
-      String pincode = doc.data()["Pincode"];
-      pincodeList.add(pincode);
-      prodPinMap[prod] = pincode;
-    });
+    // Product prod = await dbConnection.getProduct(bid.id);
+    // productsList.add(prod);
+    // QuerySnapshot query = await dbConnection.dbSellerCollection.where("Name", isEqualTo : prod.owner).get();
+    // query.docs.forEach((doc) {
+    //   String pincode = doc.data()["Pincode"];
+    //   pincodeList.add(pincode);
+    //   prodPinMap[prod] = pincode;
+    // });
     Map<String,bool> bidderCheckbox = new Map();
     for(var count = 0;bid.bidders != null  && count < bid.bidders.length && count < topThreeBidders; count++){
       bidderCheckbox[bid.bidders[count]] = false; // Set default checkbox to false for all bidder
@@ -94,6 +95,21 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
     return bid;
 
   }
+
+
+  Future<Bid> generateProduct(QueryDocumentSnapshot document) async {
+    String bidId = document.id;
+    Product prod = await dbConnection.getProduct(bidId);
+    productsList.add(prod);
+    QuerySnapshot query = await dbConnection.dbSellerCollection.where("Name", isEqualTo : prod.owner).get();
+    query.docs.forEach((doc) {
+      String pincode = doc.data()["Pincode"];
+      pincodeList.add(pincode);
+      prodPinMap[prod] = pincode;
+    });
+  }
+
+
 
   // Future<List<Bid>> getAllBidProducts() async {
   //   List<Bid> bids = await dbConnection.getSellerBidProducts(loggedUser);
@@ -138,14 +154,14 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
         ]);
   }
 
-  Widget showProductTiles(BuildContext context, List<Product> productsList,int index) {
+  Widget showProductTiles(BuildContext context, Map<Bid,Product> bidProductMap,int index) {
     bool isBidActive;
     if( bidList[index].status == "Active" )
       isBidActive = true;
     else
       isBidActive = false;
 
-
+    Product product = bidProductMap[bidList[index]];
     final border = RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(10.0),
     );
@@ -154,7 +170,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
     String differenceInYears = '';
     if( index < productsList.length ) {
       Duration dur = DateTime.now().difference(
-          productsList[index].age);
+          product.age);
       differenceInYears = (dur.inDays / 365).floor().toString();
     }
 
@@ -185,7 +201,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
           MaterialPageRoute(
             builder: (context) {
               return ProductDetails(
-                  product: productsList[index], bid: bidList[index]);
+                  product: product, bid: bidList[index]);
             },
           ),
         );
@@ -200,9 +216,9 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
             child: Column(
               children: [
                 ListTile(
-                  title: Text( getTranslated(context, (productsList[index].category.toLowerCase() + "_category_key")).toUpperCase()
-                      + " - " + prettifyDouble(productsList[index].size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key"))
-                      + " - " + productsList[index].location, style: TextStyle( color : Colors.green[600], fontSize: 25)),
+                  title: Text( getTranslated(context, (product.category.toLowerCase() + "_category_key")).toUpperCase()
+                      + " - " + prettifyDouble(product.size) + " " + toBeginningOfSentenceCase(getTranslated(context, "bigha_key"))
+                      + " - " + product.location, style: TextStyle( color : Colors.green[600], fontSize: 25)),
                 ),
                 //Row(
                 //children: <Widget>[
@@ -219,8 +235,8 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
                     padding: const EdgeInsets.all(8.0),
 
                     child: Center(
-                      child: (productsList[index].image1 != null && productsList[index].image1 != "" ) ? Image.network(
-                        "${productsList[index].image1}" ,
+                      child: (product.image1 != null && product.image1 != "" ) ? Image.network(
+                        "${product.image1}" ,
                         fit: BoxFit.cover,
                       ) : Text(getTranslated(context, "no_image_key")),
                     ),
@@ -257,7 +273,7 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
                               : SizedBox(height: 0) ),
 
 
-                      for(var count = 0; (bidList[index].bidWinner == null) && count < bidList[index].bidders.length
+                      for(var count = 0; (bidList[index].bidWinner == null) && count < biddersCheckboxList[index].length
                           && count < topThreeBidders; count++)
                         (isBidActive) ? ( new Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -322,10 +338,10 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(width: 10.0,),
-                      tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "owner_key")), Icons.account_circle, productsList[index].owner),
+                      tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "owner_key")), Icons.account_circle, product.owner),
                       SizedBox(width: 10.0,),
                       Expanded(child:
-                      tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "location_key")), Icons.place, productsList[index].location),)
+                      tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "location_key")), Icons.place, product.location),)
                     ]),
                 Row(
                   // crossAxisAlignment: CrossAxisAlignment.center,
@@ -334,12 +350,12 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
                     SizedBox(width: 10.0,),
                     tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "age_key")), Icons.nature_people, differenceInYears),
                     SizedBox(width: 10.0,),
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(productsList[index].size) ),
+                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "size_key")), Icons.fence, prettifyDouble(product.size) ),
                     SizedBox(width: 10.0,),
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (productsList[index].noOfPlants).toString()),
+                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "plants_key")), Icons.nature, (product.noOfPlants).toString()),
                     SizedBox(width: 10.0,),
                     Expanded(child:
-                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(productsList[index].reservePrice)).toString())
+                    tilesInfo(toBeginningOfSentenceCase(getTranslated(context, "base_price_key")), Icons.monetization_on, (currencyFormat.format(product.reservePrice)).toString())
                     ),
                   ],
                 ),
@@ -474,24 +490,26 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
             //   productsList = [];
             // }
             print("Length of snapshot data is ${snapshot.data.length}");
-            bidList.addAll(snapshot.data);
+            snapshot.data.forEach((bid) { if( bid != null ) bidList.add(bid); });
+
+            for( Bid bid in bidList) {
+              int index = productsList.indexWhere((product) => product.id == bid.id);
+              bidProdMap[bid] = productsList[index];
+            }
             print("products list ids are");
-            int count = 0, count1=0;
-            for( Product p in productsList )
-              {
-                count++;
-                if( p != null )
-                  print(" $count + ${p.id} ");
-              }
+            int count = 0, count1=0, i=0;
+            bidProdMap.entries.forEach((entry) { print("Bid id is ${entry.key.id}"); print("Product id is ${entry.value.id}");});
 
             print("Bids list ids are");
+            i = 0 ;
             for( Bid b in bidList )
             {
               count1++;
               if( b != null )
-                print(" $count1 + ${b.id} ");
+                print(" ${i++} + ${b.id} ");
             }
-            bidList.forEach((bid) {print(bid.id + " ");});
+            print("bid count is $count1");
+            //bidList.forEach((bid) {print(bid.id + " ");});
             // productsList.sort((a, b) =>
             // a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
             for (Product product in productsList)
@@ -556,11 +574,12 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
 
                   print("Length of snapshot data is ${snapshot.data
                       .length} && index is $index");
+                  Product currentProd = bidProdMap[bidList[index - 1]];
                   return (filterCondition() == true)
-                      ? ((!selectedVillageList.contains(productsList[index - 1].location) && !(selectedPincodeList.contains(prodPinMap[productsList[index - 1]]))) // if selected filter does not contain village and pincode
+                      ? ((!selectedVillageList.contains(currentProd.location) && !(selectedPincodeList.contains(prodPinMap[currentProd]))) // if selected filter does not contain village and pincode
                           ? SizedBox(height: 0)
-                          : showProductTiles(context, productsList, index - 1))
-                      : showProductTiles(context, productsList, index - 1);
+                          : showProductTiles(context, bidProdMap, index - 1))
+                      : showProductTiles(context, bidProdMap, index - 1);
 
                 },
               )
