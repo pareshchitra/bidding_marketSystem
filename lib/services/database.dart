@@ -1121,11 +1121,11 @@ class DatabaseService {
     QuerySnapshot querySnapshot;
 
     if (bidLastDocument == null) {
-      querySnapshot = await dbBidCollection.where( 'Status' , isEqualTo: status).orderBy('EndTime')
+      querySnapshot = await dbBidCollection.where( 'Status' , isEqualTo: status).orderBy("Bids", descending: true)
           .limit(bidDocumentLimit)
           .get();
     } else {
-      querySnapshot = await dbBidCollection.where( 'Status' , isEqualTo: status).orderBy('EndTime').startAfterDocument(bidLastDocument)
+      querySnapshot = await dbBidCollection.where( 'Status' , isEqualTo: status).orderBy("Bids", descending: true).startAfterDocument(bidLastDocument)
           .limit(bidDocumentLimit)
           .get();
       print(1);
