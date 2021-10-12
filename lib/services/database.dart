@@ -1387,6 +1387,18 @@ class DatabaseService {
     return counterDetails;
   }
 
+  Future<String> getProductPincode(Product prod) async
+  {
+    String pincode = null;
+    QuerySnapshot query = await dbSellerCollection.where("Name", isEqualTo : prod.owner).get();
+    query.docs.forEach((doc) {
+      pincode = doc.data()["Pincode"];
+      });
+    if( pincode == null )
+      print("Failed to get Pincode of Product with id ${prod.id}");
+    return pincode;
+  }
+
   final CollectionReference brewCollection = Firestore.instance.collection('brews');
 
   // Future<void> updateUserData(String sugars, String name, int strength) async {

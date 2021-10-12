@@ -37,72 +37,12 @@ class _HomeState extends State<Home> {
   List<Product> productsList ;
   List<String>  villageList = [];
   List<String> selectedVillageList = [];
+  List<String> pincodeList = [];
+  List<String> selectedPincodeList = [];
+  Map<Product, String> prodPinMap = new Map();
 
   int pagesPerBatch = 10;
 
-//  List<Product> products = [];
-  //Translated values
-//   List<Product> _translatedProductsList = [] ;
-//   int callCount = 0;
-//   void _getTranslatedValues(BuildContext context)
-//   {
-//     callCount++;
-//     print("Called func- $callCount with productListnumber-${_translatedProductsList.length}");
-//       for (var i = 0; i < productsList.length; i++) {
-//         print(
-//             "Calling for Category- i=${i}, callCount=${callCount}, productId=${_translatedProductsList[i]
-//                 .id}");
-//         if(selectedLanguage == "hi") {
-//         getTranslatedOnline(context, _translatedProductsList[i].category, "0").then((
-//             value) =>
-//             setState(() {
-//               _translatedProductsList[i].category = value;
-//             }));
-//         print(
-//             "Calling for location- i=${i}, callCount=${callCount}, productId=${_translatedProductsList[i]
-//                 .id}");
-//         getTranslatedOnline(context, _translatedProductsList[i].location, "0").then((
-//             value) =>
-//             setState(() {
-//               _translatedProductsList[i].location = value;
-//             }));
-//         print(
-//             "Calling for Owner- i=${i}, callCount=${callCount}, productId=${_translatedProductsList[i]
-//                 .id}");
-//         getTranslatedOnline(context, _translatedProductsList[i].owner, "0").then((value) =>
-//             setState(() {
-//               _translatedProductsList[i].owner = value;
-//             }));
-//         }
-//         else if(selectedLanguage == "en")
-//         {
-//           _translatedProductsList[i].category = productsList[i].category;
-//           _translatedProductsList[i].location = productsList[i].location;
-//           _translatedProductsList[i].owner = productsList[i].owner;
-//         }
-//       }
-//
-//   }
-//
-//   Future<void> productsGet() async {
-//   products = await dbConnection.getProducts();
-// }
-//
-//   @override
-//   void initState() {
-//     productsGet();
-//     super.initState();
-//   }
-//
-//   @override
-//   // ignore: must_call_super
-//   Future<void> didChangeDependencies() async {
-//     //super.initState();
-//     //showList();
-//     await Future.delayed(const Duration(seconds: 1));
-//     _translatedProductsList = List.from(products);
-//     _getTranslatedValues(context);
-//   }
 
   Widget showProductTiles(BuildContext context, List<Product> productsList,int index) {
 
@@ -311,9 +251,20 @@ class _HomeState extends State<Home> {
     );
     }
 
+
+    Future<List<Product>> getAllProductsFromDB() async{
+      List<Product> productList = await dbConnection.getProducts();
+      for( Product product in productList ) {
+        String pincode = await dbConnection.getProductPincode(product);
+        pincodeList.add(pincode);
+        prodPinMap[product] = pincode;
+      }
+      return productList;
+    }
+
  Widget showList() {
     return FutureBuilder(
-        future: dbConnection.getProducts(),
+        future: getAllProductsFromDB(),
         builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
           print("Snapshot is " + snapshot.toString());
           //productsList.addAll(snapshot.data);
@@ -347,6 +298,7 @@ class _HomeState extends State<Home> {
               for( Product product in productsList )
                 villageList.add(product.location);
               villageList = villageList.toSet().toList();
+              pincodeList = pincodeList.toSet().toList();
               print("Village List is $villageList");
             }
           }
@@ -373,17 +325,32 @@ class _HomeState extends State<Home> {
                         return Container(
                           alignment: Alignment.topRight,
                           color: Colors.brown[200],
-                          child: RaisedButton.icon(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
-                                side: BorderSide(color: Colors.red)
-                            ),
-                            icon: Icon(Icons.filter_alt_outlined),
-                            onPressed: _openFilterList,
-                            label : Text(toBeginningOfSentenceCase(getTranslated(context, "village_filter_key"))),
-                            color: Colors.red[100],
+                          child: Row(
+                            children: [
+                              RaisedButton.icon(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    side: BorderSide(color: Colors.red)
+                                ),
+                                icon: Icon(Icons.filter_alt_outlined),
+                                onPressed: _openVillageFilterList,
+                                label : Text(toBeginningOfSentenceCase(getTranslated(context, "village_filter_key"))),
+                                color: Colors.red[100],
 
-                  ),
+                              ),
+                              RaisedButton.icon(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                    side: BorderSide(color: Colors.red)
+                                ),
+                                icon: Icon(Icons.filter_alt_outlined),
+                                onPressed: _openPincodeFilterList,
+                                label : Text(toBeginningOfSentenceCase(getTranslated(context, "pincode_filter_key"))),
+                                color: Colors.red[100],
+
+                              ),
+                            ],
+                          ),
                         );
                 }
 
@@ -407,10 +374,10 @@ class _HomeState extends State<Home> {
                             ),
                           )
                     : (filterCondition() == true)
-                        ? ((!selectedVillageList
-                                .contains(productsList[index - 1].location)) // if selected filter does not contain village
+                        ? ( (!selectedVillageList
+                                .contains(productsList[index - 1].location)) && !(selectedPincodeList.contains(prodPinMap[productsList[index - 1]]))  // if selected filter does not contain village
                             ? SizedBox(height: 0)
-                            : showProductTiles(context, productsList, index - 1))
+                            : showProductTiles(context, productsList, index - 1) )
                         : showProductTiles(context, productsList, index - 1);
               },
           )
@@ -511,7 +478,7 @@ class _HomeState extends State<Home> {
 
   }
 
-  void _openFilterList() async {
+  void _openVillageFilterList() async {
     FilterListDialog.display<String>(
         context,
         listData: villageList,
@@ -547,9 +514,45 @@ class _HomeState extends State<Home> {
         });
   }
 
+  void _openPincodeFilterList() async {
+    FilterListDialog.display<String>(
+        context,
+        listData: pincodeList,
+        selectedListData: selectedPincodeList,
+        height: 480,
+        headlineText: toBeginningOfSentenceCase(getTranslated(context, "select_pincode_key")),
+        searchFieldHintText: toBeginningOfSentenceCase(getTranslated(context, "search_here_key")),
+        label: (item) {
+          return item;
+        },
+        validateSelectedItem: (list, val) {
+          return list.contains(val);
+        },
+        onItemSearch: (list, text) {
+          if (list.any((element) =>
+              element.toLowerCase().contains(text.toLowerCase()))) {
+            return list
+                .where((element) =>
+                element.toLowerCase().contains(text.toLowerCase()))
+                .toList().toSet().toList();
+          }
+          else{
+            return [];
+          }
+        },
+        onApplyButtonClick: (list) {
+          if (list != null) {
+            setState(() {
+              selectedPincodeList = List.from(list);
+            });
+          }
+          Navigator.pop(context);
+        });
+  }
+
   // Returns TRUE if any filter is selected otherwise false
   bool filterCondition() {
-    if (selectedVillageList == null || selectedVillageList.length == 0)
+    if ((selectedVillageList == null || selectedVillageList.length == 0 ) && (selectedPincodeList == null || selectedPincodeList.length == 0))
       return false;
     else
       return true;

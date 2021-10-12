@@ -36,6 +36,9 @@ class _LiveBidsState extends State<LiveBids> {
   List<Bid> bidList = [];
   List<String>  villageList = [];
   List<String> selectedVillageList = [];
+  List<String> pincodeList = [];
+  List<String> selectedPincodeList = [];
+  Map<Product, String> prodPinMap = new Map();
   bool loadMoreFlag = true;
   int pagesPerBatch = 10;
 
@@ -48,6 +51,9 @@ class _LiveBidsState extends State<LiveBids> {
       {
         Product prod = await dbConnection.getProduct(bid.productId);
         products.add(prod);
+        String pincode = await dbConnection.getProductPincode(prod);
+        pincodeList.add(pincode);
+        prodPinMap[prod] = pincode;
       }
     bidList.addAll(bids); // ORDER OF GET IN PRODUCTS AND BIDS ??
     return products;
@@ -270,6 +276,7 @@ class _LiveBidsState extends State<LiveBids> {
               for( Product product in productsList )
                 villageList.add(product.location);
               villageList = villageList.toSet().toList();
+              pincodeList = pincodeList.toSet().toList();
               print("Village List is $villageList");
             }
           }
@@ -298,16 +305,31 @@ class _LiveBidsState extends State<LiveBids> {
                       return Container(
                         alignment: Alignment.topRight,
                         color: Colors.brown[200],
-                        child: RaisedButton.icon(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                              side: BorderSide(color: Colors.red)
-                          ),
-                          icon: Icon(Icons.filter_alt_outlined),
-                          onPressed: _openFilterList,
-                          label : Text(toBeginningOfSentenceCase(getTranslated(context, "village_filter_key"))),
-                          color: Colors.red[100],
+                        child: Row(
+                          children: [
+                            RaisedButton.icon(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  side: BorderSide(color: Colors.red)
+                              ),
+                              icon: Icon(Icons.filter_alt_outlined),
+                              onPressed: _openVillageFilterList,
+                              label : Text(toBeginningOfSentenceCase(getTranslated(context, "village_filter_key"))),
+                              color: Colors.red[100],
 
+                            ),
+                            RaisedButton.icon(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15.0),
+                                  side: BorderSide(color: Colors.red)
+                              ),
+                              icon: Icon(Icons.filter_alt_outlined),
+                              onPressed: _openPincodeFilterList,
+                              label : Text(toBeginningOfSentenceCase(getTranslated(context, "pincode_filter_key"))),
+                              color: Colors.red[100],
+
+                            ),
+                          ],
                         ),
                       );
                     }
@@ -331,7 +353,7 @@ class _LiveBidsState extends State<LiveBids> {
                                 ),
                           )
                         : (filterCondition() == true)
-                          ? ((!selectedVillageList.contains(productsList[index - 1].location)) // if selected filter does not contain village
+                          ? ( ((!selectedVillageList.contains(productsList[index - 1].location)) && !(selectedPincodeList.contains(prodPinMap[productsList[index - 1]])) ) // if selected filter does not contain village
                             ? SizedBox(height: 0)
                             : showProductTiles(context, productsList, index - 1))
                           : showProductTiles(context, productsList, index - 1);
@@ -428,7 +450,7 @@ class _LiveBidsState extends State<LiveBids> {
 
   }
 
-  void _openFilterList() async {
+  void _openVillageFilterList() async {
     FilterListDialog.display<String>(
         context,
         listData: villageList,
@@ -464,14 +486,50 @@ class _LiveBidsState extends State<LiveBids> {
         });
   }
 
+
+  void _openPincodeFilterList() async {
+    FilterListDialog.display<String>(
+        context,
+        listData: pincodeList,
+        selectedListData: selectedPincodeList,
+        height: 480,
+        headlineText: toBeginningOfSentenceCase(getTranslated(context, "select_pincode_key")),
+        searchFieldHintText: toBeginningOfSentenceCase(getTranslated(context, "search_here_key")),
+        label: (item) {
+          return item;
+        },
+        validateSelectedItem: (list, val) {
+          return list.contains(val);
+        },
+        onItemSearch: (list, text) {
+          if (list.any((element) =>
+              element.toLowerCase().contains(text.toLowerCase()))) {
+            return list
+                .where((element) =>
+                element.toLowerCase().contains(text.toLowerCase()))
+                .toList().toSet().toList();
+          }
+          else{
+            return [];
+          }
+        },
+        onApplyButtonClick: (list) {
+          if (list != null) {
+            setState(() {
+              selectedPincodeList = List.from(list);
+            });
+          }
+          Navigator.pop(context);
+        });
+  }
+
   // Returns TRUE if any filter is selected otherwise false
   bool filterCondition() {
-    if (selectedVillageList == null || selectedVillageList.length == 0)
+    if ((selectedVillageList == null || selectedVillageList.length == 0 ) && (selectedPincodeList == null || selectedPincodeList.length == 0))
       return false;
     else
       return true;
   }
-
 
   // FOR ADMIN HOME PAGE
   Widget biddingWindow(int index) {

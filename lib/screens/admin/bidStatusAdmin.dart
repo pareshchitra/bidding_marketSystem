@@ -101,12 +101,9 @@ class _BidStatusAdminState extends State<BidStatusAdmin> {
     String bidId = document.id;
     Product prod = await dbConnection.getProduct(bidId);
     productsList.add(prod);
-    QuerySnapshot query = await dbConnection.dbSellerCollection.where("Name", isEqualTo : prod.owner).get();
-    query.docs.forEach((doc) {
-      String pincode = doc.data()["Pincode"];
-      pincodeList.add(pincode);
-      prodPinMap[prod] = pincode;
-    });
+    String pincode = await dbConnection.getProductPincode(prod);
+    pincodeList.add(pincode);
+    prodPinMap[prod] = pincode;
   }
 
 
