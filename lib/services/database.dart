@@ -887,7 +887,8 @@ class DatabaseService {
           }
         }
         if (bidders.length != 0) // This Bid is having some buyers
-            {
+          {
+          Map buyerUpdatedBidsMap = new Map();
           for (var buyerId in bidders) {
             print("Finding buyer info with id $buyerId ");
             DocumentReference buyerRef = dbBuyerCollection.doc(buyerId);
@@ -895,19 +896,33 @@ class DatabaseService {
             List buyerBidList = buyerDoc.data()['ProductBids'];
             List updatedBuyerBidList = [];
 
-
             for (var buyerBid in buyerBidList) {
               String productId = buyerBid['ProductId'];
               if (productId != bid.id) {
                 print(
                     "Updated Bid list of the buyer contains productId $productId");
+                print("Buyer bid is $buyerBid");
                 updatedBuyerBidList.add(buyerBid);
               }
             }
-
+            print("UpdatedBuyerBidList is $updatedBuyerBidList");
+            // Form a map to make all updates after reads for a Transaction
+            if( buyerUpdatedBidsMap.containsKey(buyerRef) == false )
+              buyerUpdatedBidsMap[buyerRef] = updatedBuyerBidList;
+            print("Buyer Updated BidMap is key $buyerRef value ${buyerUpdatedBidsMap[buyerRef]}");
+          }
+          buyerUpdatedBidsMap.values.forEach((value) { print("value is $value");});
+          int index = 0;
+          for(MapEntry entry in buyerUpdatedBidsMap.entries)
+          {
+            print("Buyer Updated BidMap is key bidId ${entry.key} value bidList is ${buyerUpdatedBidsMap.values.elementAt(index++)}");
+          }
+          index = 0;
+          for(MapEntry entry in buyerUpdatedBidsMap.entries)
+          {
             // TRANSACTION STARTS
-            await transaction.update(buyerRef, {
-              'ProductBids': updatedBuyerBidList,
+            transaction.update(entry.key, {
+              'ProductBids': buyerUpdatedBidsMap.values.elementAt(index++),
             });
           }
         }
@@ -916,8 +931,8 @@ class DatabaseService {
         }
       }
       await transaction.update(counterRef, {
-          "count": FieldValue.increment(1)}
-          );
+        "count": FieldValue.increment(1)}
+      );
       return await transaction.set(newBidRef, {
         'ProductId': bid.productId,
         'StartTime': bid.startTime,

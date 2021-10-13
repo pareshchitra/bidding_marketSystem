@@ -51,11 +51,14 @@ class _LiveBidsState extends State<LiveBids> {
       {
         Product prod = await dbConnection.getProduct(bid.productId);
         products.add(prod);
+        bidList.add(bid); // ORDER OF GET IN PRODUCTS AND BIDS ??
+        print("Adding product with id ${bid.id} to productList");
+        print("Adding bid with id ${bid.id} to bidList");
         String pincode = await dbConnection.getProductPincode(prod);
         pincodeList.add(pincode);
         prodPinMap[prod] = pincode;
       }
-    bidList.addAll(bids); // ORDER OF GET IN PRODUCTS AND BIDS ??
+
     return products;
   }
 
@@ -271,6 +274,14 @@ class _LiveBidsState extends State<LiveBids> {
               productsList.addAll(snapshot.data);
               print("products list is now");
               print(productsList);
+              for(int count =0;count< productsList.length;count++)
+              {
+                print("Product List[$count] Id: ${productsList[count].id}");
+              }
+              for(int count =0;count< bidList.length;count++)
+              {
+                print("Bid List[$count] Id: ${bidList[count].id}");
+              }
               // productsList.sort((a, b) =>
               // a.lastUpdatedOn.isBefore(b.lastUpdatedOn) == true ? 1 : 0);
               for( Product product in productsList )
@@ -335,6 +346,7 @@ class _LiveBidsState extends State<LiveBids> {
                     }
 
                     print("Length of snapshot data is ${snapshot.data.length} && index is $index");
+
                     return ((index == productsList.length + 1) &&
                             (snapshot.data.length <= pagesPerBatch || snapshot.data.length == 0))
                         ? (snapshot.data.length == 0 || snapshot.data.length < pagesPerBatch)
